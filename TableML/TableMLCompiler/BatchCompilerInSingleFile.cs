@@ -51,7 +51,36 @@ namespace TableML.Compiler
         /// 生成代码的文件名=表名+后缀+.cs，建议和模版中的一致
         /// </summary>
         public const string FileNameSuffix = "Setting";
-        
+
+        /// <summary>
+        /// 处理文件名，符合微软的C#命名风格
+        /// copy from TableTemplateVars.DefaultClassNameParse
+        /// </summary>
+        /// <param name="tabFilePath"></param>
+        /// <returns></returns>
+        public string DefaultClassNameParse(string tabFilePath)
+        {
+            // 未处理路径的类名, 去掉后缀扩展名
+            var classNameOrigin = Path.ChangeExtension(tabFilePath, null);
+
+            // 子目录合并，首字母大写, 组成class name
+            var className = classNameOrigin.Replace("/", "_").Replace("\\", "_");
+            className = className.Replace(" ", "");
+            className = string.Join("", (from name
+                in className.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries)
+                                         select (name[0].ToString().ToUpper() + name.Substring(1, name.Length - 1)))
+                .ToArray());
+
+            // 去掉+或#号后面的字符
+            var plusSignIndex = className.IndexOf("+");
+            className = className.Substring(0, plusSignIndex == -1 ? className.Length : plusSignIndex);
+            plusSignIndex = className.IndexOf("#");
+            className = className.Substring(0, plusSignIndex == -1 ? className.Length : plusSignIndex);
+
+            return className;
+
+        }
+
         /// <summary>
         /// 生成代码文件
         /// </summary>
@@ -63,7 +92,6 @@ namespace TableML.Compiler
         void GenSingleClass(TableCompileResult compileResult, string genCodeTemplateString, string genCodeFilePath,
             string nameSpace = "AppSettings", string changeExtension = ".tml", string settingCodeIgnorePattern = null, bool forceAll = false, bool genManagerClass = false, Dictionary<string, TableTemplateVars> templateVars = null)
         {
-            //代码文件名=tml的文件名
             // 根据编译结果，构建vars，同class名字的，进行合并
             if (!genManagerClass)
             {
@@ -108,8 +136,7 @@ namespace TableML.Compiler
             if (!genManagerClass)
             {
                 //首字母大写，符合微软命名规范
-                var filenName = compileResult.TabFileRelativePath.Replace(changeExtension, "");
-                var newFileName = string.Concat(filenName.Substring(0, 1).ToUpper(),filenName.Substring(1),FileNameSuffix,".cs");
+                var newFileName = string.Concat(DefaultClassNameParse(compileResult.TabFileRelativePath),FileNameSuffix,".cs");
                 if (string.IsNullOrEmpty(genCodeFilePath))
                 {
                     genCodeFilePath += string.Concat(DefaultGenCodeDir, newFileName);
@@ -211,6 +238,9 @@ namespace TableML.Compiler
                          * NOTE 开始编译Excel 成 tml文件
                          * 每编译一个Excel就生成一个代码文件
                         */
+                        //NOTE 设置编译出的文件名
+                        SimpleExcelFile excelFile = new SimpleExcelFile(excelPath);
+                        relativePath = excelFile.GetOutFileName();
                         var compileToPath = string.Format("{0}/{1}", compileBaseDir,
                             Path.ChangeExtension(relativePath, changeExtension));
                         var srcFileInfo = new FileInfo(excelPath);

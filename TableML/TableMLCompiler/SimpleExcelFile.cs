@@ -87,16 +87,16 @@ namespace TableML.Compiler
         public Dictionary<int, string> Index2ColName { get; set; }
         public Dictionary<string, string> ColName2Statement { get; set; } //  string,or something
         public Dictionary<string, string> ColName2Comment { get; set; } // string comment
-
+        //NOTE by zhaoqingqing 根据特殊的Excel格式定制
         /// <summary>
         /// Header, Statement, Comment, at lease 3 rows
         /// 预留行数
         /// </summary>
-        public const int PreserverRowCount = 3;
+        public const int PreserverRowCount = 15;
         /// <summary>
         /// 从指定列开始读,默认是0
         /// </summary>
-        public const int StartColumnIdx = 0;
+        public const int StartColumnIdx = 1;
 
         //private DataTable DataTable_;
         private string Path;
@@ -150,9 +150,16 @@ namespace TableML.Compiler
                 var sheetRowCount = GetWorksheetCount();
                 if (sheetRowCount < PreserverRowCount)
                     throw new Exception(string.Format("At lease {0} rows of this excel", sheetRowCount));
-          
-                // 列头名
-                var headerRow = Worksheet.GetRow(0);
+                
+                /**表头结构如下所示：
+                *   Id  Name    CDTime
+                *   int string int
+                *   编号 名称 CD时间
+                */
+        
+                //NOTE 从第0行开始读
+                // 列头名(字段名) 
+                var headerRow = Worksheet.GetRow(5);
                 // 列总数保存
                 int columnCount = _columnCount = headerRow.LastCellNum;
                 
@@ -164,8 +171,8 @@ namespace TableML.Compiler
                     ColName2Index[headerName] = columnIndex;
                     Index2ColName[columnIndex] = headerName;
                 }
-                // 表头声明
-                var statementRow = Worksheet.GetRow(1);
+                // 表头声明(数据类型)
+                var statementRow = Worksheet.GetRow(4);
                 for (int columnIndex = StartColumnIdx; columnIndex < columnCount; columnIndex++)
                 {
                     var colName = Index2ColName[columnIndex];
@@ -173,8 +180,8 @@ namespace TableML.Compiler
                     var statementString = statementCell != null ? statementCell.ToString() : "";
                     ColName2Statement[colName] = statementString;
                 }
-                // 表头注释
-                var commentRow = Worksheet.GetRow(2);
+                // 表头注释(字段注释)
+                var commentRow = Worksheet.GetRow(14);
                 for (int columnIndex = StartColumnIdx; columnIndex < columnCount; columnIndex++)
                 {
                     var colName = Index2ColName[columnIndex];
@@ -184,6 +191,7 @@ namespace TableML.Compiler
                 }
             }
         }
+      
         /// <summary>
         /// 是否存在列名
         /// </summary>
@@ -254,7 +262,7 @@ namespace TableML.Compiler
         }
 
         /// <summary>
-        /// 不带3个预留头的数据总行数
+        /// 不带预留头的数据总行数
         /// </summary>
         /// <returns></returns>
         public int GetRowsCount()
@@ -359,6 +367,16 @@ namespace TableML.Compiler
         public int GetColumnCount()
         {
             return _columnCount;
+        }
+
+        /// <summary>
+        /// 读表中的字段获取输出文件名
+        /// </summary>
+        /// <returns></returns>
+        public string GetOutFileName()
+        {
+            var outFileName = Worksheet.GetRow(1).Cells[2].StringCellValue;
+            return outFileName;
         }
     }
 }
