@@ -89,7 +89,9 @@ namespace TableML.Compiler
                     {
                         //NOTE by qingqing-zhao 因为是从指定的列开始读取，所以>有效列 才加入\t
                         if (colIndex > SimpleExcelFile.StartColumnIdx)
+                        {
                             tableBuilder.Append("\t");
+                        }
                         tableBuilder.Append(colNameStr);
 
                         string typeName = "string";
@@ -142,6 +144,8 @@ namespace TableML.Compiler
                 tableBuilder.Append(statementStr);
             }
             tableBuilder.Append("\n");
+            //以上是tml写入的第一行
+
             
             // #if check, 是否正在if false模式, if false时，行被忽略
             var ifCondtioning = true;
@@ -197,9 +201,15 @@ namespace TableML.Compiler
                                 if (startRow != 0) // 不是第一行，往添加换行，首列
                                     rowBuilder.Append("\n");
                             }
-                            //NOTE by qingqing-zhao 因为是从指定的列开始读取，所以>有效列 才加入\t
-                            if (loopColumn > SimpleExcelFile.StartColumnIdx && loopColumn < columnCount) // 最后一列不需加tab
+                            /*
+                                NOTE by qingqing-zhao 因为是从指定的列开始读取，所以>有效列 才加入\t
+                                如果这列是空白的也不需要加入
+                            */
+                            if (!string.IsNullOrEmpty(columnName) && !string.IsNullOrEmpty(cellStr) && 
+                                loopColumn > SimpleExcelFile.StartColumnIdx && loopColumn < columnCount) // 最后一列不需加tab
+                            {
                                 rowBuilder.Append("\t");
+                            }
 
                             // 如果单元格是字符串，换行符改成\\n
                             cellStr = cellStr.Replace("\n", "\\n");
@@ -213,7 +223,9 @@ namespace TableML.Compiler
                         tableBuilder.Append(rowBuilder);
                 }
             }
-            
+            //以上是tml写入其它行
+        
+
             var fileName = Path.GetFileNameWithoutExtension(path);
             string exportPath;
             if (!string.IsNullOrEmpty(compileToFilePath))

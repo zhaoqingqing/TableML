@@ -136,7 +136,7 @@ namespace TableML.Compiler
             if (!genManagerClass)
             {
                 //首字母大写，符合微软命名规范
-                var newFileName = string.Concat(DefaultClassNameParse(compileResult.TabFileRelativePath),FileNameSuffix,".cs");
+                var newFileName = string.Concat(DefaultClassNameParse(compileResult.TabFileRelativePath), FileNameSuffix, ".cs");
                 if (string.IsNullOrEmpty(genCodeFilePath))
                 {
                     genCodeFilePath += string.Concat(DefaultGenCodeDir, newFileName);
@@ -210,10 +210,7 @@ namespace TableML.Compiler
             var copyExt = new HashSet<string>() { ".txt" };
             if (Directory.Exists(sourcePath) == false)
             {
-#if UNITY_5_3_OR_NEWER
-
-#endif
-                Console.WriteLine("Error! {0} 路径不存在！{0}", sourcePath);
+                Console.WriteLine("Error! {0} 路径不存在！", sourcePath);
                 return results;
             }
             var findDir = sourcePath;
