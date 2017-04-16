@@ -372,11 +372,33 @@ namespace TableML.Compiler
 
         /// <summary>
         /// 读表中的字段获取输出文件名
+        /// 做好约定输出tml文件名在指定的单元格，不用遍历整表让解析更快
         /// </summary>
         /// <returns></returns>
-        public string GetOutFileName()
+        public static string GetOutFileName(string filePath)
         {
-            var outFileName = Worksheet.GetRow(1).Cells[2].StringCellValue;
+            IWorkbook workbook;
+            using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // no isolation
+            {
+                try
+                {
+                    workbook = WorkbookFactory.Create(file);
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath,
+                        e.Message));
+                }
+            }
+            var worksheet = workbook.GetSheetAt(0);
+            if (worksheet == null)
+                throw new Exception("Null Worksheet");
+            var row = worksheet.GetRow(1);
+            if (row == null || row.Cells.Count < 2)
+            {
+                throw new Exception("第二行至少需要3列");
+            }
+            var outFileName = row.Cells[2].StringCellValue;
             return outFileName;
         }
     }

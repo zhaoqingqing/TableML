@@ -64,7 +64,15 @@ namespace TableML.Compiler
             _config = cfg;
         }
 
-
+        /// <summary>
+        /// 生成tml文件内容
+        /// </summary>
+        /// <param name="path">源excel的相对路径</param>
+        /// <param name="excelFile"></param>
+        /// <param name="compileToFilePath">编译后的tml文件路径</param>
+        /// <param name="compileBaseDir"></param>
+        /// <param name="doCompile"></param>
+        /// <returns></returns>
         private TableCompileResult DoCompilerExcelReader(string path, ITableSourceFile excelFile, string compileToFilePath = null, string compileBaseDir = null, bool doCompile = true)
         {
             var renderVars = new TableCompileResult();

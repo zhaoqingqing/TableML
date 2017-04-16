@@ -29,7 +29,7 @@ namespace TableCompilerConsole
         {
             var startPath = Environment.CurrentDirectory;
             //源excel文件路径
-            var srcFile = Path.Combine(startPath, "settingsrc", "Test.xlsx");
+            var srcFile = Path.Combine(startPath, "src", "Test.xlsx");
             //输出tml文件路径
             var OutputDirectory = Path.Combine(startPath, "setting", "Test.tml");
             //生成的代码路径
@@ -57,7 +57,7 @@ namespace TableCompilerConsole
             Console.WriteLine("当前目录：{0}", startPath);
             //源excel文件路径
             //var srcDirectory = "settingsrc";
-            var srcDirectory = "ConfigTable";
+            var srcDirectory = "src";
             //输出tml文件路径
             var OutputDirectory = "setting";
             //生成的代码路径
@@ -68,9 +68,10 @@ namespace TableCompilerConsole
             string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
 
             var results = batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, OutputDirectory, CodeFilePath,
-               templateString, "AppSettings", ".k",settingCodeIgnorePattern, !string.IsNullOrEmpty(CodeFilePath));
+               templateString, "AppSettings", ".tml",settingCodeIgnorePattern, !string.IsNullOrEmpty(CodeFilePath));
 
             Console.WriteLine("Done!");
+            
         }
 
         public static void UpdateTableAll()

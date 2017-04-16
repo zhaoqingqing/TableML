@@ -89,7 +89,7 @@ namespace TableML.Compiler
         /// <param name="forceAll"></param>
         /// <param name="genManagerClass"></param>
         /// <param name="templateVars">如果是生成Manager Class 一定要在外部初始化此字段</param>
-        void GenSingleClass(TableCompileResult compileResult, string genCodeTemplateString, string genCodeFilePath,
+        void GenCodeFile(TableCompileResult compileResult, string genCodeTemplateString, string genCodeFilePath,
             string nameSpace = "AppSettings", string changeExtension = ".tml", string settingCodeIgnorePattern = null, bool forceAll = false, bool genManagerClass = false, Dictionary<string, TableTemplateVars> templateVars = null)
         {
             // 根据编译结果，构建vars，同class名字的，进行合并
@@ -183,7 +183,7 @@ namespace TableML.Compiler
             var templateVars = new Dictionary<string, TableTemplateVars>();
             foreach (var compileResult in results)
             {
-                GenSingleClass(compileResult, genCodeTemplateString, genCodeFilePath, nameSpace, changeExtension, settingCodeIgnorePattern, forceAll, true, templateVars);
+                GenCodeFile(compileResult, genCodeTemplateString, genCodeFilePath, nameSpace, changeExtension, settingCodeIgnorePattern, forceAll, true, templateVars);
             }
         }
 
@@ -235,9 +235,8 @@ namespace TableML.Compiler
                          * NOTE 开始编译Excel 成 tml文件
                          * 每编译一个Excel就生成一个代码文件
                         */
-                        //NOTE 设置编译出的文件名
-                        SimpleExcelFile excelFile = new SimpleExcelFile(excelPath);
-                        relativePath = excelFile.GetOutFileName();
+                        //NOTE 设置编译后文件的文件名(tml文件名)
+                        relativePath = SimpleExcelFile.GetOutFileName(excelPath);
                         var compileToPath = string.Format("{0}/{1}", compileBaseDir,
                             Path.ChangeExtension(relativePath, changeExtension));
                         var srcFileInfo = new FileInfo(excelPath);
@@ -269,7 +268,7 @@ namespace TableML.Compiler
                             var compiledFileInfo = new FileInfo(compileToPath);
                             compiledFileInfo.LastWriteTime = srcFileInfo.LastWriteTime;
                             //仅仅是生成单个Class，只需要当前的CompileResult
-                            GenSingleClass(compileResult, genCodeTemplateString, genCodeFilePath, nameSpace, changeExtension, settingCodeIgnorePattern, forceAll);
+                            GenCodeFile(compileResult, genCodeTemplateString, genCodeFilePath, nameSpace, changeExtension, settingCodeIgnorePattern, forceAll);
 
                         }
                     }
