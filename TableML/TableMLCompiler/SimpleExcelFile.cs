@@ -160,31 +160,34 @@ namespace TableML.Compiler
                 //NOTE 从第0行开始读
                 // 列头名(字段名) 
                 var headerRow = Worksheet.GetRow(5);
+                //npoi的列数是从0开始,最大列是从1开始
+                var firstColuIdx = headerRow.FirstCellNum;
+                _columnCount = headerRow.LastCellNum;
                 // 列总数保存
-                int columnCount = _columnCount = headerRow.LastCellNum;
+                int columnCount = GetColumnCount();
                 
                 //NOTE by qingqing-zhao 从指定的列开始读取
-                for (int columnIndex = StartColumnIdx; columnIndex < columnCount; columnIndex++)
+                for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
                 {
                     var cell = headerRow.GetCell(columnIndex);
                     var headerName = cell != null ? cell.ToString().Trim() : ""; // trim!
-                    ColName2Index[headerName] = columnIndex;
-                    Index2ColName[columnIndex] = headerName;
+                    ColName2Index[headerName] = columnIndex -StartColumnIdx;
+                    Index2ColName[columnIndex-StartColumnIdx] = headerName;
                 }
                 // 表头声明(数据类型)
                 var statementRow = Worksheet.GetRow(4);
-                for (int columnIndex = StartColumnIdx; columnIndex < columnCount; columnIndex++)
+                for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
                 {
-                    var colName = Index2ColName[columnIndex];
+                    var colName = Index2ColName[columnIndex -StartColumnIdx];
                     var statementCell = statementRow.GetCell(columnIndex);
                     var statementString = statementCell != null ? statementCell.ToString() : "";
                     ColName2Statement[colName] = statementString;
                 }
                 // 表头注释(字段注释)
                 var commentRow = Worksheet.GetRow(14);
-                for (int columnIndex = StartColumnIdx; columnIndex < columnCount; columnIndex++)
+                for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
                 {
-                    var colName = Index2ColName[columnIndex];
+                    var colName = Index2ColName[columnIndex-StartColumnIdx];
                     var commentCell = commentRow.GetCell(columnIndex);
                     var commentString = commentCell != null ? commentCell.ToString() : "";
                     ColName2Comment[colName] = commentString;
@@ -235,7 +238,7 @@ namespace TableML.Compiler
             if (theRow == null)
                 theRow = Worksheet.CreateRow(dataRow);
 
-            var colIndex = ColName2Index[columnName];
+            var colIndex = ColName2Index[columnName] + SimpleExcelFile.StartColumnIdx;
             var cell = theRow.GetCell(colIndex);
             if (cell == null)
                 cell = theRow.CreateCell(colIndex);
@@ -367,7 +370,7 @@ namespace TableML.Compiler
         /// <returns></returns>
         public int GetColumnCount()
         {
-            return _columnCount;
+            return _columnCount - StartColumnIdx;
         }
 
         /// <summary>

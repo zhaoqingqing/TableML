@@ -149,8 +149,11 @@ namespace TableML
             string[] firstLineDef = new string[firstLineSplitString.Length];
 
             var metaLineArr = metaLine.Split(_config.Separators, StringSplitOptions.None);
-            Array.Copy(metaLineArr, 0, firstLineDef, 0, metaLineArr.Length);  // 拷贝，确保不会超出表头的
-
+            List<string> newMeta = new List<string>(metaLineArr);
+            newMeta.RemoveAt(metaLineArr.Length - 1);
+            var newMetaArr = newMeta.ToArray();
+            Array.Copy(newMetaArr, 0, firstLineDef, 0, newMetaArr.Length);  // 拷贝，确保不会超出表头的
+            //Array.Copy(metaLineArr, 0, firstLineDef, 0, metaLineArr.Length);  // 拷贝，确保不会超出表头的
             for (int i = 0; i < firstLineSplitString.Length; i++)
             {
                 var headerString = firstLineSplitString[i];

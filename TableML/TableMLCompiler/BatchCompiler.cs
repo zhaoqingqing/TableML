@@ -124,6 +124,7 @@ namespace TableML.Compiler
 			// make unity compile
 			//AssetDatabase.Refresh();
 		}
+
 		/// <summary>
 		/// Compile one directory 's all settings, and return behaivour results
 		/// </summary>
