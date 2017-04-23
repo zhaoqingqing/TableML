@@ -84,6 +84,26 @@ namespace TableCompilerConsole
             var aa = tab;
         }
 
+        static void CopyTo(bool isRelease = false)
+        {
+            var verName = isRelease ? "Release" : "Debug";
+            string srcDir = string.Format(@"E:\Code\TableML\TableML\TableMLCompilerConsole\bin\{0}\", verName);
+            string dstDir = @"E:\3dsn\client\trunk\Project_Win\Assets\Plugins\KEngine\KEngine.Lib\TableML\";
+            string dstTCDir = @"E:\3dsn\client\trunk\Project_Win\Assets\Plugins\KEngine\Editor\KEngineEditor\KEngine.Editor\TableMLCompiler\";
+
+            string srcDll = srcDir + "TableML.dll";
+            string dstDLL = dstDir + "TableML.dll";
+            File.Delete(dstDLL);
+            File.Copy(srcDll, dstDLL, true);
+            Console.WriteLine("copy {0} -->{1}", srcDll, dstDLL);
+
+            string srcTCDLL = srcDir + "TableMLCompiler.dll";
+            string dstTCDLL = dstTCDir + "TableMLCompiler.dll";
+            File.Delete(dstTCDLL);
+            File.Copy(srcTCDLL, dstTCDLL, true);
+            Console.WriteLine("copy {0} -->{1}", srcTCDLL, dstTCDLL);
+        }
+
         public static void CopyToH()
         {
             //home pc

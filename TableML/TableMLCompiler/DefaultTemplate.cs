@@ -1,4 +1,4 @@
-﻿
+
 namespace TableML.Compiler
 {
 
@@ -7,8 +7,7 @@ namespace TableML.Compiler
     /// </summary>
     public class DefaultTemplate
     {
-        public static string LicenseStr = @"
-#region Copyright (c) 2015 KEngine / Kelly <http://github.com/mr-kelly>, All rights reserved.
+        public static string LicenseStr = @"#region Copyright (c) 2015 KEngine / Kelly <http://github.com/mr-kelly>, All rights reserved.
 
 // KEngine - Asset Bundle framework for Unity3D
 // ===================================
