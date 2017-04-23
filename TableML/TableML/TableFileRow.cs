@@ -87,18 +87,6 @@ namespace TableML
         /// </summary>
 
 
-        //private string[] values;
-        //public string[] Values
-        //{
-        //    get
-        //    {
-        //        var newVal = new List<string>(values);
-        //        //newVal.Insert(0, "temp");
-        //        return newVal.ToArray();
-        //    }
-        //    internal set { values = value; }
-        //}
-
         public string[] Values { get; internal set; }
 
         /// <summary>
