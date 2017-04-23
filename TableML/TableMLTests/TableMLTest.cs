@@ -8,21 +8,24 @@ namespace TableMLTests
 	[TestFixture]
     public class TableMLTest
     {
-        public string TableString1 = @"Id	Value
+        public string TableString1 = @"
+Id	Value
 int	string
 1	hi
 2	f
 3	abc 
 4	temp
 ";
-        public string TableString2 = @"Id	Value
+        public string TableString2 = @"
+Id	Value
 int	string
 10	hi
 20	f
 30	abc 
 40	temp
 ";
-        public string TableString1Plus2 = @"Id	Value
+        public string TableString1Plus2 = @"
+Id	Value
 int	string
 1	hi
 2	f

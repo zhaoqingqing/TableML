@@ -18,8 +18,6 @@ namespace TableCompilerConsole
         {
             //CompileOne();
 
-            //UpdateTableAll();
-
             CompileAll();
 
             //LoadTest();
