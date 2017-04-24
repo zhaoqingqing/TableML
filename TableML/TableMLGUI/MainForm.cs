@@ -1,18 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using NPOI.OpenXml4Net.OPC.Internal;
 using TableML.Compiler;
 
 namespace TableMLGUI
 {
     public partial class MainForm : Form
     {
+
+        /// <summary>
+        /// 输出tml文件路径
+        /// </summary>
+        public string GenTmlPath = "..\\client_setting";
+
+        /// <summary>
+        /// 生成的代码路径
+        /// </summary>
+        public string GenCodePath = "..\\client_code\\";
+
+
         public MainForm()
         {
             InitializeComponent();
@@ -21,8 +35,24 @@ namespace TableMLGUI
 
         public void Init()
         {
-            var defaultSrc = Path.GetFullPath(Application.StartupPath + "\\..\\Src\\");
-            this.tbFileDir.Text = defaultSrc;
+            //源始excel路径
+            var excelSrc = Path.GetFullPath(Application.StartupPath + ConfigurationManager.AppSettings.Get("srcExcelPath"));
+            this.tbFileDir.Text = excelSrc;
+
+
+            GenTmlPath = ConfigurationManager.AppSettings.Get("GenTmlPath");
+            GenCodePath = ConfigurationManager.AppSettings.Get("GenCodePath");
+
+            //客户端代码路径
+            //var dstClientCode = Path.GetFullPath(Application.StartupPath + @".\..\..\..\client\trunk\Project\Assets\Scripts\AppSettings\");
+            var dstClientCode = Path.GetFullPath(Application.StartupPath + ConfigurationManager.AppSettings.Get("dstClientCodePath"));
+            this.txtCodePath.Text = dstClientCode;
+
+            //客户端tml路径
+            //var dstClientTml = Path.GetFullPath(Application.StartupPath + @".\..\..\..\client\trunk\\Product\Config\");
+            var dstClientTml = Path.GetFullPath(Application.StartupPath + ConfigurationManager.AppSettings.Get("dstClientTmlPath"));
+            this.txtTmlPath.Text = dstClientTml;
+
         }
 
         private void FileField_DragEnter(object sender, DragEventArgs e)
@@ -83,7 +113,7 @@ namespace TableMLGUI
             {
                 Console.WriteLine(filePath);
                 var savePath = saveDir + "\\" + SimpleExcelFile.GetOutFileName(filePath) + ".k";
-              TableCompileResult result =   compiler.Compile(filePath, savePath);
+                TableCompileResult result = compiler.Compile(filePath, savePath);
                 Console.WriteLine("编译结果:{0}---->{1}", filePath, savePath);
                 Console.WriteLine();
                 if (result != null)
@@ -101,17 +131,14 @@ namespace TableMLGUI
             Console.WriteLine("当前目录：{0}", startPath);
 
             var srcDirectory = tbFileDir.Text;
-            //输出tml文件路径
-            var OutputDirectory = "..\\client_setting";
-            //生成的代码路径
-            var CodeFilePath = "..\\client_code\\";
+
 
             var batchCompiler = new BatchCompiler();
 
             string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
 
-            var results = batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, OutputDirectory, CodeFilePath,
-               templateString, "AppSettings", ".k", null, !string.IsNullOrEmpty(CodeFilePath));
+            var results = batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, GenTmlPath, GenCodePath,
+               templateString, "AppSettings", ".k", null, !string.IsNullOrEmpty(GenCodePath));
             ShowCompileResult(results.Count);
         }
 
@@ -123,6 +150,31 @@ namespace TableMLGUI
         private void btnUpdateCSSyntax_Click(object sender, EventArgs e)
         {
             ExcelHelper.UpdateAllTableSyntax();
+        }
+
+        private void btnSyncCode_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(txtCodePath.Text) == false)
+            {
+                MessageBox.Show("目录不存在！", string.Format("{0}\r\n不存在", txtCodePath.Text), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            FileHelper.CopyFolder(GenCodePath, txtCodePath.Text);
+            Console.WriteLine("copy {0} to \r\n {1}", GenCodePath, txtCodePath.Text);
+        }
+
+        private void btnSyncTml_Click(object sender, EventArgs e)
+        {
+
+            if (Directory.Exists(txtTmlPath.Text) == false)
+            {
+                MessageBox.Show("目录不存在！", string.Format("{0}\r\n不存在", txtTmlPath.Text), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            FileHelper.CopyFolder(GenTmlPath, txtTmlPath.Text);
+            Console.WriteLine("copy {0} to \r\n {1}", GenTmlPath, txtTmlPath.Text);
+
+
         }
     }
 }

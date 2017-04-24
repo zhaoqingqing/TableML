@@ -32,7 +32,7 @@ using System.Text.RegularExpressions;
 
 namespace TableML.Compiler
 {
-	
+
     /// <summary>
     /// Compile Excel to TSV
     /// </summary>
@@ -105,7 +105,7 @@ namespace TableML.Compiler
                         string typeName = "string";
                         string defaultVal = "";
 
-                        var attrs = excelFile.ColName2Statement[colNameStr].Split(new char[] {'|', '/'}, StringSplitOptions.RemoveEmptyEntries);
+                        var attrs = excelFile.ColName2Statement[colNameStr].Split(new char[] { '|', '/' }, StringSplitOptions.RemoveEmptyEntries);
                         // Type
                         if (attrs.Length > 0)
                         {
@@ -154,7 +154,7 @@ namespace TableML.Compiler
             tableBuilder.Append("\n");
             //以上是tml写入的第一行
 
-            
+
             // #if check, 是否正在if false模式, if false时，行被忽略
             var ifCondtioning = true;
             if (doCompile)
@@ -186,7 +186,7 @@ namespace TableML.Compiler
                                     var hasAllVars = true;
                                     foreach (var var in ifVars)
                                     {
-                                        if (_config.ConditionVars == null || 
+                                        if (_config.ConditionVars == null ||
                                             !_config.ConditionVars.Contains(var)) // 定义的变量，需要全部配置妥当,否则if失败
                                         {
                                             hasAllVars = false;
@@ -213,9 +213,9 @@ namespace TableML.Compiler
                                 NOTE by qingqing-zhao 因为是从指定的列开始读取，所以>有效列 才加入\t
                                 如果这列是空白的也不需要加入
                             */
-                            if (!string.IsNullOrEmpty(columnName) && !string.IsNullOrEmpty(cellStr)
+                            if (!string.IsNullOrEmpty(columnName)
                                && loopColumn > 0
-                                && loopColumn < columnCount) // 最后一列不需加tab
+                               && loopColumn < columnCount) // 最后一列不需加tab
                             {
                                 rowBuilder.Append("\t");
                             }
@@ -233,7 +233,7 @@ namespace TableML.Compiler
                 }
             }
             //以上是tml写入其它行
-        
+
 
             var fileName = Path.GetFileNameWithoutExtension(path);
             string exportPath;
@@ -258,16 +258,16 @@ namespace TableML.Compiler
 
             // 基于base dir路径
             var tabFilePath = exportPath; // without extension
-			var fullTabFilePath = Path.GetFullPath(tabFilePath).Replace("\\", "/");;
+            var fullTabFilePath = Path.GetFullPath(tabFilePath).Replace("\\", "/"); ;
             if (!string.IsNullOrEmpty(compileBaseDir))
             {
-				var fullCompileBaseDir = Path.GetFullPath(compileBaseDir).Replace("\\", "/");;
-				tabFilePath = fullTabFilePath.Replace(fullCompileBaseDir, ""); // 保留后戳
+                var fullCompileBaseDir = Path.GetFullPath(compileBaseDir).Replace("\\", "/"); ;
+                tabFilePath = fullTabFilePath.Replace(fullCompileBaseDir, ""); // 保留后戳
             }
             if (tabFilePath.StartsWith("/"))
                 tabFilePath = tabFilePath.Substring(1);
 
-			renderVars.TabFileFullPath = fullTabFilePath;
+            renderVars.TabFileFullPath = fullTabFilePath;
             renderVars.TabFileRelativePath = tabFilePath;
 
             return renderVars;
@@ -280,7 +280,7 @@ namespace TableML.Compiler
         /// <returns></returns>
         private string[] GetIfVars(string cellStr)
         {
-            return cellStr.Replace("#if", "").Trim().Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            return cellStr.Replace("#if", "").Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
@@ -306,15 +306,15 @@ namespace TableML.Compiler
             return CellType.Value;
         }
 
-		/// <summary>
-		/// Compile the specified path, auto change extension to config `ExportTabExt`
-		/// </summary>
-		/// <param name="path">Path.</param>
-		public TableCompileResult Compile(string path)
-		{
-			var outputPath = System.IO.Path.ChangeExtension(path, this._config.ExportTabExt);
-			return Compile(path, outputPath);
-		}
+        /// <summary>
+        /// Compile the specified path, auto change extension to config `ExportTabExt`
+        /// </summary>
+        /// <param name="path">Path.</param>
+        public TableCompileResult Compile(string path)
+        {
+            var outputPath = System.IO.Path.ChangeExtension(path, this._config.ExportTabExt);
+            return Compile(path, outputPath);
+        }
 
         /// <summary>
         /// Compile a setting file, return a hash for template
@@ -326,8 +326,8 @@ namespace TableML.Compiler
         /// <returns></returns>
         public TableCompileResult Compile(string path, string compileToFilePath, string compileBaseDir = null, bool doRealCompile = true)
         {
-			// 确保目录存在
-			compileToFilePath = Path.GetFullPath(compileToFilePath);
+            // 确保目录存在
+            compileToFilePath = Path.GetFullPath(compileToFilePath);
             var compileToFileDirPath = Path.GetDirectoryName(compileToFilePath);
 
             if (!Directory.Exists(compileToFileDirPath))
@@ -338,7 +338,7 @@ namespace TableML.Compiler
             ITableSourceFile sourceFile;
             if (ext == ".tsv") sourceFile = new SimpleTSVFile(path);
             else sourceFile = new SimpleExcelFile(path);
-            
+
             var hash = DoCompilerExcelReader(path, sourceFile, compileToFilePath, compileBaseDir, doRealCompile);
             return hash;
 

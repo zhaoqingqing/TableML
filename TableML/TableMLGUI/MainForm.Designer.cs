@@ -35,9 +35,11 @@
             this.btnCompileAll = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnUpdateCSSyntax = new System.Windows.Forms.Button();
-            this.flowLayoutPanel1.SuspendLayout();
+            this.txtCodePath = new System.Windows.Forms.TextBox();
+            this.btnSyncCode = new System.Windows.Forms.Button();
+            this.btnSyncTml = new System.Windows.Forms.Button();
+            this.txtTmlPath = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -105,37 +107,66 @@
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label3.Location = new System.Drawing.Point(303, 673);
+            this.label3.Location = new System.Drawing.Point(320, 673);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(233, 12);
             this.label3.TabIndex = 5;
             this.label3.Text = "任务栏点击我选TableGUI，可查看输出日志";
             // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.Controls.Add(this.btnUpdateCSSyntax);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(495, 36);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(343, 264);
-            this.flowLayoutPanel1.TabIndex = 6;
-            // 
             // btnUpdateCSSyntax
             // 
-            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(13, 13);
+            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(474, 36);
             this.btnUpdateCSSyntax.Name = "btnUpdateCSSyntax";
-            this.btnUpdateCSSyntax.Size = new System.Drawing.Size(145, 40);
+            this.btnUpdateCSSyntax.Size = new System.Drawing.Size(169, 40);
             this.btnUpdateCSSyntax.TabIndex = 0;
             this.btnUpdateCSSyntax.Text = "批量改表的前端字段类型";
             this.btnUpdateCSSyntax.UseVisualStyleBackColor = true;
             this.btnUpdateCSSyntax.Click += new System.EventHandler(this.btnUpdateCSSyntax_Click);
             // 
+            // txtCodePath
+            // 
+            this.txtCodePath.Location = new System.Drawing.Point(474, 111);
+            this.txtCodePath.Name = "txtCodePath";
+            this.txtCodePath.Size = new System.Drawing.Size(398, 21);
+            this.txtCodePath.TabIndex = 1;
+            // 
+            // btnSyncCode
+            // 
+            this.btnSyncCode.Location = new System.Drawing.Point(474, 148);
+            this.btnSyncCode.Name = "btnSyncCode";
+            this.btnSyncCode.Size = new System.Drawing.Size(169, 40);
+            this.btnSyncCode.TabIndex = 0;
+            this.btnSyncCode.Text = "生成代码同步到客户端";
+            this.btnSyncCode.UseVisualStyleBackColor = true;
+            this.btnSyncCode.Click += new System.EventHandler(this.btnSyncCode_Click);
+            // 
+            // btnSyncTml
+            // 
+            this.btnSyncTml.Location = new System.Drawing.Point(474, 257);
+            this.btnSyncTml.Name = "btnSyncTml";
+            this.btnSyncTml.Size = new System.Drawing.Size(169, 40);
+            this.btnSyncTml.TabIndex = 0;
+            this.btnSyncTml.Text = "编译后表同步到客户端";
+            this.btnSyncTml.UseVisualStyleBackColor = true;
+            this.btnSyncTml.Click += new System.EventHandler(this.btnSyncTml_Click);
+            // 
+            // txtTmlPath
+            // 
+            this.txtTmlPath.Location = new System.Drawing.Point(474, 220);
+            this.txtTmlPath.Name = "txtTmlPath";
+            this.txtTmlPath.Size = new System.Drawing.Size(398, 21);
+            this.txtTmlPath.TabIndex = 1;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(850, 697);
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.ClientSize = new System.Drawing.Size(884, 697);
+            this.Controls.Add(this.txtTmlPath);
+            this.Controls.Add(this.btnSyncTml);
+            this.Controls.Add(this.txtCodePath);
+            this.Controls.Add(this.btnSyncCode);
+            this.Controls.Add(this.btnUpdateCSSyntax);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbFileDir);
@@ -145,7 +176,6 @@
             this.Controls.Add(this.btnCompileSelect);
             this.Name = "MainForm";
             this.Text = "Excel配置表编译 For C#";
-            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -160,8 +190,11 @@
         private System.Windows.Forms.Button btnCompileAll;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button btnUpdateCSSyntax;
+        private System.Windows.Forms.TextBox txtCodePath;
+        private System.Windows.Forms.Button btnSyncCode;
+        private System.Windows.Forms.Button btnSyncTml;
+        private System.Windows.Forms.TextBox txtTmlPath;
     }
 }
 
