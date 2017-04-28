@@ -89,7 +89,7 @@ namespace TableML.Compiler
         /// <param name="forceAll"></param>
         /// <param name="genManagerClass"></param>
         /// <param name="templateVars">如果是生成Manager Class 一定要在外部初始化此字段</param>
-        void GenCodeFile(TableCompileResult compileResult, string genCodeTemplateString, string genCodeFilePath,
+        public  void GenCodeFile(TableCompileResult compileResult, string genCodeTemplateString, string genCodeFilePath,
             string nameSpace = "AppSettings", string changeExtension = ".tml", string settingCodeIgnorePattern = null, bool forceAll = false, bool genManagerClass = false, Dictionary<string, TableTemplateVars> templateVars = null)
         {
             // 根据编译结果，构建vars，同class名字的，进行合并

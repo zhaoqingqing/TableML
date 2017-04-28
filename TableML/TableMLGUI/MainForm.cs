@@ -25,7 +25,12 @@ namespace TableMLGUI
         /// 生成的代码路径
         /// </summary>
         public string GenCodePath = "..\\client_code\\";
+        /// <summary>
+        /// tml文件后缀
+        /// </summary>
+        public string TmlExtensions = ".k";
 
+        public string NameSpace = "AppSettings";
 
         public MainForm()
         {
@@ -98,11 +103,19 @@ namespace TableMLGUI
             this.tbFileDir.Text = dragDir;
         }
 
+        public string[] fileList
+        {
+            get
+            {
+                return  tbFileList.Text.Split(new string[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            }
+        }
+
         private void btnCompileSelect_Click(object sender, EventArgs e)
         {
             //编译选定的表
             Console.Clear();
-            var fileList = tbFileList.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+         
 
             var startPath = Environment.CurrentDirectory;
             Console.WriteLine("当前目录：{0}", startPath);
@@ -113,10 +126,17 @@ namespace TableMLGUI
             {
                 Console.WriteLine(filePath);
                 var savePath = saveDir + "\\" + SimpleExcelFile.GetOutFileName(filePath) + ".k";
-                TableCompileResult result = compiler.Compile(filePath, savePath);
+                //TODO 编译表时，生成代码
+                TableCompileResult compileResult = compiler.Compile(filePath, savePath);
                 Console.WriteLine("编译结果:{0}---->{1}", filePath, savePath);
                 Console.WriteLine();
-                if (result != null)
+                //生成代码
+                //BatchCompiler batchCompiler = new BatchCompiler();
+                //bug 路径不正确
+                //batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, null, NameSpace, TmlExtensions, null, true);
+                Console.WriteLine("生成代码完成");
+
+                if (compileResult != null)
                 {
                     comileCount += 1;
                 }
@@ -175,6 +195,14 @@ namespace TableMLGUI
             Console.WriteLine("copy {0} to \r\n {1}", GenTmlPath, txtTmlPath.Text);
 
 
+        }
+
+        private void btnCheckNameRepet_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(tbFileList.Text))
+            {
+                ExcelHelper.CheckNameRepet(fileList);
+            }
         }
     }
 }

@@ -40,6 +40,7 @@
             this.btnSyncCode = new System.Windows.Forms.Button();
             this.btnSyncTml = new System.Windows.Forms.Button();
             this.txtTmlPath = new System.Windows.Forms.TextBox();
+            this.btnCheckNameRepet = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -157,6 +158,16 @@
             this.txtTmlPath.Size = new System.Drawing.Size(398, 21);
             this.txtTmlPath.TabIndex = 1;
             // 
+            // btnCheckNameRepet
+            // 
+            this.btnCheckNameRepet.Location = new System.Drawing.Point(660, 36);
+            this.btnCheckNameRepet.Name = "btnCheckNameRepet";
+            this.btnCheckNameRepet.Size = new System.Drawing.Size(169, 40);
+            this.btnCheckNameRepet.TabIndex = 0;
+            this.btnCheckNameRepet.Text = "检查前端字段名重复";
+            this.btnCheckNameRepet.UseVisualStyleBackColor = true;
+            this.btnCheckNameRepet.Click += new System.EventHandler(this.btnCheckNameRepet_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -166,6 +177,7 @@
             this.Controls.Add(this.btnSyncTml);
             this.Controls.Add(this.txtCodePath);
             this.Controls.Add(this.btnSyncCode);
+            this.Controls.Add(this.btnCheckNameRepet);
             this.Controls.Add(this.btnUpdateCSSyntax);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -195,6 +207,7 @@
         private System.Windows.Forms.Button btnSyncCode;
         private System.Windows.Forms.Button btnSyncTml;
         private System.Windows.Forms.TextBox txtTmlPath;
+        private System.Windows.Forms.Button btnCheckNameRepet;
     }
 }
 

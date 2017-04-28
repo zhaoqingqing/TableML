@@ -94,5 +94,65 @@ namespace TableMLGUI
             }
             return true;
         }
+
+
+        public static bool CheckRepet(string filePath)
+        {
+            bool fileChange = false;
+            IWorkbook Workbook;
+            ISheet Worksheet;
+            using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // no isolation
+            {
+                try
+                {
+                    Workbook = WorkbookFactory.Create(file);
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath,
+                        e.Message));
+                    //IsLoadSuccess = false;
+                }
+            }
+
+            Worksheet = Workbook.GetSheetAt(0);
+            List<ICell> cells = Worksheet.GetRow(5).Cells;
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+            StringBuilder repet = new StringBuilder();
+            foreach (ICell cell in cells)
+            {
+                if (dict.ContainsKey(cell.StringCellValue) == false)
+                {
+                    dict.Add(cell.StringCellValue, cell.StringCellValue);
+                }
+                else
+                {
+                    repet.AppendFormat("{0}\t", cell.StringCellValue);
+                }
+            }
+            if (repet.Length >= 1)
+            {
+                Console.WriteLine("重复字段{0}", repet.ToString());
+                MessageBox.Show(repet.ToString(), "重复字段");
+            }
+            return repet.Length == 0;
+        }
+
+        public static void CheckNameRepet(string[] filePaths)
+        {
+            int repetCount = 0;
+            foreach (string filePath in filePaths)
+            {
+                CheckRepet(filePath);
+            }
+        }
+
+        /// <summary>
+        /// 检查前端字段名是否重复
+        /// </summary>
+        public static void CheckNameRepet(List<string> filePaths)
+        {
+            CheckNameRepet(filePaths.ToArray());
+        }
     }
 }
