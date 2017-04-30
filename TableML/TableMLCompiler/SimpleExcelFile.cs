@@ -19,6 +19,7 @@ namespace TableML.Compiler
         int GetRowsCount();
         int GetColumnCount();
         string GetString(string columnName, int row);
+        string ExcelFileName { get; set; }
     }
 
     /// <summary>
@@ -30,6 +31,7 @@ namespace TableML.Compiler
         public Dictionary<int, string> Index2ColName { get; set; }
         public Dictionary<string, string> ColName2Statement { get; set; }
         public Dictionary<string, string> ColName2Comment { get; set; }
+        public string ExcelFileName { get; set; }
 
         private TableFile _tableFile;
         private int _columnCount;
@@ -39,6 +41,7 @@ namespace TableML.Compiler
             Index2ColName = new Dictionary<int, string>();
             ColName2Statement = new Dictionary<string, string>();
             ColName2Comment = new Dictionary<string, string>();
+            ExcelFileName = Path.GetFileName(filePath);
             ParseTsv(filePath);
         }
 
@@ -87,6 +90,7 @@ namespace TableML.Compiler
         public Dictionary<int, string> Index2ColName { get; set; }
         public Dictionary<string, string> ColName2Statement { get; set; } //  string,or something
         public Dictionary<string, string> ColName2Comment { get; set; } // string comment
+        public string ExcelFileName { get; set; }
         //NOTE by zhaoqingqing 根据特殊的Excel格式定制
         /// <summary>
         /// Header, Statement, Comment, at lease 3 rows
@@ -113,7 +117,7 @@ namespace TableML.Compiler
             Index2ColName = new Dictionary<int, string>();
             ColName2Statement = new Dictionary<string, string>();
             ColName2Comment = new Dictionary<string, string>();
-
+            ExcelFileName = System.IO.Path.GetFileName(excelPath);
             ParseExcel(excelPath);
         }
 
@@ -401,6 +405,7 @@ namespace TableML.Compiler
             {
                 throw new Exception("第二行至少需要3列");
             }
+            
             var outFileName = row.Cells[2].StringCellValue;
             return outFileName;
         }

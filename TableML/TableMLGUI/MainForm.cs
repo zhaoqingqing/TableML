@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using NPOI.OpenXml4Net.OPC.Internal;
 using TableML.Compiler;
 
 namespace TableMLGUI
@@ -40,20 +33,30 @@ namespace TableMLGUI
 
         public void Init()
         {
+            string useAbsolutePathStr = ConfigurationManager.AppSettings.Get("UseAbsolutePath").ToLower();
+            bool useAbsolutePath = useAbsolutePathStr == "true" || useAbsolutePathStr == "1";
+
             //源始excel路径
-            var excelSrc = Path.GetFullPath(Application.StartupPath + ConfigurationManager.AppSettings.Get("srcExcelPath"));
+            var srcExcelPath = ConfigurationManager.AppSettings.Get("srcExcelPath");
+            var excelSrc = useAbsolutePath ? srcExcelPath : Path.GetFullPath(Application.StartupPath + srcExcelPath);
             this.tbFileDir.Text = excelSrc;
 
+            //tml路径
+            var genTmlPath =ConfigurationManager.AppSettings.Get("GenTmlPath");
+            GenTmlPath = useAbsolutePath ? genTmlPath : Path.GetFullPath(Application.StartupPath + genTmlPath);
 
-            GenTmlPath = ConfigurationManager.AppSettings.Get("GenTmlPath");
-            GenCodePath = ConfigurationManager.AppSettings.Get("GenCodePath");
+            //代码路径
+            var genCodePath = ConfigurationManager.AppSettings.Get("GenCodePath");
+            GenCodePath = useAbsolutePath ? genCodePath : Path.GetFullPath(Application.StartupPath + genCodePath);
 
             //客户端代码路径
-            var dstClientCode = Path.GetFullPath(Application.StartupPath + ConfigurationManager.AppSettings.Get("dstClientCodePath"));
+            var dstClientCodePath = ConfigurationManager.AppSettings.Get("dstClientCodePath");
+            var dstClientCode = useAbsolutePath ? dstClientCodePath : Path.GetFullPath(Application.StartupPath + dstClientCodePath);
             this.txtCodePath.Text = dstClientCode;
 
             //客户端tml路径
-            var dstClientTml = Path.GetFullPath(Application.StartupPath + ConfigurationManager.AppSettings.Get("dstClientTmlPath"));
+            var dstClientTmlPath = ConfigurationManager.AppSettings.Get("dstClientTmlPath");
+            var dstClientTml = useAbsolutePath ? dstClientTmlPath : Path.GetFullPath(Application.StartupPath + dstClientTmlPath);
             this.txtTmlPath.Text = dstClientTml;
         }
 
@@ -116,39 +119,29 @@ namespace TableMLGUI
             var startPath = Environment.CurrentDirectory;
             Console.WriteLine("当前目录：{0}", startPath);
             var compiler = new Compiler();
-            
+
             int comileCount = 0;
             foreach (var filePath in fileList)
             {
                 Console.WriteLine(filePath);
                 var savePath = GenTmlPath + "\\" + SimpleExcelFile.GetOutFileName(filePath) + TmlExtensions;
-                //TODO 编译表时，生成代码
+                //编译表时，生成代码
                 TableCompileResult compileResult = compiler.Compile(filePath, savePath);
                 Console.WriteLine("编译结果:{0}---->{1}", filePath, savePath);
                 Console.WriteLine();
                 //生成代码
                 BatchCompiler batchCompiler = new BatchCompiler();
-
-                //NOTE 替换成相对路径
-                string repStr = string.Empty;
-                if (GenCodePath.Contains("..\\") || GenCodePath.Contains("../"))
-                {
-                    repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName;
-                }
-                else
-                {
-                    repStr = Path.GetFullPath(compileResult.TabFileRelativePath);
-                }
-                
+                //NOTE 替换成相对路径(保证最后只有文件名)
+                string repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName;
                 compileResult.TabFileRelativePath = compileResult.TabFileRelativePath.Replace(repStr, "");
                 batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
-                
+
                 if (compileResult != null)
                 {
                     comileCount += 1;
                 }
             }
-            
+
             ShowCompileResult(comileCount);
         }
 
@@ -184,25 +177,22 @@ namespace TableMLGUI
         {
             if (Directory.Exists(txtCodePath.Text) == false)
             {
-                MessageBox.Show("目录不存在！", string.Format("{0}\r\n不存在", txtCodePath.Text), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                Directory.CreateDirectory(txtCodePath.Text);
             }
             FileHelper.CopyFolder(GenCodePath, txtCodePath.Text);
             Console.WriteLine("copy {0} to \r\n {1}", GenCodePath, txtCodePath.Text);
+            MessageBox.Show(string.Format("{0}\r\n同步完成", txtCodePath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnSyncTml_Click(object sender, EventArgs e)
         {
-
             if (Directory.Exists(txtTmlPath.Text) == false)
             {
-                MessageBox.Show("目录不存在！", string.Format("{0}\r\n不存在", txtTmlPath.Text), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                Directory.CreateDirectory(txtTmlPath.Text);
             }
             FileHelper.CopyFolder(GenTmlPath, txtTmlPath.Text);
             Console.WriteLine("copy {0} to \r\n {1}", GenTmlPath, txtTmlPath.Text);
-
-
+            MessageBox.Show(string.Format("{0}\r\n同步完成", txtTmlPath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnCheckNameRepet_Click(object sender, EventArgs e)
