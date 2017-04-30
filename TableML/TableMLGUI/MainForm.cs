@@ -49,15 +49,12 @@ namespace TableMLGUI
             GenCodePath = ConfigurationManager.AppSettings.Get("GenCodePath");
 
             //客户端代码路径
-            //var dstClientCode = Path.GetFullPath(Application.StartupPath + @".\..\..\..\client\trunk\Project\Assets\Scripts\AppSettings\");
             var dstClientCode = Path.GetFullPath(Application.StartupPath + ConfigurationManager.AppSettings.Get("dstClientCodePath"));
             this.txtCodePath.Text = dstClientCode;
 
             //客户端tml路径
-            //var dstClientTml = Path.GetFullPath(Application.StartupPath + @".\..\..\..\client\trunk\\Product\Config\");
             var dstClientTml = Path.GetFullPath(Application.StartupPath + ConfigurationManager.AppSettings.Get("dstClientTmlPath"));
             this.txtTmlPath.Text = dstClientTml;
-
         }
 
         private void FileField_DragEnter(object sender, DragEventArgs e)
@@ -107,7 +104,7 @@ namespace TableMLGUI
         {
             get
             {
-                return  tbFileList.Text.Split(new string[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+                return tbFileList.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
@@ -115,32 +112,43 @@ namespace TableMLGUI
         {
             //编译选定的表
             Console.Clear();
-         
 
             var startPath = Environment.CurrentDirectory;
             Console.WriteLine("当前目录：{0}", startPath);
             var compiler = new Compiler();
-            var saveDir = startPath + ".\\..\\client_setting\\";
+            
             int comileCount = 0;
             foreach (var filePath in fileList)
             {
                 Console.WriteLine(filePath);
-                var savePath = saveDir + "\\" + SimpleExcelFile.GetOutFileName(filePath) + ".k";
+                var savePath = GenTmlPath + "\\" + SimpleExcelFile.GetOutFileName(filePath) + TmlExtensions;
                 //TODO 编译表时，生成代码
                 TableCompileResult compileResult = compiler.Compile(filePath, savePath);
                 Console.WriteLine("编译结果:{0}---->{1}", filePath, savePath);
                 Console.WriteLine();
                 //生成代码
-                //BatchCompiler batchCompiler = new BatchCompiler();
-                //bug 路径不正确
-                //batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, null, NameSpace, TmlExtensions, null, true);
-                Console.WriteLine("生成代码完成");
+                BatchCompiler batchCompiler = new BatchCompiler();
 
+                //NOTE 替换成相对路径
+                string repStr = string.Empty;
+                if (GenCodePath.Contains("..\\") || GenCodePath.Contains("../"))
+                {
+                    repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName;
+                }
+                else
+                {
+                    repStr = Path.GetFullPath(compileResult.TabFileRelativePath);
+                }
+                
+                compileResult.TabFileRelativePath = compileResult.TabFileRelativePath.Replace(repStr, "");
+                batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
+                
                 if (compileResult != null)
                 {
                     comileCount += 1;
                 }
             }
+            
             ShowCompileResult(comileCount);
         }
 

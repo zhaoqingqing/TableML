@@ -103,11 +103,12 @@ namespace TableML.Compiler
 							// 不同，会触发编译，强制停止Unity后再继续写入
 							//if (EditorApplication.isPlaying)
 							{
-								Console.WriteLine("[CAUTION]AppSettings code modified! Force stop Unity playing");
+								//Console.WriteLine("[CAUTION]AppSettings code modified! Force stop Unity playing");
 								//EditorApplication.isPlaying = false;
 							}
 							File.WriteAllText(exportPath, genCode);
-						}
+						    Console.WriteLine("{0} code file update complete", exportPath);
+                        }
 					}
 					else
 				    {
@@ -118,7 +119,8 @@ namespace TableML.Compiler
 				            Directory.CreateDirectory(exportDir);
 				        }
                         File.WriteAllText(exportPath, genCode);
-				    }
+				        Console.WriteLine("{0} code file gen complete", exportPath);
+                    }
 				}
 			}
 			// make unity compile
