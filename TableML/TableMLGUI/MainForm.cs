@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using TableML.Compiler;
@@ -132,7 +133,7 @@ namespace TableMLGUI
                 //生成代码
                 BatchCompiler batchCompiler = new BatchCompiler();
                 //NOTE 替换成相对路径(保证最后只有文件名)
-                string repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName;
+                string repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName + "\\";
                 compileResult.TabFileRelativePath = compileResult.TabFileRelativePath.Replace(repStr, "");
                 batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
 
@@ -201,6 +202,16 @@ namespace TableMLGUI
             {
                 ExcelHelper.CheckNameRepet(fileList);
             }
+        }
+
+        private void btnOpenCodeDir_Click(object sender, EventArgs e)
+        {
+            Process.Start(GenCodePath);
+        }
+
+        private void btnOpenTmlDir_Click(object sender, EventArgs e)
+        {
+            Process.Start(GenTmlPath);
         }
     }
 }

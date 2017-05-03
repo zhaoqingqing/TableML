@@ -41,6 +41,8 @@
             this.btnSyncTml = new System.Windows.Forms.Button();
             this.txtTmlPath = new System.Windows.Forms.TextBox();
             this.btnCheckNameRepet = new System.Windows.Forms.Button();
+            this.btnOpenCodeDir = new System.Windows.Forms.Button();
+            this.btnOpenTmlDir = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -168,12 +170,34 @@
             this.btnCheckNameRepet.UseVisualStyleBackColor = true;
             this.btnCheckNameRepet.Click += new System.EventHandler(this.btnCheckNameRepet_Click);
             // 
+            // btnOpenCodeDir
+            // 
+            this.btnOpenCodeDir.Location = new System.Drawing.Point(474, 443);
+            this.btnOpenCodeDir.Name = "btnOpenCodeDir";
+            this.btnOpenCodeDir.Size = new System.Drawing.Size(169, 40);
+            this.btnOpenCodeDir.TabIndex = 0;
+            this.btnOpenCodeDir.Text = "打开生成的代码目录";
+            this.btnOpenCodeDir.UseVisualStyleBackColor = true;
+            this.btnOpenCodeDir.Click += new System.EventHandler(this.btnOpenCodeDir_Click);
+            // 
+            // btnOpenTmlDir
+            // 
+            this.btnOpenTmlDir.Location = new System.Drawing.Point(660, 443);
+            this.btnOpenTmlDir.Name = "btnOpenTmlDir";
+            this.btnOpenTmlDir.Size = new System.Drawing.Size(169, 40);
+            this.btnOpenTmlDir.TabIndex = 0;
+            this.btnOpenTmlDir.Text = "打开编译后的表目录";
+            this.btnOpenTmlDir.UseVisualStyleBackColor = true;
+            this.btnOpenTmlDir.Click += new System.EventHandler(this.btnOpenTmlDir_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 697);
             this.Controls.Add(this.txtTmlPath);
+            this.Controls.Add(this.btnOpenTmlDir);
+            this.Controls.Add(this.btnOpenCodeDir);
             this.Controls.Add(this.btnSyncTml);
             this.Controls.Add(this.txtCodePath);
             this.Controls.Add(this.btnSyncCode);
@@ -208,6 +232,8 @@
         private System.Windows.Forms.Button btnSyncTml;
         private System.Windows.Forms.TextBox txtTmlPath;
         private System.Windows.Forms.Button btnCheckNameRepet;
+        private System.Windows.Forms.Button btnOpenCodeDir;
+        private System.Windows.Forms.Button btnOpenTmlDir;
     }
 }
 
