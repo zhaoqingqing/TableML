@@ -193,10 +193,36 @@ namespace TableML.Compiler
                 {
                     var colName = Index2ColName[columnIndex-StartColumnIdx];
                     var commentCell = commentRow.GetCell(columnIndex);
-                    var commentString = commentCell != null ? commentCell.ToString() : "";
+                    var commentString = commentCell != null ? commentCell.StringCellValue : "";
+                    //fix 注释包含\r\n
+                    if (commentString.Contains("\n"))
+                    {
+                        commentString = CombieLine(commentString, "\n");
+                    }
+                    else if (commentString.Contains("\r\n"))
+                    {
+                        commentString = CombieLine(commentString, "\r\n");
+                    }
                     ColName2Comment[colName] = commentString;
                 }
             }
+        }
+
+        public string CombieLine(string commentString,string lineStr)
+        {
+            if (commentString.Contains(lineStr))
+            {
+                var comments = commentString.Split(new string[] { lineStr }, StringSplitOptions.None);
+                StringBuilder sb = new StringBuilder();
+                sb.Append(comments[0]);
+                for (int idx = 1; idx < comments.Length; idx++)
+                {
+                    if (string.IsNullOrEmpty(comments[idx])) continue;
+                    sb.Append(string.Concat("\r\n", "       ///  ", comments[idx]));
+                }
+                commentString = sb.ToString();
+            }
+            return commentString;
         }
       
         /// <summary>
