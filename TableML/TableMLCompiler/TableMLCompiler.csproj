@@ -74,6 +74,7 @@
     <Compile Include="BatchCompiler.cs" />
     <Compile Include="DefaultTemplate.cs" />
     <Compile Include="TableColumnVars.cs" />
+    <Compile Include="TableTemplateVars.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TableML\TableML.csproj">

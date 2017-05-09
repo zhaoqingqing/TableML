@@ -351,7 +351,7 @@ namespace {{ NameSpace }}
         /// <summary>
         /// 单张表(Class)对应的模版(Template)
         /// </summary>
-        public static string GenSingleClassCodeTemplate = string.Concat(LicenseStr,@"
+        public static string GenSingleClassCodeTemplate = string.Concat(LicenseStr, @"
 // 此代码由工具生成，如果重新生成代码，将丢失对此文件所做的更改。
 // 如需扩展本类请编写同名Class并加上partial关键字
 
@@ -365,6 +365,7 @@ namespace {{ NameSpace }}
 {% for file in Files %}
 	/// <summary>
 	/// Auto Generate for Tab File: {{ file.TabFilePaths }}
+    /// Excel File: {{ file.TabFileNames }}
     /// No use of generic and reflection, for better performance,  less IL code generating
 	/// </summary>>
     public partial class {{file.ClassName}}Settings : IReloadableSettings
@@ -528,7 +529,8 @@ namespace {{ NameSpace }}
     }
 
 	/// <summary>
-	/// Auto Generate for Tab File: {{ file.TabFilePaths }}
+	/// Auto Generate for Tab File: {{ file.TabFilePaths }} 
+    /// Excel File: {{ file.TabFileNames }}
     /// Singleton class for less memory use
 	/// </summary>
 	public partial class {{file.ClassName}}Setting : TableRowFieldParser
