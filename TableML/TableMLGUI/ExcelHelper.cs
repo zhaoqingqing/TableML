@@ -160,6 +160,10 @@ namespace TableMLGUI
                         Console.WriteLine("重复字段{0}", repet.ToString());
                         MessageBox.Show(repet.ToString(), "重复字段");
                     }
+                    else
+                    {
+                        MessageBox.Show("没有重复字段", "重复字段");
+                    }
                     return repet.Length == 0;
                     break;
                 case CheckType.Empty:
@@ -167,6 +171,10 @@ namespace TableMLGUI
                     {
                         Console.WriteLine("空白字段{0}", empty.ToString());
                         MessageBox.Show(empty.ToString(), "空白字段");
+                    }
+                    else
+                    {
+                        MessageBox.Show("没有空白字段", "空白字段");
                     }
                     return empty.Length == 0;
                     break;
