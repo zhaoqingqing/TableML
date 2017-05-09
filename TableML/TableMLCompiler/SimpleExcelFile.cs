@@ -96,7 +96,7 @@ namespace TableML.Compiler
         /// Header, Statement, Comment, at lease 3 rows
         /// 预留行数
         /// </summary>
-        public const int PreserverRowCount = 15;
+        public const int PreserverRowCount = 16;
         /// <summary>
         /// 从指定列开始读,默认是0
         /// </summary>
@@ -187,13 +187,23 @@ namespace TableML.Compiler
                     var statementString = statementCell != null ? statementCell.ToString() : "";
                     ColName2Statement[colName] = statementString;
                 }
-                // 表头注释(字段注释)
-                var commentRow = Worksheet.GetRow(14);
+                // 表头注释(字段注释) 我们有两行注释
+                var commentRow = Worksheet.GetRow(15);
+                var commentRowDetail = Worksheet.GetRow(14);
                 for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
                 {
                     var colName = Index2ColName[columnIndex-StartColumnIdx];
                     var commentCell = commentRow.GetCell(columnIndex);
-                    var commentString = commentCell != null ? commentCell.StringCellValue : "";
+                    var commentCellDetail = commentRowDetail.GetCell(columnIndex);
+                    string commentString = string.Empty;
+                    if (commentCell != null)
+                    {
+                        commentString += string.Concat(commentCell.StringCellValue,"\n");
+                    }
+                    if (commentCellDetail != null)
+                    {
+                        commentString += commentCellDetail.StringCellValue; 
+                    }
                     //fix 注释包含\r\n
                     if (commentString.Contains("\n"))
                     {
