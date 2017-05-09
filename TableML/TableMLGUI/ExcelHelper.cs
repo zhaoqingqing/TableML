@@ -9,6 +9,17 @@ using TableML.Compiler;
 
 namespace TableMLGUI
 {
+    public enum CheckType
+    {
+        /// <summary>
+        /// 重复
+        /// </summary>
+        Repet,
+        /// <summary>
+        /// 空白
+        /// </summary>
+        Empty,
+    }
     public class ExcelHelper
     {
         public static void UpdateAllTableSyntax()
@@ -95,8 +106,14 @@ namespace TableMLGUI
             return true;
         }
 
-
-        public static bool CheckRepet(string filePath)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="type"></param>
+        /// <param name="rowIdx">读取的行，从0开始</param>
+        /// <returns></returns>
+        public static bool CheckExcel(string filePath, CheckType type,int rowIdx = 5)
         {
             bool fileChange = false;
             IWorkbook Workbook;
@@ -116,9 +133,10 @@ namespace TableMLGUI
             }
 
             Worksheet = Workbook.GetSheetAt(0);
-            List<ICell> cells = Worksheet.GetRow(5).Cells;
+            List<ICell> cells = Worksheet.GetRow(rowIdx).Cells;
             Dictionary<string, string> dict = new Dictionary<string, string>();
             StringBuilder repet = new StringBuilder();
+            StringBuilder empty = new StringBuilder();
             foreach (ICell cell in cells)
             {
                 if (dict.ContainsKey(cell.StringCellValue) == false)
@@ -129,21 +147,41 @@ namespace TableMLGUI
                 {
                     repet.AppendFormat("{0}\t", cell.StringCellValue);
                 }
+                if (string.IsNullOrEmpty(cell.StringCellValue))
+                {
+                    empty.AppendFormat("row:{0} column:{1} \t", cell.RowIndex + 1, cell.ColumnIndex + 1);
+                }
             }
-            if (repet.Length >= 1)
+            switch (type)
             {
-                Console.WriteLine("重复字段{0}", repet.ToString());
-                MessageBox.Show(repet.ToString(), "重复字段");
+                case CheckType.Repet:
+                    if (repet.Length >= 1)
+                    {
+                        Console.WriteLine("重复字段{0}", repet.ToString());
+                        MessageBox.Show(repet.ToString(), "重复字段");
+                    }
+                    return repet.Length == 0;
+                    break;
+                case CheckType.Empty:
+                    if (empty.Length >= 1)
+                    {
+                        Console.WriteLine("空白字段{0}", empty.ToString());
+                        MessageBox.Show(empty.ToString(), "空白字段");
+                    }
+                    return empty.Length == 0;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-            return repet.Length == 0;
+
         }
 
         public static void CheckNameRepet(string[] filePaths)
         {
-            int repetCount = 0;
+            int count = 0;
             foreach (string filePath in filePaths)
             {
-                CheckRepet(filePath);
+                CheckExcel(filePath, CheckType.Repet);
             }
         }
 
@@ -153,6 +191,15 @@ namespace TableMLGUI
         public static void CheckNameRepet(List<string> filePaths)
         {
             CheckNameRepet(filePaths.ToArray());
+        }
+
+        public static void CheckNameEmpty(string[] filePaths)
+        {
+            int count = 0;
+            foreach (string filePath in filePaths)
+            {
+                CheckExcel(filePath, CheckType.Empty);
+            }
         }
     }
 }

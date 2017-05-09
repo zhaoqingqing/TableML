@@ -213,5 +213,13 @@ namespace TableMLGUI
         {
             Process.Start(GenTmlPath);
         }
+
+        private void btnCheckNameEmpty_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(tbFileList.Text))
+            {
+                ExcelHelper.CheckNameEmpty(fileList);
+            }
+        }
     }
 }

@@ -85,74 +85,83 @@ namespace TableML.Compiler
             // Header Column
             foreach (var colNameStr in excelFile.ColName2Index.Keys)
             {
-                var colIndex = excelFile.ColName2Index[colNameStr];
-                if (!string.IsNullOrEmpty(colNameStr))
+                if (string.IsNullOrEmpty(colNameStr))
                 {
-                    var isCommentColumn = CheckCellType(colNameStr) == CellType.Comment;
-                    if (isCommentColumn)
+                    continue;
+                }
+                var colIndex = excelFile.ColName2Index[colNameStr];
+                var isCommentColumn = CheckCellType(colNameStr) == CellType.Comment;
+                if (isCommentColumn)
+                {
+                    ignoreColumns.Add(colIndex);
+                }
+                else
+                {
+                    //NOTE by qingqing-zhao 加入\t，从指定的列开始读取，但是dict的索引是从0开始
+                    if (colIndex > 0)
                     {
-                        ignoreColumns.Add(colIndex);
+                        tableBuilder.Append("\t");
                     }
-                    else
+                    tableBuilder.Append(colNameStr);
+
+                    string typeName = "string";
+                    string defaultVal = "";
+
+                    var attrs = excelFile.ColName2Statement[colNameStr]
+                        .Split(new char[] {'|', '/'}, StringSplitOptions.RemoveEmptyEntries);
+                    // Type
+                    if (attrs.Length > 0)
                     {
-                        //NOTE by qingqing-zhao 加入\t，从指定的列开始读取，但是dict的索引是从0开始
-                        if (colIndex > 0)
-                        {
-                            tableBuilder.Append("\t");
-                        }
-                        tableBuilder.Append(colNameStr);
-
-                        string typeName = "string";
-                        string defaultVal = "";
-
-                        var attrs = excelFile.ColName2Statement[colNameStr].Split(new char[] { '|', '/' }, StringSplitOptions.RemoveEmptyEntries);
-                        // Type
-                        if (attrs.Length > 0)
-                        {
-                            typeName = attrs[0];
-                        }
-                        // Default Value
-                        if (attrs.Length > 1)
-                        {
-                            defaultVal = attrs[1];
-                        }
-                        if (attrs.Length > 2)
-                        {
-                            if (attrs[2] == "pk")
-                            {
-                                renderVars.PrimaryKey = colNameStr;
-                            }
-                        }
-
-                        renderVars.FieldsInternal.Add(new TableColumnVars
-                        {
-                            Index = colIndex - ignoreColumns.Count, // count the comment columns
-                            Type = typeName,
-                            Name = colNameStr,
-                            DefaultValue = defaultVal,
-                            Comment = excelFile.ColName2Comment[colNameStr],
-                        });
+                        typeName = attrs[0];
                     }
+                    // Default Value
+                    if (attrs.Length > 1)
+                    {
+                        defaultVal = attrs[1];
+                    }
+                    if (attrs.Length > 2)
+                    {
+                        if (attrs[2] == "pk")
+                        {
+                            renderVars.PrimaryKey = colNameStr;
+                        }
+                    }
+
+                    renderVars.FieldsInternal.Add(new TableColumnVars
+                    {
+                        Index = colIndex - ignoreColumns.Count, // count the comment columns
+                        Type = typeName,
+                        Name = colNameStr,
+                        DefaultValue = defaultVal,
+                        Comment = excelFile.ColName2Comment[colNameStr],
+                    });
                 }
             }
             tableBuilder.Append("\n");
+            //以上是tml写入的第一行
 
             // Statements rows, keeps
             foreach (var kv in excelFile.ColName2Statement)
             {
-                var colName = kv.Key;
                 var statementStr = kv.Value;
+                if (string.IsNullOrEmpty(statementStr))
+                {
+                    continue;
+                }
+                var colName = kv.Key;
                 var colIndex = excelFile.ColName2Index[colName];
 
                 if (ignoreColumns.Contains(colIndex)) // comment column, ignore
                     continue;
                 //NOTE by qingqing-zhao 加入\t，从指定的列开始读取，但是dict的索引是从0开始
                 if (colIndex > 0)
+                {
                     tableBuilder.Append("\t");
+                }
                 tableBuilder.Append(statementStr);
             }
             tableBuilder.Append("\n");
-            //以上是tml写入的第一行
+            //以上是tml写入的第二行
 
 
             // #if check, 是否正在if false模式, if false时，行被忽略
@@ -170,6 +179,10 @@ namespace TableML.Compiler
                     {
                         if (!ignoreColumns.Contains(loopColumn)) // comment column, ignore 注释列忽略
                         {
+                            if (excelFile.Index2ColName.ContainsKey(loopColumn) == false)
+                            {
+                                continue;
+                            }
                             var columnName = excelFile.Index2ColName[loopColumn];
                             var cellStr = excelFile.GetString(columnName, startRow);
 

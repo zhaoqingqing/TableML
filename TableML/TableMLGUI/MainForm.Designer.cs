@@ -43,6 +43,7 @@
             this.btnCheckNameRepet = new System.Windows.Forms.Button();
             this.btnOpenCodeDir = new System.Windows.Forms.Button();
             this.btnOpenTmlDir = new System.Windows.Forms.Button();
+            this.btnCheckNameEmpty = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -118,7 +119,7 @@
             // 
             // btnUpdateCSSyntax
             // 
-            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(474, 36);
+            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(474, 318);
             this.btnUpdateCSSyntax.Name = "btnUpdateCSSyntax";
             this.btnUpdateCSSyntax.Size = new System.Drawing.Size(169, 40);
             this.btnUpdateCSSyntax.TabIndex = 0;
@@ -128,14 +129,14 @@
             // 
             // txtCodePath
             // 
-            this.txtCodePath.Location = new System.Drawing.Point(474, 111);
+            this.txtCodePath.Location = new System.Drawing.Point(474, 36);
             this.txtCodePath.Name = "txtCodePath";
             this.txtCodePath.Size = new System.Drawing.Size(398, 21);
             this.txtCodePath.TabIndex = 1;
             // 
             // btnSyncCode
             // 
-            this.btnSyncCode.Location = new System.Drawing.Point(474, 148);
+            this.btnSyncCode.Location = new System.Drawing.Point(474, 73);
             this.btnSyncCode.Name = "btnSyncCode";
             this.btnSyncCode.Size = new System.Drawing.Size(169, 40);
             this.btnSyncCode.TabIndex = 0;
@@ -145,7 +146,7 @@
             // 
             // btnSyncTml
             // 
-            this.btnSyncTml.Location = new System.Drawing.Point(474, 257);
+            this.btnSyncTml.Location = new System.Drawing.Point(474, 182);
             this.btnSyncTml.Name = "btnSyncTml";
             this.btnSyncTml.Size = new System.Drawing.Size(169, 40);
             this.btnSyncTml.TabIndex = 0;
@@ -155,14 +156,14 @@
             // 
             // txtTmlPath
             // 
-            this.txtTmlPath.Location = new System.Drawing.Point(474, 220);
+            this.txtTmlPath.Location = new System.Drawing.Point(474, 145);
             this.txtTmlPath.Name = "txtTmlPath";
             this.txtTmlPath.Size = new System.Drawing.Size(398, 21);
             this.txtTmlPath.TabIndex = 1;
             // 
             // btnCheckNameRepet
             // 
-            this.btnCheckNameRepet.Location = new System.Drawing.Point(660, 36);
+            this.btnCheckNameRepet.Location = new System.Drawing.Point(660, 318);
             this.btnCheckNameRepet.Name = "btnCheckNameRepet";
             this.btnCheckNameRepet.Size = new System.Drawing.Size(169, 40);
             this.btnCheckNameRepet.TabIndex = 0;
@@ -190,6 +191,16 @@
             this.btnOpenTmlDir.UseVisualStyleBackColor = true;
             this.btnOpenTmlDir.Click += new System.EventHandler(this.btnOpenTmlDir_Click);
             // 
+            // btnCheckNameEmpty
+            // 
+            this.btnCheckNameEmpty.Location = new System.Drawing.Point(474, 379);
+            this.btnCheckNameEmpty.Name = "btnCheckNameEmpty";
+            this.btnCheckNameEmpty.Size = new System.Drawing.Size(169, 40);
+            this.btnCheckNameEmpty.TabIndex = 0;
+            this.btnCheckNameEmpty.Text = "检查前端字段名空白";
+            this.btnCheckNameEmpty.UseVisualStyleBackColor = true;
+            this.btnCheckNameEmpty.Click += new System.EventHandler(this.btnCheckNameEmpty_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -201,6 +212,7 @@
             this.Controls.Add(this.btnSyncTml);
             this.Controls.Add(this.txtCodePath);
             this.Controls.Add(this.btnSyncCode);
+            this.Controls.Add(this.btnCheckNameEmpty);
             this.Controls.Add(this.btnCheckNameRepet);
             this.Controls.Add(this.btnUpdateCSSyntax);
             this.Controls.Add(this.label3);
@@ -234,6 +246,7 @@
         private System.Windows.Forms.Button btnCheckNameRepet;
         private System.Windows.Forms.Button btnOpenCodeDir;
         private System.Windows.Forms.Button btnOpenTmlDir;
+        private System.Windows.Forms.Button btnCheckNameEmpty;
     }
 }
 

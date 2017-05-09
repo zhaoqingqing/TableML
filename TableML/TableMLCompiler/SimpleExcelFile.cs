@@ -175,14 +175,21 @@ namespace TableML.Compiler
                 {
                     var cell = headerRow.GetCell(columnIndex);
                     var headerName = cell != null ? cell.ToString().Trim() : ""; // trim!
-                    ColName2Index[headerName] = columnIndex -StartColumnIdx;
-                    Index2ColName[columnIndex-StartColumnIdx] = headerName;
+                    var realIdx = columnIndex - StartColumnIdx;
+                    ColName2Index[headerName] = realIdx;
+                    Index2ColName[realIdx] = headerName;
                 }
                 // 表头声明(数据类型)
                 var statementRow = Worksheet.GetRow(4);
+                int emptyColumn2 = 0;
                 for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
                 {
-                    var colName = Index2ColName[columnIndex -StartColumnIdx];
+                    var realIdx = columnIndex - StartColumnIdx;
+                    if (Index2ColName.ContainsKey(realIdx) == false)
+                    {
+                        continue;
+                    }
+                    var colName = Index2ColName[realIdx];
                     var statementCell = statementRow.GetCell(columnIndex);
                     var statementString = statementCell != null ? statementCell.ToString() : "";
                     ColName2Statement[colName] = statementString;
@@ -192,7 +199,12 @@ namespace TableML.Compiler
                 var commentRowDetail = Worksheet.GetRow(14);
                 for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
                 {
-                    var colName = Index2ColName[columnIndex-StartColumnIdx];
+                    var realIdx = columnIndex - StartColumnIdx;
+                    if (Index2ColName.ContainsKey(realIdx) == false)
+                    {
+                        continue;
+                    }
+                    var colName = Index2ColName[realIdx];
                     var commentCell = commentRow.GetCell(columnIndex);
                     var commentCellDetail = commentRowDetail.GetCell(columnIndex);
                     string commentString = string.Empty;

@@ -133,7 +133,6 @@ namespace TableML.Compiler
                 {
                     templateVars[templateVar.ClassName].RelativePaths.Add(compileResult.TabFileRelativePath);
                 }
-                //templateVars[templateVar.ClassName].TabFileNames = compileResult.TabFileNames;
             }
 
             if (!genManagerClass)
@@ -166,7 +165,7 @@ namespace TableML.Compiler
             var templateHashes = new List<Hash>();
             foreach (var kv in templateVars)
             {
-                //TODO render 加多一项TabFilName
+                //NOTE render 加多一项TabFilName
                 var templateVar2 = kv.Value;
                 var renderTemplateHash = Hash.FromAnonymousObject(templateVar2);
                 templateHashes.Add(renderTemplateHash);
