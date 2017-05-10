@@ -120,7 +120,7 @@ namespace TableML
 		/// <param name="index">Index.</param>
         public virtual object Get(int index)
         {
-            if (index > Values.Length || index < 0)
+            if (index >= Values.Length || index < 0)
             {
                 throw new Exception(string.Format("Overflow index `{0}`", index));
             }

@@ -67,6 +67,7 @@
     <Compile Include="BatchCompilerInSingleFile.cs" />
     <Compile Include="CompilerConfig.cs" />
     <Compile Include="ITableSourceFile.cs" />
+    <Compile Include="SimpleTSVFile.cs" />
     <Compile Include="TableCompileResult.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

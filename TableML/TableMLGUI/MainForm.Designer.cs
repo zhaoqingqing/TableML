@@ -44,6 +44,7 @@
             this.btnOpenCodeDir = new System.Windows.Forms.Button();
             this.btnOpenTmlDir = new System.Windows.Forms.Button();
             this.btnCheckNameEmpty = new System.Windows.Forms.Button();
+            this.cbSimpleRule = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -73,14 +74,14 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(3, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(311, 12);
+            this.label1.Size = new System.Drawing.Size(347, 12);
             this.label1.TabIndex = 2;
-            this.label1.Text = "请拖入需要编译的单个或多个Excel文件(可手动输入路径)";
+            this.label1.Text = "请拖入需要编译的单个或多个Excel文件(可手动增加或删除路径)";
             // 
             // tbFileDir
             // 
             this.tbFileDir.AllowDrop = true;
-            this.tbFileDir.Location = new System.Drawing.Point(12, 558);
+            this.tbFileDir.Location = new System.Drawing.Point(12, 596);
             this.tbFileDir.Name = "tbFileDir";
             this.tbFileDir.Size = new System.Drawing.Size(438, 21);
             this.tbFileDir.TabIndex = 3;
@@ -89,7 +90,7 @@
             // 
             // btnCompileAll
             // 
-            this.btnCompileAll.Location = new System.Drawing.Point(46, 601);
+            this.btnCompileAll.Location = new System.Drawing.Point(46, 639);
             this.btnCompileAll.Name = "btnCompileAll";
             this.btnCompileAll.Size = new System.Drawing.Size(300, 50);
             this.btnCompileAll.TabIndex = 0;
@@ -100,7 +101,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 525);
+            this.label2.Location = new System.Drawing.Point(10, 563);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(131, 12);
             this.label2.TabIndex = 4;
@@ -111,7 +112,7 @@
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label3.Location = new System.Drawing.Point(320, 673);
+            this.label3.Location = new System.Drawing.Point(320, 704);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(233, 12);
             this.label3.TabIndex = 5;
@@ -201,11 +202,22 @@
             this.btnCheckNameEmpty.UseVisualStyleBackColor = true;
             this.btnCheckNameEmpty.Click += new System.EventHandler(this.btnCheckNameEmpty_Click);
             // 
+            // cbSimpleRule
+            // 
+            this.cbSimpleRule.AutoSize = true;
+            this.cbSimpleRule.Location = new System.Drawing.Point(12, 524);
+            this.cbSimpleRule.Name = "cbSimpleRule";
+            this.cbSimpleRule.Size = new System.Drawing.Size(204, 16);
+            this.cbSimpleRule.TabIndex = 6;
+            this.cbSimpleRule.Text = "是否 name|type|comment 三行TSV";
+            this.cbSimpleRule.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(884, 697);
+            this.ClientSize = new System.Drawing.Size(884, 728);
+            this.Controls.Add(this.cbSimpleRule);
             this.Controls.Add(this.txtTmlPath);
             this.Controls.Add(this.btnOpenTmlDir);
             this.Controls.Add(this.btnOpenCodeDir);
@@ -247,6 +259,7 @@
         private System.Windows.Forms.Button btnOpenCodeDir;
         private System.Windows.Forms.Button btnOpenTmlDir;
         private System.Windows.Forms.Button btnCheckNameEmpty;
+        private System.Windows.Forms.CheckBox cbSimpleRule;
     }
 }
 

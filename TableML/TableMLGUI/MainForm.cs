@@ -26,10 +26,16 @@ namespace TableMLGUI
 
         public string NameSpace = "AppSettings";
 
+        public bool IsSimpleRule
+        {
+            get { return cbSimpleRule.Checked; }
+        }
+
         public MainForm()
         {
             InitializeComponent();
             Init();
+
         }
 
         public void Init()
@@ -43,7 +49,7 @@ namespace TableMLGUI
             this.tbFileDir.Text = excelSrc;
 
             //tml路径
-            var genTmlPath =ConfigurationManager.AppSettings.Get("GenTmlPath");
+            var genTmlPath = ConfigurationManager.AppSettings.Get("GenTmlPath");
             GenTmlPath = useAbsolutePath ? genTmlPath : Path.GetFullPath(Application.StartupPath + genTmlPath);
 
             //代码路径
@@ -125,7 +131,16 @@ namespace TableMLGUI
             foreach (var filePath in fileList)
             {
                 Console.WriteLine(filePath);
-                var savePath = GenTmlPath + "\\" + SimpleExcelFile.GetOutFileName(filePath) + TmlExtensions;
+                string savePath = null;
+                var ext = Path.GetExtension(filePath).Trim().ToLower();
+                if (ext == ".tsv" || IsSimpleRule)
+                {
+                    savePath = GenTmlPath + "\\" + Path.GetFileNameWithoutExtension(filePath) + TmlExtensions;
+                }
+                else
+                {
+                    savePath = GenTmlPath + "\\" + SimpleExcelFile.GetOutFileName(filePath) + TmlExtensions;
+                }
                 //编译表时，生成代码
                 TableCompileResult compileResult = compiler.Compile(filePath, savePath);
                 Console.WriteLine("编译结果:{0}---->{1}", filePath, savePath);
@@ -153,7 +168,6 @@ namespace TableMLGUI
             Console.WriteLine("当前目录：{0}", startPath);
 
             var srcDirectory = tbFileDir.Text;
-
 
             var batchCompiler = new BatchCompiler();
 

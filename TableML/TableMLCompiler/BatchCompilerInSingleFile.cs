@@ -30,6 +30,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DotLiquid;
+using NPOI.Util;
 
 namespace TableML.Compiler
 {
@@ -239,7 +240,14 @@ namespace TableML.Compiler
                          * 每编译一个Excel就生成一个代码文件
                         */
                         //NOTE 设置编译后文件的文件名(tml文件名)
-                        relativePath = SimpleExcelFile.GetOutFileName(excelPath);
+                        if (Path.GetExtension(excelPath) == ".tsv")
+                        {
+                            relativePath = Path.GetFileName(excelPath);
+                        }
+                        else
+                        {
+                            relativePath = SimpleExcelFile.GetOutFileName(excelPath);
+                        }
                         var compileToPath = string.Format("{0}/{1}", compileBaseDir,
                             Path.ChangeExtension(relativePath, changeExtension));
                         var srcFileInfo = new FileInfo(excelPath);
