@@ -19,9 +19,15 @@ namespace TableMLGUI
         /// 空白
         /// </summary>
         Empty,
+        /// <summary>
+        /// 是否有关键词
+        /// </summary>
+        HasKeyWords,
     }
     public class ExcelHelper
     {
+        private string keywordFile { get { return Application.StartupPath + "\\csharpkeywords.txt"; } }
+
         public static void UpdateAllTableSyntax()
         {
             var findPath = System.Environment.CurrentDirectory + ".\\..\\Src";
@@ -113,7 +119,7 @@ namespace TableMLGUI
         /// <param name="type"></param>
         /// <param name="rowIdx">读取的行，从0开始</param>
         /// <returns></returns>
-        public static bool CheckExcel(string filePath, CheckType type,int rowIdx = 5)
+        public static bool CheckExcel(string filePath, CheckType type, int rowIdx = 5)
         {
             bool fileChange = false;
             IWorkbook Workbook;
@@ -134,11 +140,32 @@ namespace TableMLGUI
 
             Worksheet = Workbook.GetSheetAt(0);
             List<ICell> cells = Worksheet.GetRow(rowIdx).Cells;
+            List<string> cellValues = new List<string>();
             Dictionary<string, string> dict = new Dictionary<string, string>();
             StringBuilder repet = new StringBuilder();
             StringBuilder empty = new StringBuilder();
+            StringBuilder kwSb = new StringBuilder();
+            string[] keywords = new string[] { };
+            if (type == CheckType.HasKeyWords)
+            {
+                var keywordFile = Application.StartupPath + "/csharpkeywords.txt";
+                if (File.Exists(keywordFile) == false)
+                {
+                    MessageBox.Show(keywordFile, "文件不存在", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+                var fileContent = File.ReadAllText(keywordFile);
+                fileContent = fileContent.Replace("\r\n", "\t");
+                fileContent = fileContent.Replace("\n", "\t");
+                keywords = fileContent.Split('\t');
+                Console.WriteLine("C# 关键词数量：{0}\r\n{1}",keywords.Length, fileContent);
+            }
             foreach (ICell cell in cells)
             {
+                if (keywords.Contains(cell.StringCellValue))
+                {
+                    kwSb.AppendLine(string.Format("row:{0} column:{1}  keywords:{2}\t", cell.RowIndex + 1, cell.ColumnIndex + 1, cell.StringCellValue));
+                }
                 if (dict.ContainsKey(cell.StringCellValue) == false)
                 {
                     dict.Add(cell.StringCellValue, cell.StringCellValue);
@@ -152,6 +179,21 @@ namespace TableMLGUI
                     empty.AppendFormat("row:{0} column:{1} \t", cell.RowIndex + 1, cell.ColumnIndex + 1);
                 }
             }
+            if (type == CheckType.HasKeyWords)
+            {
+                if (kwSb.Length >= 1)
+                {
+                    Console.WriteLine("含有关键词的字段：{0}", kwSb.ToString());
+                    MessageBox.Show(kwSb.ToString(), "含有关键词的字段",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    MessageBox.Show("没有C#关键词", "关键词检测");
+                }
+
+                return kwSb.Length < 1;
+            }
+
             switch (type)
             {
                 case CheckType.Repet:
@@ -208,6 +250,17 @@ namespace TableMLGUI
             {
                 CheckExcel(filePath, CheckType.Empty);
             }
+        }
+
+        public static void CheckHasKeyWords(string[] filePaths)
+        {
+            int count = 0;
+            foreach (string filePath in filePaths)
+            {
+                CheckExcel(filePath, CheckType.HasKeyWords);
+            }
+
+
         }
     }
 }

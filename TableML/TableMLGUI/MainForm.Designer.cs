@@ -45,6 +45,7 @@
             this.btnOpenTmlDir = new System.Windows.Forms.Button();
             this.btnCheckNameEmpty = new System.Windows.Forms.Button();
             this.cbSimpleRule = new System.Windows.Forms.CheckBox();
+            this.btnCheckCSKW = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -212,6 +213,16 @@
             this.cbSimpleRule.Text = "是否 name|type|comment 三行TSV";
             this.cbSimpleRule.UseVisualStyleBackColor = true;
             // 
+            // btnCheckCSKW
+            // 
+            this.btnCheckCSKW.Location = new System.Drawing.Point(660, 379);
+            this.btnCheckCSKW.Name = "btnCheckCSKW";
+            this.btnCheckCSKW.Size = new System.Drawing.Size(169, 40);
+            this.btnCheckCSKW.TabIndex = 0;
+            this.btnCheckCSKW.Text = "检查前端字段名是否C#关键字";
+            this.btnCheckCSKW.UseVisualStyleBackColor = true;
+            this.btnCheckCSKW.Click += new System.EventHandler(this.btnCheckCSKW_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -224,6 +235,7 @@
             this.Controls.Add(this.btnSyncTml);
             this.Controls.Add(this.txtCodePath);
             this.Controls.Add(this.btnSyncCode);
+            this.Controls.Add(this.btnCheckCSKW);
             this.Controls.Add(this.btnCheckNameEmpty);
             this.Controls.Add(this.btnCheckNameRepet);
             this.Controls.Add(this.btnUpdateCSSyntax);
@@ -260,6 +272,7 @@
         private System.Windows.Forms.Button btnOpenTmlDir;
         private System.Windows.Forms.Button btnCheckNameEmpty;
         private System.Windows.Forms.CheckBox cbSimpleRule;
+        private System.Windows.Forms.Button btnCheckCSKW;
     }
 }
 

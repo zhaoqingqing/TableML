@@ -17,4 +17,4 @@ static	string	struct	switch
 this	throw	true	try
 typeof	uint	ulong	unchecked
 unsafe	ushort	using	using static
-void	volatile	while
+void	volatile	while	type

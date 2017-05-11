@@ -35,7 +35,7 @@ namespace TableMLGUI
         {
             InitializeComponent();
             Init();
-
+            //tbFileList.Text = @"e:\3dsn\plan\005ConfigTable\Src\NPC配置表.xlsx";
         }
 
         public void Init()
@@ -233,6 +233,15 @@ namespace TableMLGUI
             if (!string.IsNullOrEmpty(tbFileList.Text))
             {
                 ExcelHelper.CheckNameEmpty(fileList);
+            }
+        }
+
+        private void btnCheckCSKW_Click(object sender, EventArgs e)
+        {
+
+            if (!string.IsNullOrEmpty(tbFileList.Text))
+            {
+                ExcelHelper.CheckHasKeyWords(fileList);
             }
         }
     }
