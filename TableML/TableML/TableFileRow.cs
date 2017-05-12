@@ -47,22 +47,28 @@ namespace TableML
             }
         }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TableML.TableFileRow"/> class.
-		/// </summary>
-		/// <param name="rowNumber">Row number.</param>
-		/// <param name="headerInfos">Header infos.</param>
+        public TableFileRow()
+        {
+		
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:TableML.TableFileRow"/> class.
+        /// </summary>
+        /// <param name="rowNumber">Row number.</param>
+        /// <param name="headerInfos">Header infos.</param>
         public TableFileRow(int rowNumber, Dictionary<string, HeaderInfo> headerInfos)
         {
             Ctor(rowNumber, headerInfos);
         }
 
-		/// <summary>
-		/// Ctor the specified rowNumber and headerInfos.
-		/// </summary>
-		/// <param name="rowNumber">Row number.</param>
-		/// <param name="headerInfos">Header infos.</param>
-        private void Ctor(int rowNumber, Dictionary<string, HeaderInfo> headerInfos)
+        /// <summary>
+        /// Ctor the specified rowNumber and headerInfos.
+        /// `public` for prevent IL2CPP striping
+        /// </summary>
+        /// <param name="rowNumber">Row number.</param>
+        /// <param name="headerInfos">Header infos.</param>
+        internal void Ctor(int rowNumber, Dictionary<string, HeaderInfo> headerInfos)
         {
             RowNumber = rowNumber;
             HeaderInfos = headerInfos;

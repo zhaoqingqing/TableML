@@ -18,8 +18,8 @@ namespace TableCompilerConsole
         {
             //CompileOne();
 
-            //CopyTo();
-            CompileAll();
+            //CopyTo(true);
+            //CompileAll();
 
             //LoadTest();
         }
@@ -104,7 +104,7 @@ namespace TableCompilerConsole
             Console.WriteLine("copy {0} -->{1}", srcTCDLL, dstTCDLL);
         }
 
-        public static void CopyToH()
+        public static void CopyToHome()
         {
             //home pc
             string srcDir = @"d:\Git\TableML\TableML\TableMLCompilerConsole\bin\Debug\";

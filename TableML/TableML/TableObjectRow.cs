@@ -8,6 +8,11 @@ namespace TableML
     /// </summary>
     public class TableObjectRow : TableFileRow
     {
+        public TableObjectRow()
+        {
+            
+        }
+
         public TableObjectRow(int rowNumber, Dictionary<string, HeaderInfo> headerInfos) : base(rowNumber, headerInfos)
         {
         }

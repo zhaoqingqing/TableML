@@ -93,6 +93,12 @@ namespace TableML
         public TableFile() : base() { }
         public TableFile(string fileFullPath, Encoding encoding) : base(fileFullPath, encoding) { }
 
+        public new static TableFile LoadFromString(string content)
+        {
+            TableFile tabFile = new TableFile(content);
+            return tabFile;
+        }
+
         public new static TableFile LoadFromString(params string[] content)
         {
             TableFile tabFile = new TableFile(content);

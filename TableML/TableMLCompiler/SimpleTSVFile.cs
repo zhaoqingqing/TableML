@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -24,7 +25,14 @@ namespace TableML.Compiler
             ColName2Statement = new Dictionary<string, string>();
             ColName2Comment = new Dictionary<string, string>();
             ExcelFileName = Path.GetFileName(filePath);
-            ParseTsv(filePath);
+            try
+            {
+                ParseTsv(filePath);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error TSV File: " + filePath + " / " + e.Message);
+            }
         }
 
         private void ParseTsv(string filePath)
