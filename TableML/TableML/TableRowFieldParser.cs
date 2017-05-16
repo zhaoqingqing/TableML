@@ -118,6 +118,57 @@ namespace TableML
             return str.Split(',');
         }
 
+        public short[] Get_short_array(string value, string defaultValue)
+        {
+            var str = Get_string(value, defaultValue);
+            var strs = str.Split(',');
+            if (strs != null && strs.Length > 0)
+            {
+                List<short> array = new List<short>();
+                var max = strs.Length;
+                for (int idx = 0; idx < max; idx++)
+                {
+                    array.Add(Convert.ToInt16(strs[idx]));
+                }
+                return array.ToArray();
+            }
+            return null;
+        }
+
+        public int[] Get_int_array(string value, string defaultValue)
+        {
+            var str = Get_string(value, defaultValue);
+            var strs= str.Split(',');
+            if (strs != null && strs.Length > 0)
+            {
+                List<int> array = new List<int>();
+                var max = strs.Length;
+                for (int idx = 0; idx < max; idx++)
+                {
+                    array.Add(Convert.ToInt32(strs[idx]));
+                }
+                return array.ToArray();
+            }
+            return null;
+        }
+
+        public float[] Get_float_array(string value, string defaultValue)
+        {
+            var str = Get_string(value, defaultValue);
+            var strs = str.Split(',');
+            if (strs != null && strs.Length > 0)
+            {
+                List<float> array = new List<float>();
+                var max = strs.Length;
+                for (int idx = 0; idx < max; idx++)
+                {
+                    array.Add(Convert.ToSingle(strs[idx]));
+                }
+                return array.ToArray();
+            }
+            return null;
+        }
+
         public Dictionary<string, int> Get_Dictionary_string_int(string value, string defaultValue)
         {
             return GetDictionary<string, int>(value, defaultValue);
