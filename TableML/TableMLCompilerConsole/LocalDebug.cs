@@ -18,7 +18,7 @@ namespace TableCompilerConsole
         {
             //CompileOne();
 
-            //CopyTo(true);
+            CopyTo(true);
             //CompileAll();
 
             //LoadTest();
@@ -97,11 +97,26 @@ namespace TableCompilerConsole
             File.Copy(srcDll, dstDLL, true);
             Console.WriteLine("copy {0} -->{1}", srcDll, dstDLL);
 
+            string srcPDB = srcDir + "TableML.pdb";
+            string dstPDB = dstDir + "TableML.pdb";
+            File.Delete(dstPDB);
+            File.Copy(srcPDB, dstPDB, true);
+            Console.WriteLine("copy {0} -->{1}", srcPDB, dstPDB);
+
+            //TableMLCompiler.dll
+
             string srcTCDLL = srcDir + "TableMLCompiler.dll";
             string dstTCDLL = dstTCDir + "TableMLCompiler.dll";
             File.Delete(dstTCDLL);
             File.Copy(srcTCDLL, dstTCDLL, true);
             Console.WriteLine("copy {0} -->{1}", srcTCDLL, dstTCDLL);
+
+
+            string srcTCPDB = srcDir + "TableMLCompiler.pdb";
+            string dstTCPDB = dstTCDir + "TableMLCompiler.pdb";
+            File.Delete(dstTCPDB);
+            File.Copy(srcTCPDB, dstTCPDB, true);
+            Console.WriteLine("copy {0} -->{1}", srcTCPDB, dstTCPDB);
         }
 
         public static void CopyToHome()

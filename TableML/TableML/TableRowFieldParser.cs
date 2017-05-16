@@ -115,12 +115,14 @@ namespace TableML
         public string[] Get_string_array(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
+            if (string.IsNullOrEmpty(str)) return null;
             return str.Split(',');
         }
 
         public short[] Get_short_array(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
+            if (string.IsNullOrEmpty(str)) return null;
             var strs = str.Split(',');
             if (strs != null && strs.Length > 0)
             {
@@ -138,6 +140,7 @@ namespace TableML
         public int[] Get_int_array(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
+            if (string.IsNullOrEmpty(str)) return null;
             var strs= str.Split(',');
             if (strs != null && strs.Length > 0)
             {
@@ -155,6 +158,7 @@ namespace TableML
         public float[] Get_float_array(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
+            if (string.IsNullOrEmpty(str)) return null;
             var strs = str.Split(',');
             if (strs != null && strs.Length > 0)
             {
