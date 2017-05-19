@@ -53,6 +53,33 @@ namespace TableML
             return value;
         }
 
+        /// <summary>
+        /// 有一些分隔符
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="splits">要去掉的符号</param>
+        /// <returns></returns>
+        public string Get_String(string value,string defaultValue, params string[] splits)
+        {
+            var str = Get_string(value, defaultValue);
+            if (splits != null && splits.Length > 0)
+            {
+                foreach (var split in splits)
+                {
+                    if (str.Contains(split))
+                    {
+                        str = str.Replace(split, "");
+                    }
+                }
+            }
+            return str;
+        }
+
+        public string Get_StringByArray(string value, string defaultValue)
+        {
+            return Get_String(value, defaultValue, new string[] { "{", "}" ,"|"});
+        }
+
         public double Get_number(string value, string defaultValue)
         {
             return Get_double(value, defaultValue);
@@ -114,15 +141,17 @@ namespace TableML
 
         public string[] Get_string_array(string value, string defaultValue)
         {
-            var str = Get_string(value, defaultValue);
+            var str = Get_StringByArray(value, defaultValue);
             if (string.IsNullOrEmpty(str)) return null;
+            if (str.Contains(",") == false) return new string[] {str};
             return str.Split(',');
         }
 
         public short[] Get_short_array(string value, string defaultValue)
         {
-            var str = Get_string(value, defaultValue);
+            var str = Get_StringByArray(value, defaultValue);
             if (string.IsNullOrEmpty(str)) return null;
+            if (str.Contains(",") == false) return new short[] {str.ToShort_()};
             var strs = str.Split(',');
             if (strs != null && strs.Length > 0)
             {
@@ -130,7 +159,7 @@ namespace TableML
                 var max = strs.Length;
                 for (int idx = 0; idx < max; idx++)
                 {
-                    array.Add(Convert.ToInt16(strs[idx]));
+                    array.Add(strs[idx].ToShort_());
                 }
                 return array.ToArray();
             }
@@ -139,8 +168,9 @@ namespace TableML
 
         public int[] Get_int_array(string value, string defaultValue)
         {
-            var str = Get_string(value, defaultValue);
+            var str = Get_StringByArray(value, defaultValue);
             if (string.IsNullOrEmpty(str)) return null;
+            if (str.Contains(",") == false) return new int[] {str.ToInt32_()};
             var strs= str.Split(',');
             if (strs != null && strs.Length > 0)
             {
@@ -148,7 +178,7 @@ namespace TableML
                 var max = strs.Length;
                 for (int idx = 0; idx < max; idx++)
                 {
-                    array.Add(Convert.ToInt32(strs[idx]));
+                    array.Add(strs[idx].ToInt32_());
                 }
                 return array.ToArray();
             }
@@ -157,8 +187,9 @@ namespace TableML
 
         public float[] Get_float_array(string value, string defaultValue)
         {
-            var str = Get_string(value, defaultValue);
+            var str = Get_StringByArray(value, defaultValue);
             if (string.IsNullOrEmpty(str)) return null;
+            if (str.Contains(",") == false) return new float[] {str.ToFloat_()};
             var strs = str.Split(',');
             if (strs != null && strs.Length > 0)
             {
@@ -166,7 +197,7 @@ namespace TableML
                 var max = strs.Length;
                 for (int idx = 0; idx < max; idx++)
                 {
-                    array.Add(Convert.ToSingle(strs[idx]));
+                    array.Add(strs[idx].ToFloat_());
                 }
                 return array.ToArray();
             }
@@ -182,6 +213,7 @@ namespace TableML
         {
             var dict = new Dictionary<TKey, TValue>();
             var str = Get_String(value, defaultValue);
+            if (str.Contains(",") == false) return null;
             var arr = str.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var item in arr)
