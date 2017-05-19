@@ -5,11 +5,42 @@ using System.Text;
 
 /// <summary>
 /// 扩展C#的方法
-/// NOTE 当类型转换失败时，不抛出异常，而是值=默认，让程序可以正常运行
+/// NOTE 当类型转换失败时，不抛出异常，而是=默认，让程序可以正常运行
 /// 此同名文件在Unity的Project中已有， 所以方法命名修改
 /// </summary>
 public static class CSharpEx
 {
+    public static bool ToBool_(this string val)
+    {
+        bool ret = false;
+        try
+        {
+            if (!String.IsNullOrEmpty(val))
+            {
+                ret = val.ToLower() == "true" || val.ToLower() != "0";
+            }
+        }
+        catch (Exception)
+        {
+        }
+        return ret;
+    }
+
+    public static sbyte ToSByte_(this string val)
+    {
+        sbyte ret = 0;
+        try
+        {
+            if (!String.IsNullOrEmpty(val))
+            {
+                ret = Convert.ToSByte(val);
+            }
+        }
+        catch (Exception)
+        {
+        }
+        return ret;
+    }
 
     public static byte ToByte_(this string val)
     {
@@ -27,30 +58,15 @@ public static class CSharpEx
         return ret;
     }
 
-    public static long ToInt64_(this string val)
+    static public uint ToUInt_(this string str)
     {
-        long ret = 0;
-        try
-        {
-            if (!String.IsNullOrEmpty(val))
-            {
-                ret = Convert.ToInt64(val);
-            }
-        }
-        catch (Exception)
-        {
-        }
-        return ret;
-    }
+        uint ret = 0;
 
-    public static float ToFloat_(this string val)
-    {
-        float ret = 0;
         try
         {
-            if (!String.IsNullOrEmpty(val))
+            if (!String.IsNullOrEmpty(str))
             {
-                ret = Convert.ToSingle(val);
+                ret = Convert.ToUInt32(str);
             }
         }
         catch (Exception)
@@ -85,6 +101,80 @@ public static class CSharpEx
             if (!String.IsNullOrEmpty(str))
             {
                 ret = Convert.ToInt16(str);
+            }
+        }
+        catch (Exception)
+        {
+        }
+        return ret;
+    }
+
+    public static long ToLong_(this string val)
+    {
+        return ToInt64_(val);
+    }
+
+    public static long ToInt64_(this string val)
+    {
+        long ret = 0;
+        try
+        {
+            if (!String.IsNullOrEmpty(val))
+            {
+                ret = Convert.ToInt64(val);
+            }
+        }
+        catch (Exception)
+        {
+        }
+        return ret;
+    }
+
+    public static float ToSingle_(this string val)
+    {
+        return ToFloat_(val);
+    }
+
+    public static float ToFloat_(this string val)
+    {
+        float ret = 0;
+        try
+        {
+            if (!String.IsNullOrEmpty(val))
+            {
+                ret = Convert.ToSingle(val);
+            }
+        }
+        catch (Exception)
+        {
+        }
+        return ret;
+    }
+
+    public static double ToDouble_(this string val)
+    {
+        double ret = 0;
+        try
+        {
+            if (!String.IsNullOrEmpty(val))
+            {
+                ret = Convert.ToDouble(val);
+            }
+        }
+        catch (Exception)
+        {
+        }
+        return ret;
+    }
+
+    public static char ToChar_(this string val)
+    {
+        char ret = default(char);
+        try
+        {
+            if (!String.IsNullOrEmpty(val))
+            {
+                ret = Convert.ToChar(val);
             }
         }
         catch (Exception)

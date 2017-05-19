@@ -11,7 +11,7 @@ namespace TableML
         public byte Get_byte(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
-            return string.IsNullOrEmpty(str) ? default(byte) : byte.Parse(str);
+            return string.IsNullOrEmpty(str) ? default(byte) : str.ToByte_();
         }
 
         public byte Get_Byte(string value, string defaultValue)
@@ -22,7 +22,7 @@ namespace TableML
         public sbyte Get_sbyte(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
-            return string.IsNullOrEmpty(str) ? default(sbyte) : sbyte.Parse(str);
+            return string.IsNullOrEmpty(str) ? default(sbyte) : str.ToSByte_();
         }
 
         public sbyte Get_SByte(string value, string defaultValue)
@@ -33,7 +33,7 @@ namespace TableML
         public char Get_char(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
-            return string.IsNullOrEmpty(str) ? default(char) : char.Parse(str);
+            return string.IsNullOrEmpty(str) ? default(char) : str.ToChar_();
         }
 
         public char Get_Char(string value, string defaultValue)
@@ -54,7 +54,7 @@ namespace TableML
         }
 
         /// <summary>
-        /// 有一些分隔符
+        /// 字符串中包含一些要去掉的分隔符
         /// </summary>
         /// <param name="value"></param>
         /// <param name="splits">要去掉的符号</param>
@@ -103,40 +103,36 @@ namespace TableML
         public bool Get_Boolean(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
-            bool result;
-            if (bool.TryParse(str, out result))
-            {
-                return result;
-            }
-            return Get_int(value, defaultValue) != 0;
+            if (string.IsNullOrEmpty(str)) return false;
+            return str.ToBool_();
         }
 
         public long Get_long(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
-            return string.IsNullOrEmpty(str) ? default(long) : long.Parse(str);
+            return string.IsNullOrEmpty(str) ? default(long) : str.ToInt64_();
         }
         public int Get_int(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
-            return string.IsNullOrEmpty(str) ? default(int) : int.Parse(str);
+            return string.IsNullOrEmpty(str) ? default(int) : str.ToInt32_();
         }
 
         public double Get_double(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
-            return string.IsNullOrEmpty(str) ? default(double) : double.Parse(str);
+            return string.IsNullOrEmpty(str) ? default(double) : str.ToDouble_();
         }
 
         public float Get_float(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
-            return string.IsNullOrEmpty(str) ? default(float) : float.Parse(str);
+            return string.IsNullOrEmpty(str) ? default(float) : str.ToFloat_();
         }
         public uint Get_uint(string value, string defaultValue)
         {
             var str = Get_string(value, defaultValue);
-            return string.IsNullOrEmpty(str) ? default(int) : uint.Parse(str);
+            return string.IsNullOrEmpty(str) ? default(int) : str.ToUInt_();
         }
 
         public string[] Get_string_array(string value, string defaultValue)
@@ -228,7 +224,14 @@ namespace TableML
 
         protected T ConvertString<T>(string value)
         {
-            return (T)Convert.ChangeType(value, typeof(T));
+            try
+            {
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+            catch (Exception ex)
+            {
+                return default(T);
+            }
         }
 
     }
