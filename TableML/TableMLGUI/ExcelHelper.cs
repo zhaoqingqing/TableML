@@ -68,6 +68,8 @@ namespace TableMLGUI
                 }
             }
             Worksheet = Workbook.GetSheetAt(0);
+            //TODO 检查行数是否超出索引
+//            Worksheet.RowBreaks
             List<ICell> cells = Worksheet.GetRow(4).Cells;
             foreach (ICell cell in cells)
             {
@@ -109,6 +111,7 @@ namespace TableMLGUI
                     fileStream.Flush();
                 }
             }
+            Console.WriteLine("更新表数据类型：{0}", filePath);
             return true;
         }
 

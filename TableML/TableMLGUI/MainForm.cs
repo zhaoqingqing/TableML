@@ -244,5 +244,17 @@ namespace TableMLGUI
                 ExcelHelper.CheckHasKeyWords(fileList);
             }
         }
+
+        private void btnUpdateSelectCSSyntax_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(tbFileList.Text))
+            {
+                foreach (string filePath in fileList)
+                {
+                    ExcelHelper.ToCSharpSyntax(filePath);
+                }
+                Console.WriteLine("数据类型更新完成");
+            }
+        }
     }
 }

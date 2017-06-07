@@ -46,6 +46,7 @@
             this.btnCheckNameEmpty = new System.Windows.Forms.Button();
             this.cbSimpleRule = new System.Windows.Forms.CheckBox();
             this.btnCheckCSKW = new System.Windows.Forms.Button();
+            this.btnUpdateSelectCSSyntax = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -121,7 +122,7 @@
             // 
             // btnUpdateCSSyntax
             // 
-            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(474, 318);
+            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(660, 500);
             this.btnUpdateCSSyntax.Name = "btnUpdateCSSyntax";
             this.btnUpdateCSSyntax.Size = new System.Drawing.Size(169, 40);
             this.btnUpdateCSSyntax.TabIndex = 0;
@@ -223,6 +224,16 @@
             this.btnCheckCSKW.UseVisualStyleBackColor = true;
             this.btnCheckCSKW.Click += new System.EventHandler(this.btnCheckCSKW_Click);
             // 
+            // btnUpdateSelectCSSyntax
+            // 
+            this.btnUpdateSelectCSSyntax.Location = new System.Drawing.Point(474, 500);
+            this.btnUpdateSelectCSSyntax.Name = "btnUpdateSelectCSSyntax";
+            this.btnUpdateSelectCSSyntax.Size = new System.Drawing.Size(169, 40);
+            this.btnUpdateSelectCSSyntax.TabIndex = 0;
+            this.btnUpdateSelectCSSyntax.Text = "改框中表的前端字段类型";
+            this.btnUpdateSelectCSSyntax.UseVisualStyleBackColor = true;
+            this.btnUpdateSelectCSSyntax.Click += new System.EventHandler(this.btnUpdateSelectCSSyntax_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -238,6 +249,7 @@
             this.Controls.Add(this.btnCheckCSKW);
             this.Controls.Add(this.btnCheckNameEmpty);
             this.Controls.Add(this.btnCheckNameRepet);
+            this.Controls.Add(this.btnUpdateSelectCSSyntax);
             this.Controls.Add(this.btnUpdateCSSyntax);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -273,6 +285,7 @@
         private System.Windows.Forms.Button btnCheckNameEmpty;
         private System.Windows.Forms.CheckBox cbSimpleRule;
         private System.Windows.Forms.Button btnCheckCSKW;
+        private System.Windows.Forms.Button btnUpdateSelectCSSyntax;
     }
 }
 
