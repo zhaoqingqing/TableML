@@ -16,9 +16,15 @@ namespace TableCompilerConsole
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("WriteLine");
+            ConsoleHelper.Log("Log");
+            ConsoleHelper.Warning("Warning");
+            ConsoleHelper.Confirmation("Confirmation");
+            ConsoleHelper.Error("error");
+            ConsoleHelper.Error("error,{0}","111");
             //CompileOne();
 
-            CopyTo(true);
+            //CopyTo(true);
             //CompileAll();
 
             //LoadTest();

@@ -65,101 +65,111 @@ namespace TableML.Compiler
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
+                    //                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
+                    ConsoleHelper.Error(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
+                    return;
                     //IsLoadSuccess = false;
                 }
             }
-            //if (IsLoadSuccess)
+
+            if (Workbook == null)
             {
-                if (Workbook == null)
-                    throw new Exception(filePath + " Null Workbook");
-
-                //var dt = new DataTable();
-
-                Worksheet = Workbook.GetSheetAt(0);
-                if (Worksheet == null)
-                    throw new Exception(filePath + " Null Worksheet");
-
-                var sheetRowCount = GetWorksheetCount();
-                if (sheetRowCount < PreserverRowCount)
-                {
-                    throw new Exception(string.Format("{0} At lease {1} rows of this excel", filePath, sheetRowCount));
-                    
-                }
-
-                /**表头结构如下所示：
-                *   Id  Name    CDTime
-                *   int string int
-                *   编号 名称 CD时间
-                */
-
-                //NOTE 从第0行开始读
-                // 列头名(字段名) 
-                var headerRow = Worksheet.GetRow(5);
-                //npoi的列数是从0开始,最大列是从1开始
-                var firstColuIdx = headerRow.FirstCellNum;
-                _columnCount = headerRow.LastCellNum;
-                // 列总数保存
-                int columnCount = GetColumnCount();
-
-                //NOTE by qingqing-zhao 从指定的列开始读取
-                for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
-                {
-                    var cell = headerRow.GetCell(columnIndex);
-                    var headerName = cell != null ? cell.ToString().Trim() : ""; // trim!
-                    var realIdx = columnIndex - StartColumnIdx;
-                    ColName2Index[headerName] = realIdx;
-                    Index2ColName[realIdx] = headerName;
-                }
-                // 表头声明(数据类型)
-                var statementRow = Worksheet.GetRow(4);
-                int emptyColumn2 = 0;
-                for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
-                {
-                    var realIdx = columnIndex - StartColumnIdx;
-                    if (Index2ColName.ContainsKey(realIdx) == false)
-                    {
-                        continue;
-                    }
-                    var colName = Index2ColName[realIdx];
-                    var statementCell = statementRow.GetCell(columnIndex);
-                    var statementString = statementCell != null ? statementCell.ToString() : "";
-                    ColName2Statement[colName] = statementString;
-                }
-                // 表头注释(字段注释) 我们有两行注释
-                var commentRow = Worksheet.GetRow(15);
-                var commentRowDetail = Worksheet.GetRow(14);
-                for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
-                {
-                    var realIdx = columnIndex - StartColumnIdx;
-                    if (Index2ColName.ContainsKey(realIdx) == false)
-                    {
-                        continue;
-                    }
-                    var colName = Index2ColName[realIdx];
-                    var commentCell = commentRow.GetCell(columnIndex);
-                    var commentCellDetail = commentRowDetail.GetCell(columnIndex);
-                    string commentString = string.Empty;
-                    if (commentCell != null)
-                    {
-                        commentString += string.Concat(GetCellString(commentCell), "\n");
-                    }
-                    if (commentCellDetail != null)
-                    {
-                        commentString += GetCellString(commentCellDetail);
-                    }
-                    //fix 注释包含\r\n
-                    if (commentString.Contains("\n"))
-                    {
-                        commentString = CombieLine(commentString, "\n");
-                    }
-                    else if (commentString.Contains("\r\n"))
-                    {
-                        commentString = CombieLine(commentString, "\r\n");
-                    }
-                    ColName2Comment[colName] = commentString;
-                }
+                //                    throw new Exception(filePath + " Null Workbook");
+                ConsoleHelper.Error(filePath + " Null Workbook");
+                return;
             }
+
+
+            Worksheet = Workbook.GetSheetAt(0);
+            if (Worksheet == null)
+            {
+                //                    throw new Exception(filePath + " Null Worksheet");
+                ConsoleHelper.Error(filePath + " Null Worksheet");
+                return;
+            }
+
+            var sheetRowCount = GetWorksheetCount();
+            if (sheetRowCount < PreserverRowCount)
+            {
+                //                    throw new Exception(string.Format("{0} At lease {1} rows of this excel", filePath, sheetRowCount));
+                ConsoleHelper.Error(string.Format("{0} At lease {1} rows of this excel", filePath, sheetRowCount));
+                return;
+
+            }
+
+            /**表头结构如下所示：
+            *   Id  Name    CDTime
+            *   int string int
+            *   编号 名称 CD时间
+            */
+
+            //NOTE 从第0行开始读
+            // 列头名(字段名) 
+            var headerRow = Worksheet.GetRow(5);
+            //npoi的列数是从0开始,最大列是从1开始
+            var firstColuIdx = headerRow.FirstCellNum;
+            _columnCount = headerRow.LastCellNum;
+            // 列总数保存
+            int columnCount = GetColumnCount();
+
+            //NOTE by qingqing-zhao 从指定的列开始读取
+            for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
+            {
+                var cell = headerRow.GetCell(columnIndex);
+                var headerName = cell != null ? cell.ToString().Trim() : ""; // trim!
+                var realIdx = columnIndex - StartColumnIdx;
+                ColName2Index[headerName] = realIdx;
+                Index2ColName[realIdx] = headerName;
+            }
+            // 表头声明(数据类型)
+            var statementRow = Worksheet.GetRow(4);
+            int emptyColumn2 = 0;
+            for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
+            {
+                var realIdx = columnIndex - StartColumnIdx;
+                if (Index2ColName.ContainsKey(realIdx) == false)
+                {
+                    continue;
+                }
+                var colName = Index2ColName[realIdx];
+                var statementCell = statementRow.GetCell(columnIndex);
+                var statementString = statementCell != null ? statementCell.ToString() : "";
+                ColName2Statement[colName] = statementString;
+            }
+            // 表头注释(字段注释) 我们有两行注释
+            var commentRow = Worksheet.GetRow(15);
+            var commentRowDetail = Worksheet.GetRow(14);
+            for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
+            {
+                var realIdx = columnIndex - StartColumnIdx;
+                if (Index2ColName.ContainsKey(realIdx) == false)
+                {
+                    continue;
+                }
+                var colName = Index2ColName[realIdx];
+                var commentCell = commentRow.GetCell(columnIndex);
+                var commentCellDetail = commentRowDetail.GetCell(columnIndex);
+                string commentString = string.Empty;
+                if (commentCell != null)
+                {
+                    commentString += string.Concat(GetCellString(commentCell), "\n");
+                }
+                if (commentCellDetail != null)
+                {
+                    commentString += GetCellString(commentCellDetail);
+                }
+                //fix 注释包含\r\n
+                if (commentString.Contains("\n"))
+                {
+                    commentString = CombieLine(commentString, "\n");
+                }
+                else if (commentString.Contains("\r\n"))
+                {
+                    commentString = CombieLine(commentString, "\r\n");
+                }
+                ColName2Comment[colName] = commentString;
+            }
+
         }
 
         public string CombieLine(string commentString, string lineStr)
@@ -311,7 +321,9 @@ namespace TableML.Compiler
         {
             if (!ColName2Index.ContainsKey(columnName))
             {
-                throw new Exception(string.Format("No Column: {0} of File: {1}", columnName, Path));
+                //                throw new Exception(string.Format("No Column: {0} of File: {1}", columnName, Path));
+                ConsoleHelper.Error(string.Format("No Column: {0} of File: {1}", columnName, Path));
+                return;
             }
             var theRow = Worksheet.GetRow(row);
             if (theRow == null)
@@ -394,17 +406,24 @@ namespace TableML.Compiler
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath,
-                        e.Message));
+                    //                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
+                    ConsoleHelper.Error(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
+                    return "";
                 }
             }
             var worksheet = workbook.GetSheetAt(0);
             if (worksheet == null)
-                throw new Exception(filePath + "Null Worksheet");
+            {
+                //                throw new Exception(filePath + "Null Worksheet");
+                ConsoleHelper.Error(filePath + "Null Worksheet");
+                return "";
+            }
             var row = worksheet.GetRow(1);
             if (row == null || row.Cells.Count < 2)
             {
-                throw new Exception(filePath + "第二行至少需要3列");
+                //                throw new Exception(filePath + "第二行至少需要3列");
+                ConsoleHelper.Error(filePath + "第二行至少需要3列");
+                return "";
             }
 
             var outFileName = GetCellString(row.Cells[2]);
