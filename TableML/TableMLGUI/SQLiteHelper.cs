@@ -148,7 +148,14 @@ public partial class SQLiteHelper
             return false;
         }
         var fileName = Path.GetFileNameWithoutExtension(filePath);
+
         string[] lines = File.ReadAllLines(filePath);
+        //TODO 当文件内容为空时的处理
+        if (lines == null)
+        {
+            ConsoleHelper.Error("{0} 内容为空！", fileName);
+            return false;
+        }
         if (lines.Length < MinLine)
         {
             ConsoleHelper.Error("{0} 至少要有{1}行数据！", fileName, MinLine);
@@ -159,7 +166,7 @@ public partial class SQLiteHelper
         var columnTypes = lines[1].Split('\t');
         if (columnNames.Length != columnTypes.Length)
         {
-            ConsoleHelper.Error("{0} 第一行和第二行的列数不一样！", fileName);
+            ConsoleHelper.Error("{0} 表头列数{1},数据类型列数{2}", fileName, columnNames.Length, columnTypes.Length);
         }
 
         //执行创建表，表名如果有数字，需要加[]
