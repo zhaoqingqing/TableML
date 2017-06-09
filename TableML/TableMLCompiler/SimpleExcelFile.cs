@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using NPOI.SS.UserModel;
+using NPOI.SS.Util;
 
 namespace TableML.Compiler
 {
@@ -64,32 +65,34 @@ namespace TableML.Compiler
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath,
-                        e.Message));
+                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
                     //IsLoadSuccess = false;
                 }
             }
             //if (IsLoadSuccess)
             {
                 if (Workbook == null)
-                    throw new Exception("Null Workbook");
+                    throw new Exception(filePath + " Null Workbook");
 
                 //var dt = new DataTable();
 
                 Worksheet = Workbook.GetSheetAt(0);
                 if (Worksheet == null)
-                    throw new Exception("Null Worksheet");
+                    throw new Exception(filePath + " Null Worksheet");
 
                 var sheetRowCount = GetWorksheetCount();
                 if (sheetRowCount < PreserverRowCount)
-                    throw new Exception(string.Format("At lease {0} rows of this excel", sheetRowCount));
-                
+                {
+                    throw new Exception(string.Format("{0} At lease {1} rows of this excel", filePath, sheetRowCount));
+                    
+                }
+
                 /**表头结构如下所示：
                 *   Id  Name    CDTime
                 *   int string int
                 *   编号 名称 CD时间
                 */
-        
+
                 //NOTE 从第0行开始读
                 // 列头名(字段名) 
                 var headerRow = Worksheet.GetRow(5);
@@ -98,7 +101,7 @@ namespace TableML.Compiler
                 _columnCount = headerRow.LastCellNum;
                 // 列总数保存
                 int columnCount = GetColumnCount();
-                
+
                 //NOTE by qingqing-zhao 从指定的列开始读取
                 for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
                 {
@@ -139,11 +142,11 @@ namespace TableML.Compiler
                     string commentString = string.Empty;
                     if (commentCell != null)
                     {
-                        commentString += string.Concat(commentCell.StringCellValue,"\n");
+                        commentString += string.Concat(GetCellString(commentCell), "\n");
                     }
                     if (commentCellDetail != null)
                     {
-                        commentString += commentCellDetail.StringCellValue; 
+                        commentString += GetCellString(commentCellDetail);
                     }
                     //fix 注释包含\r\n
                     if (commentString.Contains("\n"))
@@ -159,7 +162,7 @@ namespace TableML.Compiler
             }
         }
 
-        public string CombieLine(string commentString,string lineStr)
+        public string CombieLine(string commentString, string lineStr)
         {
             if (commentString.Contains(lineStr))
             {
@@ -175,7 +178,46 @@ namespace TableML.Compiler
             }
             return commentString;
         }
-      
+
+        /// <summary>
+        /// 统一接口：获取单元格内容
+        /// </summary>
+        /// <param name="cell"></param>
+        /// <returns></returns>
+        public static string GetCellString(ICell cell)
+        {
+            if (cell == null) return "";
+            string result = string.Empty;
+            switch (cell.CellType)
+            {
+                case CellType.Unknown:
+                    result = cell.StringCellValue;
+                    break;
+                case CellType.Numeric:
+                    result = cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+                    break;
+                case CellType.String:
+                    result = cell.StringCellValue;
+                    break;
+                case CellType.Formula:
+                    result = cell.StringCellValue;
+                    break;
+                case CellType.Blank:
+                    result = "";
+                    break;
+                case CellType.Boolean:
+                    result = cell.BooleanCellValue ? "1" : "0";
+                    break;
+                case CellType.Error:
+                    result = cell.ErrorCellValue.ToString();
+                    break;
+                default:
+                    result = "未知类型";
+                    break;
+            }
+            return result;
+        }
+
         /// <summary>
         /// 是否存在列名
         /// </summary>
@@ -223,26 +265,8 @@ namespace TableML.Compiler
             var cell = theRow.GetCell(colIndex);
             if (cell == null)
                 cell = theRow.CreateCell(colIndex);
-            if (cell.CellType == CellType.Formula)
-            {
-                //NOTE 单元格内容为公式，获取失败
-                //return cell.StringCellValue.ToString();
-                switch (cell.CachedFormulaResultType)
-                {
-                    //已测试的公式:SUM,& 
-                        case CellType.Numeric:
-                            return cell.NumericCellValue.ToString();
-                        case  CellType.String:
-                            return cell.StringCellValue;
-                }
-            }
-            if (cell.CellType == CellType.String)
-                return cell.StringCellValue;
-            if (cell.CellType == CellType.Boolean)
-                return cell.BooleanCellValue ? "1" : "0";
-            if (cell.CellType == CellType.Numeric)
-                return cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-            return cell.ToString();
+
+            return GetCellString(cell);
         }
 
         /// <summary>
@@ -376,14 +400,14 @@ namespace TableML.Compiler
             }
             var worksheet = workbook.GetSheetAt(0);
             if (worksheet == null)
-                throw new Exception("Null Worksheet");
+                throw new Exception(filePath + "Null Worksheet");
             var row = worksheet.GetRow(1);
             if (row == null || row.Cells.Count < 2)
             {
-                throw new Exception("第二行至少需要3列");
+                throw new Exception(filePath + "第二行至少需要3列");
             }
-            
-            var outFileName = row.Cells[2].StringCellValue;
+
+            var outFileName = GetCellString(row.Cells[2]);
             return outFileName;
         }
     }
