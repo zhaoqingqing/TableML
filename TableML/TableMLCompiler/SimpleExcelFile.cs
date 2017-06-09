@@ -139,7 +139,7 @@ namespace TableML.Compiler
                     string commentString = string.Empty;
                     if (commentCell != null)
                     {
-                        commentString += string.Concat(commentCell.StringCellValue,"\n");
+                        commentString += string.Concat(CellToString(commentCell),"\n");
                     }
                     if (commentCellDetail != null)
                     {
@@ -354,6 +354,11 @@ namespace TableML.Compiler
             return _columnCount - StartColumnIdx;
         }
 
+        public static string CellToString(ICell c)
+        {
+            return c != null ? c.ToString() : "";
+        }
+
         /// <summary>
         /// 读表中的字段获取输出文件名
         /// 做好约定输出tml文件名在指定的单元格，不用遍历整表让解析更快
@@ -376,14 +381,18 @@ namespace TableML.Compiler
             }
             var worksheet = workbook.GetSheetAt(0);
             if (worksheet == null)
-                throw new Exception("Null Worksheet");
+                throw new Exception(filePath + "Null Worksheet");
             var row = worksheet.GetRow(1);
             if (row == null || row.Cells.Count < 2)
             {
-                throw new Exception("第二行至少需要3列");
+                throw new Exception(filePath + "第二行至少需要3列");
             }
-            
-            var outFileName = row.Cells[2].StringCellValue;
+
+            var outFileName = CellToString(row.Cells[2]);
+			if (string.IsNullOrEmpty(outFileName))
+			{
+				throw new Exception(filePath + "第二行3列数据不能为空");
+			}
             return outFileName;
         }
     }
