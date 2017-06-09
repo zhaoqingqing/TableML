@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -160,8 +161,7 @@ namespace TableMLGUI
 
             ShowCompileResult(comileCount);
         }
-
-        private void btnCompileAll_Click(object sender, EventArgs e)
+        private void CompileAllExcel()
         {
             //编译整个目录
             var startPath = Environment.CurrentDirectory;
@@ -176,6 +176,12 @@ namespace TableMLGUI
             var results = batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, GenTmlPath, GenCodePath,
                templateString, "AppSettings", ".k", null, !string.IsNullOrEmpty(GenCodePath));
             ShowCompileResult(results.Count);
+        }
+
+        private void btnCompileAll_Click(object sender, EventArgs e)
+        {
+            CompileAllExcel();
+            SQLiteHelper.UpdateDB(GenTmlPath);
         }
 
         public void ShowCompileResult(int count)
@@ -255,6 +261,21 @@ namespace TableMLGUI
                 }
                 Console.WriteLine("数据类型更新完成");
             }
+        }
+
+        private void btnSqlite_Click(object sender, EventArgs e)
+        {
+            SQLiteHelper.TestInsert();
+        }
+
+        private void btnUpdateDB_Click(object sender, EventArgs e)
+        {
+            SQLiteHelper.UpdateDB(GenTmlPath);
+        }
+
+        private void btnCompileExcel_Click(object sender, EventArgs e)
+        {
+            CompileAllExcel();
         }
     }
 }

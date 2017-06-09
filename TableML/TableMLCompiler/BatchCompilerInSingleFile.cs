@@ -248,6 +248,11 @@ namespace TableML.Compiler
                         {
                             relativePath = SimpleExcelFile.GetOutFileName(excelPath);
                         }
+                        if (string.IsNullOrEmpty(relativePath))
+                        {
+                            ConsoleHelper.Error("{0} 输出文件名为空，跳过", fileName);
+                            continue;
+                        }
                         var compileToPath = string.Format("{0}/{1}", compileBaseDir,
                             Path.ChangeExtension(relativePath, changeExtension));
                         var srcFileInfo = new FileInfo(excelPath);

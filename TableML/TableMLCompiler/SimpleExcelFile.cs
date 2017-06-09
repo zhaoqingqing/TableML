@@ -210,7 +210,8 @@ namespace TableML.Compiler
                     result = cell.StringCellValue;
                     break;
                 case CellType.Formula:
-                    result = cell.StringCellValue;
+                    //获取公式的值
+                    result = cell.CellFormula;
                     break;
                 case CellType.Blank:
                     result = "";

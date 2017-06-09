@@ -266,7 +266,14 @@ namespace TableML.Compiler
 
             // 是否写入文件
             if (doCompile)
+            {
+                var dirName = Path.GetDirectoryName(exportPath);
+                if (Directory.Exists(dirName) == false)
+                {
+                    Directory.CreateDirectory(dirName);
+                }
                 File.WriteAllText(exportPath, tableBuilder.ToString());
+            }
 
 
             // 基于base dir路径

@@ -47,6 +47,9 @@
             this.cbSimpleRule = new System.Windows.Forms.CheckBox();
             this.btnCheckCSKW = new System.Windows.Forms.Button();
             this.btnUpdateSelectCSSyntax = new System.Windows.Forms.Button();
+            this.btnCompileExcel = new System.Windows.Forms.Button();
+            this.btnSqlite = new System.Windows.Forms.Button();
+            this.btnUpdateDB = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -92,11 +95,11 @@
             // 
             // btnCompileAll
             // 
-            this.btnCompileAll.Location = new System.Drawing.Point(46, 639);
+            this.btnCompileAll.Location = new System.Drawing.Point(26, 639);
             this.btnCompileAll.Name = "btnCompileAll";
-            this.btnCompileAll.Size = new System.Drawing.Size(300, 50);
+            this.btnCompileAll.Size = new System.Drawing.Size(169, 40);
             this.btnCompileAll.TabIndex = 0;
-            this.btnCompileAll.Text = "编译此目录下的Excel";
+            this.btnCompileAll.Text = "编译并插入到SQLite中";
             this.btnCompileAll.UseVisualStyleBackColor = true;
             this.btnCompileAll.Click += new System.EventHandler(this.btnCompileAll_Click);
             // 
@@ -122,7 +125,7 @@
             // 
             // btnUpdateCSSyntax
             // 
-            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(660, 500);
+            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(660, 422);
             this.btnUpdateCSSyntax.Name = "btnUpdateCSSyntax";
             this.btnUpdateCSSyntax.Size = new System.Drawing.Size(169, 40);
             this.btnUpdateCSSyntax.TabIndex = 0;
@@ -166,7 +169,7 @@
             // 
             // btnCheckNameRepet
             // 
-            this.btnCheckNameRepet.Location = new System.Drawing.Point(660, 318);
+            this.btnCheckNameRepet.Location = new System.Drawing.Point(660, 240);
             this.btnCheckNameRepet.Name = "btnCheckNameRepet";
             this.btnCheckNameRepet.Size = new System.Drawing.Size(169, 40);
             this.btnCheckNameRepet.TabIndex = 0;
@@ -176,7 +179,7 @@
             // 
             // btnOpenCodeDir
             // 
-            this.btnOpenCodeDir.Location = new System.Drawing.Point(474, 443);
+            this.btnOpenCodeDir.Location = new System.Drawing.Point(474, 365);
             this.btnOpenCodeDir.Name = "btnOpenCodeDir";
             this.btnOpenCodeDir.Size = new System.Drawing.Size(169, 40);
             this.btnOpenCodeDir.TabIndex = 0;
@@ -186,7 +189,7 @@
             // 
             // btnOpenTmlDir
             // 
-            this.btnOpenTmlDir.Location = new System.Drawing.Point(660, 443);
+            this.btnOpenTmlDir.Location = new System.Drawing.Point(660, 365);
             this.btnOpenTmlDir.Name = "btnOpenTmlDir";
             this.btnOpenTmlDir.Size = new System.Drawing.Size(169, 40);
             this.btnOpenTmlDir.TabIndex = 0;
@@ -196,7 +199,7 @@
             // 
             // btnCheckNameEmpty
             // 
-            this.btnCheckNameEmpty.Location = new System.Drawing.Point(474, 379);
+            this.btnCheckNameEmpty.Location = new System.Drawing.Point(474, 301);
             this.btnCheckNameEmpty.Name = "btnCheckNameEmpty";
             this.btnCheckNameEmpty.Size = new System.Drawing.Size(169, 40);
             this.btnCheckNameEmpty.TabIndex = 0;
@@ -216,7 +219,7 @@
             // 
             // btnCheckCSKW
             // 
-            this.btnCheckCSKW.Location = new System.Drawing.Point(660, 379);
+            this.btnCheckCSKW.Location = new System.Drawing.Point(660, 301);
             this.btnCheckCSKW.Name = "btnCheckCSKW";
             this.btnCheckCSKW.Size = new System.Drawing.Size(169, 40);
             this.btnCheckCSKW.TabIndex = 0;
@@ -226,13 +229,43 @@
             // 
             // btnUpdateSelectCSSyntax
             // 
-            this.btnUpdateSelectCSSyntax.Location = new System.Drawing.Point(474, 500);
+            this.btnUpdateSelectCSSyntax.Location = new System.Drawing.Point(474, 422);
             this.btnUpdateSelectCSSyntax.Name = "btnUpdateSelectCSSyntax";
             this.btnUpdateSelectCSSyntax.Size = new System.Drawing.Size(169, 40);
             this.btnUpdateSelectCSSyntax.TabIndex = 0;
             this.btnUpdateSelectCSSyntax.Text = "改框中表的前端字段类型";
             this.btnUpdateSelectCSSyntax.UseVisualStyleBackColor = true;
             this.btnUpdateSelectCSSyntax.Click += new System.EventHandler(this.btnUpdateSelectCSSyntax_Click);
+            // 
+            // btnCompileExcel
+            // 
+            this.btnCompileExcel.Location = new System.Drawing.Point(259, 639);
+            this.btnCompileExcel.Name = "btnCompileExcel";
+            this.btnCompileExcel.Size = new System.Drawing.Size(169, 40);
+            this.btnCompileExcel.TabIndex = 0;
+            this.btnCompileExcel.Text = "仅仅编译Excel";
+            this.btnCompileExcel.UseVisualStyleBackColor = true;
+            this.btnCompileExcel.Click += new System.EventHandler(this.btnCompileExcel_Click);
+            // 
+            // btnSqlite
+            // 
+            this.btnSqlite.Location = new System.Drawing.Point(474, 482);
+            this.btnSqlite.Name = "btnSqlite";
+            this.btnSqlite.Size = new System.Drawing.Size(169, 40);
+            this.btnSqlite.TabIndex = 0;
+            this.btnSqlite.Text = "测试Sqlite";
+            this.btnSqlite.UseVisualStyleBackColor = true;
+            this.btnSqlite.Click += new System.EventHandler(this.btnSqlite_Click);
+            // 
+            // btnUpdateDB
+            // 
+            this.btnUpdateDB.Location = new System.Drawing.Point(660, 482);
+            this.btnUpdateDB.Name = "btnUpdateDB";
+            this.btnUpdateDB.Size = new System.Drawing.Size(169, 40);
+            this.btnUpdateDB.TabIndex = 0;
+            this.btnUpdateDB.Text = "插入到Sqlite";
+            this.btnUpdateDB.UseVisualStyleBackColor = true;
+            this.btnUpdateDB.Click += new System.EventHandler(this.btnUpdateDB_Click);
             // 
             // MainForm
             // 
@@ -249,6 +282,8 @@
             this.Controls.Add(this.btnCheckCSKW);
             this.Controls.Add(this.btnCheckNameEmpty);
             this.Controls.Add(this.btnCheckNameRepet);
+            this.Controls.Add(this.btnUpdateDB);
+            this.Controls.Add(this.btnSqlite);
             this.Controls.Add(this.btnUpdateSelectCSSyntax);
             this.Controls.Add(this.btnUpdateCSSyntax);
             this.Controls.Add(this.label3);
@@ -256,6 +291,7 @@
             this.Controls.Add(this.tbFileDir);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbFileList);
+            this.Controls.Add(this.btnCompileExcel);
             this.Controls.Add(this.btnCompileAll);
             this.Controls.Add(this.btnCompileSelect);
             this.Name = "MainForm";
@@ -286,6 +322,9 @@
         private System.Windows.Forms.CheckBox cbSimpleRule;
         private System.Windows.Forms.Button btnCheckCSKW;
         private System.Windows.Forms.Button btnUpdateSelectCSSyntax;
+        private System.Windows.Forms.Button btnCompileExcel;
+        private System.Windows.Forms.Button btnSqlite;
+        private System.Windows.Forms.Button btnUpdateDB;
     }
 }
 

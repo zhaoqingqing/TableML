@@ -16,6 +16,7 @@ namespace TableCompilerConsole
     {
         public static void Main(string[] args)
         {
+            ConsoleHelper.WriteLine("回滚事务,Exception:{0}", "ex message");
             Console.WriteLine("WriteLine");
             ConsoleHelper.Log("Log");
             ConsoleHelper.Warning("Warning");

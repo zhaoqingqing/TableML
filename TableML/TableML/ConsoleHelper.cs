@@ -8,6 +8,15 @@ using System.Text;
 /// </summary>
 public class ConsoleHelper
 {
+    public static void WriteLine(string message, params object[] args)
+    {
+        Console.BackgroundColor = ConsoleColor.Black;
+        Console.ForegroundColor = ConsoleColor.White;
+        var msg = string.Concat("[", System.DateTime.Now.ToString("u"), "]", string.Format(message, args));
+        Console.WriteLine(msg);
+        Console.ResetColor();
+    }
+
     public static void Log(string message, params object[] args)
     {
         Console.BackgroundColor = ConsoleColor.Black;
@@ -38,6 +47,7 @@ public class ConsoleHelper
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(message, args);
         Console.ResetColor();
+        //TODO 打印出错堆栈
     }
 }
 
