@@ -78,7 +78,7 @@ namespace TableCompilerConsole
 
             string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
 
-            var results = batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, OutputDirectory, CodeFilePath,
+            var results = batchCompiler.CompileAll(srcDirectory, OutputDirectory, CodeFilePath,
                templateString, "AppSettings", ".tml", settingCodeIgnorePattern, true);
 
             Console.WriteLine("Done!");

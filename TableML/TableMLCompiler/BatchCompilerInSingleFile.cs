@@ -193,17 +193,19 @@ namespace TableML.Compiler
 
 
         /// <summary>
+        /// 编译所有的文件，并且每个文件生成一个代码文件
         /// Compile one directory 's all settings, and return behaivour results
         /// </summary>
-        /// <param name="sourcePath"></param>
-        /// <param name="compilePath"></param>
-        /// <param name="genCodeFilePath"></param>
-        /// <param name="changeExtension"></param>
+        /// <param name="sourcePath">需要的编译的Excel路径</param>
+        /// <param name="compilePath">编译后的tml存放路径</param>
+        /// <param name="genCodeFilePath">编译后的代码存放路径</param>
+        /// <param name="changeExtension">编译后的tml文件格式</param>
         /// <param name="forceAll">no diff! only force compile will generate code</param>
+        /// <param name="genCSCode">是否生成CSharp代码</param>
         /// <returns></returns>
-        public List<TableCompileResult> CompileTableMLAllInSingleFile(string sourcePath, string compilePath,
+        public List<TableCompileResult> CompileAll(string sourcePath, string compilePath,
             string genCodeFilePath, string genCodeTemplateString = null, string nameSpace = "AppSettings",
-            string changeExtension = ".tml", string settingCodeIgnorePattern = null, bool forceAll = false)
+            string changeExtension = ".tml", string settingCodeIgnorePattern = null, bool forceAll = false, bool genCSCode = true)
         {
             var results = new List<TableCompileResult>();
             var compileBaseDir = compilePath;
@@ -221,7 +223,6 @@ namespace TableML.Compiler
             try
             {
                 var allFiles = Directory.GetFiles(findDir, "*.*", SearchOption.AllDirectories);
-                var allFilesCount = allFiles.Length;
                 var nowFileIndex = -1; // 开头+1， 起始为0
                 foreach (var excelPath in allFiles)
                 {
@@ -277,14 +278,17 @@ namespace TableML.Compiler
                             Console.WriteLine("[SettingModule]Compile from {0} to {1}", excelPath, compileToPath);
                             Console.WriteLine(); //美观一下 打印空白行
                             var compileResult = compiler.Compile(excelPath, compileToPath, compileBaseDir, doCompile);
+                            if (genCSCode)
+                            {
+                                // 添加模板值
+                                results.Add(compileResult);
 
-                            // 添加模板值
-                            results.Add(compileResult);
-
-                            var compiledFileInfo = new FileInfo(compileToPath);
-                            compiledFileInfo.LastWriteTime = srcFileInfo.LastWriteTime;
-                            //仅仅是生成单个Class，只需要当前的CompileResult
-                            GenCodeFile(compileResult, genCodeTemplateString, genCodeFilePath, nameSpace, changeExtension, settingCodeIgnorePattern, forceAll);
+                                var compiledFileInfo = new FileInfo(compileToPath);
+                                compiledFileInfo.LastWriteTime = srcFileInfo.LastWriteTime;
+                                //仅仅是生成单个Class，只需要当前的CompileResult
+                                GenCodeFile(compileResult, genCodeTemplateString, genCodeFilePath, nameSpace,
+                                    changeExtension, settingCodeIgnorePattern, forceAll);
+                            }
 
                         }
                     }
@@ -301,9 +305,12 @@ namespace TableML.Compiler
                         Console.WriteLine("Copy File ..." + string.Format("{0} -> {1}", excelPath, compileToPath));
                     }
                 }
-
-                //生成Manager class
-                GenManagerClass(results, DefaultTemplate.GenManagerCodeTemplate, genCodeFilePath, nameSpace, changeExtension, settingCodeIgnorePattern, forceAll);
+                if (genCSCode)
+                {
+                    //生成Manager class
+                    GenManagerClass(results, DefaultTemplate.GenManagerCodeTemplate, genCodeFilePath, nameSpace,
+                        changeExtension, settingCodeIgnorePattern, forceAll);
+                }
             }
             finally
             {

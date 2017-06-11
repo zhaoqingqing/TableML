@@ -26,10 +26,18 @@ namespace TableMLGUI
 
         public string NameSpace = "AppSettings";
 
+        /// <summary>
+        /// 简单三行格式文件
+        /// </summary>
         public bool IsSimpleRule
         {
             get { return cbSimpleRule.Checked; }
         }
+        public bool GenCSCode
+        {
+            get { return cbGenCS.Checked; }
+        }
+
         /// <summary>
         /// 框中的文件列表
         /// </summary>
@@ -61,7 +69,7 @@ namespace TableMLGUI
             var sqlDBPath = ConfigurationManager.AppSettings.Get("DBPath");
             if (!string.IsNullOrEmpty(sqlDBPath))
             {
-               var sqlDataPath = useAbsolutePath? sqlDBPath : Path.GetFullPath(Application.StartupPath + sqlDBPath);
+                var sqlDataPath = useAbsolutePath ? sqlDBPath : Path.GetFullPath(Application.StartupPath + sqlDBPath);
                 SQLiteHelper.Init(sqlDataPath);
             }
 
@@ -172,6 +180,7 @@ namespace TableMLGUI
                 var ext = Path.GetExtension(filePath).Trim().ToLower();
                 if (ext == ".tsv" || IsSimpleRule)
                 {
+                    //如果是tsv格式，即是已经编译好的文件
                     savePath = GenTmlPath + "\\" + Path.GetFileNameWithoutExtension(filePath) + TmlExtensions;
                 }
                 else
@@ -188,7 +197,10 @@ namespace TableMLGUI
                 //NOTE 替换成相对路径(保证最后只有文件名)
                 string repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName + "\\";
                 compileResult.TabFileRelativePath = compileResult.TabFileRelativePath.Replace(repStr, "");
-                batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
+                if (GenCSCode)
+                {
+                    batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
+                }
 
                 if (compileResult != null)
                 {
@@ -215,8 +227,8 @@ namespace TableMLGUI
 
             string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
 
-            var results = batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, GenTmlPath, GenCodePath,
-               templateString, "AppSettings", TmlExtensions, null, !string.IsNullOrEmpty(GenCodePath));
+            var results = batchCompiler.CompileAll(srcDirectory, GenTmlPath, GenCodePath,
+               templateString, NameSpace, TmlExtensions, null, !string.IsNullOrEmpty(GenCodePath),GenCSCode);
             if (msgResult) { ShowCompileResult(results.Count); }
         }
 

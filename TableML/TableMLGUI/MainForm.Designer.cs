@@ -50,6 +50,7 @@
             this.btnCompileExcel = new System.Windows.Forms.Button();
             this.btnSqlite = new System.Windows.Forms.Button();
             this.btnUpdateDB = new System.Windows.Forms.Button();
+            this.cbGenCS = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -268,11 +269,22 @@
             this.btnUpdateDB.UseVisualStyleBackColor = true;
             this.btnUpdateDB.Click += new System.EventHandler(this.btnUpdateDB_Click);
             // 
+            // cbGenCS
+            // 
+            this.cbGenCS.AutoSize = true;
+            this.cbGenCS.Location = new System.Drawing.Point(342, 524);
+            this.cbGenCS.Name = "cbGenCS";
+            this.cbGenCS.Size = new System.Drawing.Size(108, 16);
+            this.cbGenCS.TabIndex = 6;
+            this.cbGenCS.Text = "生成CSharp代码";
+            this.cbGenCS.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 728);
+            this.Controls.Add(this.cbGenCS);
             this.Controls.Add(this.cbSimpleRule);
             this.Controls.Add(this.txtTmlPath);
             this.Controls.Add(this.btnOpenTmlDir);
@@ -326,6 +338,7 @@
         private System.Windows.Forms.Button btnCompileExcel;
         private System.Windows.Forms.Button btnSqlite;
         private System.Windows.Forms.Button btnUpdateDB;
+        private System.Windows.Forms.CheckBox cbGenCS;
     }
 }
 
