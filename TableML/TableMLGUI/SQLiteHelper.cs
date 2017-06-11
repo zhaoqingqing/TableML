@@ -50,14 +50,22 @@ public partial class SQLiteHelper
         return false;
     }
 
-    public static void UpdateDB(string srcPath)
+    /// <summary>
+    /// 更新数据库
+    /// </summary>
+    /// <param name="fileList">文件列表[完整路径]</param>
+    public static void UpdateDB(string[] fileList)
     {
-        if (Directory.Exists(srcPath) == false)
+        if (fileList == null)
         {
-            ConsoleHelper.Error("{0} 目录不存在!", srcPath);
+            ConsoleHelper.Error("文件列表不能为空!");
             return;
         }
-
+        if (fileList.Length < 1)
+        {
+            ConsoleHelper.Warning("文件列表为空!");
+            return;
+        }
 
         if (File.Exists(dbfile) == false)
         {
@@ -85,19 +93,20 @@ public partial class SQLiteHelper
                 DbTransaction trans = conn.BeginTransaction();
                 try
                 {
-                    var fileList = FileHelper.GetAllFiles(srcPath);
                     List<string> failList = new List<string>();
                     List<string> successList = new List<string>();
-                    foreach (FileInfo fileInfo in fileList)
+                    foreach (var filePath in fileList)
                     {
-                        bool success = UpdateTable(fileInfo.FullName, cmd);
+                        bool success = UpdateTable(filePath, cmd);
+                        var fileName = Path.GetFileName(filePath);
                         if (!success)
                         {
-                            failList.Add(fileInfo.Name);
+
+                            failList.Add(fileName);
                         }
                         else
                         {
-                            successList.Add(fileInfo.Name);
+                            successList.Add(fileName);
                         }
                     }
 
@@ -108,7 +117,10 @@ public partial class SQLiteHelper
                     {
                         ConsoleHelper.Confirmation("{0}", fileName);
                     }
-                    ConsoleHelper.Error("更新失败{0}张表", failList.Count);
+                    if (failList.Count > 0)
+                    {   //不打印 没有失败
+                        ConsoleHelper.Error("更新失败{0}张表", failList.Count);
+                    }
                     foreach (var fileName in failList)
                     {
                         ConsoleHelper.Error("{0}", fileName);
@@ -131,6 +143,28 @@ public partial class SQLiteHelper
                 ConsoleHelper.Error("{0} 连接失败！", dbfile);
             }
         }
+    }
+
+    /// <summary>
+    /// 更新数据库
+    /// </summary>
+    /// <param name="srcPath">文件目录</param>
+    public static void UpdateDB(string srcPath)
+    {
+        if (Directory.Exists(srcPath) == false)
+        {
+            ConsoleHelper.Error("{0} 目录不存在!", srcPath);
+            return;
+        }
+
+        var fileList = FileHelper.GetAllFiles(srcPath);
+        List<string> pathList = new List<string>();
+
+        foreach (FileInfo fileInfo in fileList)
+        {
+            pathList.Add(fileInfo.FullName);
+        }
+        UpdateDB(pathList.ToArray());
     }
 
 
@@ -181,7 +215,7 @@ public partial class SQLiteHelper
         sb.AppendFormat("CREATE TABLE [{0}] (", fileName);
         for (int i = 0; i < columnNames.Length; i++)
         {
-            //DROP是SQL关键字，TODO：需要加上所有关键字限定。
+            //DROP是SQL关键字，TODO：需要加上所有关键字限定
             if (CheckIsSqlKeyword(columnNames[i]))
             {
                 //NOTE 字段名可以包含sql关键字
@@ -201,7 +235,7 @@ public partial class SQLiteHelper
             }
             else
             {
-                ConsoleHelper.Error("index={0} ,columnTypes索引超出", i);
+                ConsoleHelper.Error("index={0} ,超出索引columnTypes.Length={1}", i, columnTypes.Length);
             }
         }
         sb.Remove(sb.Length - 1, 1);

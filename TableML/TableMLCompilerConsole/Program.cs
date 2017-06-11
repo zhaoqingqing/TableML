@@ -37,7 +37,7 @@ namespace TableCompilerConsole
     }
 
     /// <summary>
-    /// 此类生成的Exe可以接收命令行参数
+    /// 接收命令行参数,进行编译excel
     /// 修改生成的Exe名(程序集)，不为TableML，因为同解决方案下有同名的类库，导致调试时无法获取局部变量
     /// </summary>
     class TableCompilerConsole

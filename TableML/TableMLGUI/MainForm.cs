@@ -111,6 +111,9 @@ namespace TableMLGUI
             this.tbFileDir.Text = dragDir;
         }
 
+        /// <summary>
+        /// 框中的文件列表
+        /// </summary>
         public string[] fileList
         {
             get
@@ -120,6 +123,25 @@ namespace TableMLGUI
         }
 
         private void btnCompileSelect_Click(object sender, EventArgs e)
+        {
+            List<string> tmlList = new List<string>();
+            CompileSelect(ref tmlList);
+            //传递编译后的文件列表
+            if (tmlList != null)
+            {
+                SQLiteHelper.UpdateDB(tmlList.ToArray());
+            }
+            else
+            {
+                ConsoleHelper.Error("编译选中的Excel失败,获取编译后文件列表为空！");
+            }
+        }
+
+        /// <summary>
+        /// 编译选中的excel
+        /// </summary>
+        /// <param name="msgResult"></param>
+        private void CompileSelect(ref List<string> tmlList, bool msgResult = false)
         {
             //编译选定的表
             Console.Clear();
@@ -144,6 +166,7 @@ namespace TableMLGUI
                 }
                 //编译表时，生成代码
                 TableCompileResult compileResult = compiler.Compile(filePath, savePath);
+                tmlList.Add(Path.GetFullPath(savePath));
                 Console.WriteLine("编译结果:{0}---->{1}", filePath, savePath);
                 Console.WriteLine();
                 //生成代码
@@ -159,9 +182,14 @@ namespace TableMLGUI
                 }
             }
 
-            ShowCompileResult(comileCount);
+            if (msgResult) { ShowCompileResult(comileCount); }
         }
-        private void CompileAllExcel()
+
+        /// <summary>
+        /// 编译所有的excel
+        /// </summary>
+        /// <param name="msgResult">是否弹出编译结果</param>
+        private void CompileAllExcel(bool msgResult = false)
         {
             //编译整个目录
             var startPath = Environment.CurrentDirectory;
@@ -175,7 +203,7 @@ namespace TableMLGUI
 
             var results = batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, GenTmlPath, GenCodePath,
                templateString, "AppSettings", ".k", null, !string.IsNullOrEmpty(GenCodePath));
-            ShowCompileResult(results.Count);
+            if (msgResult) { ShowCompileResult(results.Count); }
         }
 
         private void btnCompileAll_Click(object sender, EventArgs e)

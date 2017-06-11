@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define LOCAL_TEST
+#if LOCAL_TEST
+using System;
 using System.Collections.Generic;
 using System.IO;
 using CommandLine;
@@ -144,3 +146,4 @@ namespace TableCompilerConsole
 
     }
 }
+#endif
