@@ -51,6 +51,7 @@
             this.btnSqlite = new System.Windows.Forms.Button();
             this.btnUpdateDB = new System.Windows.Forms.Button();
             this.cbGenCS = new System.Windows.Forms.CheckBox();
+            this.btnOpenDB = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -127,7 +128,7 @@
             // 
             // btnUpdateCSSyntax
             // 
-            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(660, 422);
+            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(660, 361);
             this.btnUpdateCSSyntax.Name = "btnUpdateCSSyntax";
             this.btnUpdateCSSyntax.Size = new System.Drawing.Size(169, 40);
             this.btnUpdateCSSyntax.TabIndex = 0;
@@ -171,7 +172,7 @@
             // 
             // btnCheckNameRepet
             // 
-            this.btnCheckNameRepet.Location = new System.Drawing.Point(660, 240);
+            this.btnCheckNameRepet.Location = new System.Drawing.Point(474, 246);
             this.btnCheckNameRepet.Name = "btnCheckNameRepet";
             this.btnCheckNameRepet.Size = new System.Drawing.Size(169, 40);
             this.btnCheckNameRepet.TabIndex = 0;
@@ -181,21 +182,21 @@
             // 
             // btnOpenCodeDir
             // 
-            this.btnOpenCodeDir.Location = new System.Drawing.Point(474, 365);
+            this.btnOpenCodeDir.Location = new System.Drawing.Point(474, 422);
             this.btnOpenCodeDir.Name = "btnOpenCodeDir";
-            this.btnOpenCodeDir.Size = new System.Drawing.Size(169, 40);
+            this.btnOpenCodeDir.Size = new System.Drawing.Size(110, 40);
             this.btnOpenCodeDir.TabIndex = 0;
-            this.btnOpenCodeDir.Text = "打开生成的代码目录";
+            this.btnOpenCodeDir.Text = "打开生成的代码";
             this.btnOpenCodeDir.UseVisualStyleBackColor = true;
             this.btnOpenCodeDir.Click += new System.EventHandler(this.btnOpenCodeDir_Click);
             // 
             // btnOpenTmlDir
             // 
-            this.btnOpenTmlDir.Location = new System.Drawing.Point(660, 365);
+            this.btnOpenTmlDir.Location = new System.Drawing.Point(603, 422);
             this.btnOpenTmlDir.Name = "btnOpenTmlDir";
-            this.btnOpenTmlDir.Size = new System.Drawing.Size(169, 40);
+            this.btnOpenTmlDir.Size = new System.Drawing.Size(110, 40);
             this.btnOpenTmlDir.TabIndex = 0;
-            this.btnOpenTmlDir.Text = "打开编译后的表目录";
+            this.btnOpenTmlDir.Text = "打开编译后的表";
             this.btnOpenTmlDir.UseVisualStyleBackColor = true;
             this.btnOpenTmlDir.Click += new System.EventHandler(this.btnOpenTmlDir_Click);
             // 
@@ -231,7 +232,7 @@
             // 
             // btnUpdateSelectCSSyntax
             // 
-            this.btnUpdateSelectCSSyntax.Location = new System.Drawing.Point(474, 422);
+            this.btnUpdateSelectCSSyntax.Location = new System.Drawing.Point(474, 361);
             this.btnUpdateSelectCSSyntax.Name = "btnUpdateSelectCSSyntax";
             this.btnUpdateSelectCSSyntax.Size = new System.Drawing.Size(169, 40);
             this.btnUpdateSelectCSSyntax.TabIndex = 0;
@@ -255,7 +256,7 @@
             this.btnSqlite.Name = "btnSqlite";
             this.btnSqlite.Size = new System.Drawing.Size(169, 40);
             this.btnSqlite.TabIndex = 0;
-            this.btnSqlite.Text = "测试Sqlite";
+            this.btnSqlite.Text = "插入十万条测试数据";
             this.btnSqlite.UseVisualStyleBackColor = true;
             this.btnSqlite.Click += new System.EventHandler(this.btnSqlite_Click);
             // 
@@ -279,6 +280,16 @@
             this.cbGenCS.Text = "生成CSharp代码";
             this.cbGenCS.UseVisualStyleBackColor = true;
             // 
+            // btnOpenDB
+            // 
+            this.btnOpenDB.Location = new System.Drawing.Point(732, 422);
+            this.btnOpenDB.Name = "btnOpenDB";
+            this.btnOpenDB.Size = new System.Drawing.Size(140, 40);
+            this.btnOpenDB.TabIndex = 0;
+            this.btnOpenDB.Text = "打开SQLite的data.db";
+            this.btnOpenDB.UseVisualStyleBackColor = true;
+            this.btnOpenDB.Click += new System.EventHandler(this.btnOpenDB_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -287,6 +298,7 @@
             this.Controls.Add(this.cbGenCS);
             this.Controls.Add(this.cbSimpleRule);
             this.Controls.Add(this.txtTmlPath);
+            this.Controls.Add(this.btnOpenDB);
             this.Controls.Add(this.btnOpenTmlDir);
             this.Controls.Add(this.btnOpenCodeDir);
             this.Controls.Add(this.btnSyncTml);
@@ -339,6 +351,7 @@
         private System.Windows.Forms.Button btnSqlite;
         private System.Windows.Forms.Button btnUpdateDB;
         private System.Windows.Forms.CheckBox cbGenCS;
+        private System.Windows.Forms.Button btnOpenDB;
     }
 }
 

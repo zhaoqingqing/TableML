@@ -16,7 +16,8 @@ public partial class SQLiteHelper
             // 创建数据库文件
             SQLiteConnection.CreateFile(dbfile);
         }
-
+        int maxCount = 100000;
+        string tabName = "TestTable";
         DbProviderFactory factory = SQLiteFactory.Instance;
         using (DbConnection conn = factory.CreateConnection())
         {
@@ -27,7 +28,7 @@ public partial class SQLiteHelper
                 conn.Open();
 
                 // 创建数据表
-                string sql = "create table [test1] ([id] INTEGER PRIMARY KEY, [s] TEXT COLLATE NOCASE)";
+                string sql = string.Format("create table [{0}] ([id] INTEGER PRIMARY KEY, [value] TEXT COLLATE NOCASE)", tabName);
                 DbCommand cmd = conn.CreateCommand();
                 cmd.Connection = conn;
                 cmd.CommandText = sql;
@@ -46,16 +47,16 @@ public partial class SQLiteHelper
                 {
 
                     // 连续插入1000条记录
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < maxCount; i++)
                     {
-                        cmd.CommandText = "insert into [test1] ([s]) values (?)";
+                        cmd.CommandText = string.Format("insert into [{0}] ([value]) values (?)", tabName);
                         cmd.Parameters[0].Value = i.ToString();
-
                         cmd.ExecuteNonQuery();
                     }
 
                     trans.Commit();
                     ConsoleHelper.WriteLine("提交事务");
+                    ConsoleHelper.Confirmation("创建表{0},并插入{1}条测试数据", tabName, maxCount);
                 }
                 catch (Exception ex)
                 {

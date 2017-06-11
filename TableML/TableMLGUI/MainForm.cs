@@ -25,6 +25,7 @@ namespace TableMLGUI
         public string TmlExtensions = ".tsv";
 
         public string NameSpace = "AppSettings";
+        private string sqlDataPath;
 
         /// <summary>
         /// 简单三行格式文件
@@ -55,6 +56,7 @@ namespace TableMLGUI
             //tbFileList.Text = @"e:\3dsn\plan\005ConfigTable\Src\NPC配置表.xlsx";
         }
 
+
         public void Init()
         {
             string useAbsolutePathStr = ConfigurationManager.AppSettings.Get("UseAbsolutePath").Trim().ToLower();
@@ -69,7 +71,7 @@ namespace TableMLGUI
             var sqlDBPath = ConfigurationManager.AppSettings.Get("DBPath");
             if (!string.IsNullOrEmpty(sqlDBPath))
             {
-                var sqlDataPath = useAbsolutePath ? sqlDBPath : Path.GetFullPath(Application.StartupPath + sqlDBPath);
+                sqlDataPath = useAbsolutePath ? sqlDBPath : Path.GetFullPath(Application.StartupPath + sqlDBPath);
                 SQLiteHelper.Init(sqlDataPath);
             }
 
@@ -171,7 +173,7 @@ namespace TableMLGUI
             var startPath = Environment.CurrentDirectory;
             Console.WriteLine("当前目录：{0}", startPath);
             var compiler = new Compiler();
-
+            Dictionary<string, string> dst2src = new Dictionary<string, string>();
             int comileCount = 0;
             foreach (var filePath in fileList)
             {
@@ -190,8 +192,14 @@ namespace TableMLGUI
                 //编译表时，生成代码
                 TableCompileResult compileResult = compiler.Compile(filePath, savePath);
                 tmlList.Add(Path.GetFullPath(savePath));
+                var dstFileName = Path.GetFileNameWithoutExtension(savePath);
+                if (dst2src.ContainsKey(dstFileName) == false)
+                {
+                    dst2src.Add(dstFileName, Path.GetFileName(filePath));
+                }
                 Console.WriteLine("编译结果:{0}---->{1}", filePath, savePath);
                 Console.WriteLine();
+
                 //生成代码
                 BatchCompiler batchCompiler = new BatchCompiler();
                 //NOTE 替换成相对路径(保证最后只有文件名)
@@ -207,7 +215,7 @@ namespace TableMLGUI
                     comileCount += 1;
                 }
             }
-
+            BatchCompiler.SaveCompileResult(dst2src);
             if (msgResult) { ShowCompileResult(comileCount); }
         }
 
@@ -228,7 +236,7 @@ namespace TableMLGUI
             string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
 
             var results = batchCompiler.CompileAll(srcDirectory, GenTmlPath, GenCodePath,
-               templateString, NameSpace, TmlExtensions, null, !string.IsNullOrEmpty(GenCodePath),GenCSCode);
+               templateString, NameSpace, TmlExtensions, null, !string.IsNullOrEmpty(GenCodePath), GenCSCode);
             if (msgResult) { ShowCompileResult(results.Count); }
         }
 
@@ -340,6 +348,12 @@ namespace TableMLGUI
         {
             CompileAllExcel();
             SQLiteHelper.UpdateDB(GenTmlPath);
+        }
+
+        private void btnOpenDB_Click(object sender, EventArgs e)
+        {
+            var dirPath = Path.GetDirectoryName(sqlDataPath);
+            FileHelper.OpenFolder(dirPath);
         }
     }
 }

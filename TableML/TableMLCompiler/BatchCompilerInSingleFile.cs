@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using DotLiquid;
 using NPOI.Util;
@@ -222,6 +223,7 @@ namespace TableML.Compiler
             var findDir = sourcePath;
             try
             {
+                Dictionary<string, string> dst2src = new Dictionary<string, string>();
                 var allFiles = Directory.GetFiles(findDir, "*.*", SearchOption.AllDirectories);
                 var nowFileIndex = -1; // 开头+1， 起始为0
                 foreach (var excelPath in allFiles)
@@ -257,7 +259,11 @@ namespace TableML.Compiler
                         var compileToPath = string.Format("{0}/{1}", compileBaseDir,
                             Path.ChangeExtension(relativePath, changeExtension));
                         var srcFileInfo = new FileInfo(excelPath);
-
+                        var dstFileName = Path.GetFileNameWithoutExtension(compileToPath);
+                        if (dst2src.ContainsKey(dstFileName) == false)
+                        {
+                            dst2src.Add(dstFileName, Path.GetFileName(excelPath));
+                        }
                         Console.WriteLine("Compiling Excel to Tab..." +
                                           string.Format("{0} -> {1}", excelPath, compileToPath));
 
@@ -311,12 +317,40 @@ namespace TableML.Compiler
                     GenManagerClass(results, DefaultTemplate.GenManagerCodeTemplate, genCodeFilePath, nameSpace,
                         changeExtension, settingCodeIgnorePattern, forceAll);
                 }
+                SaveCompileResult(dst2src);
             }
             finally
             {
                 //EditorUtility.ClearProgressBar();
             }
             return results;
+        }
+
+        /// <summary>
+        /// NOTE 目前我们的源始excel文件后和编译后的不一样，把结果输出到文件作个记录
+        /// </summary>
+        /// <param name="dst2Src"></param>
+        public static void SaveCompileResult(Dictionary<string, string> dst2Src)
+        {
+            if (dst2Src == null)
+            {
+                return;
+            }
+            var savePath = System.Environment.CurrentDirectory + "/" + "compile_result.csv";
+            if (File.Exists(savePath) )
+            {
+                File.Delete(savePath);
+            }
+ 
+            using (var sw = File.CreateText(savePath))
+            {
+                sw.WriteLine("[dst]目标表名,[src]源始Excel文件名");
+                foreach (KeyValuePair<string, string> kv in dst2Src)
+                {
+                    sw.WriteLine("{0},{1}", kv.Key, kv.Value);
+                }
+            }
+            ConsoleHelper.ConfirmationWithBlankLine("共编译{0}表，编译结果保存在：{1}", dst2Src.Count, savePath);
         }
 
 
