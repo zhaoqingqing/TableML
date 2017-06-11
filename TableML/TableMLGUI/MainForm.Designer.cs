@@ -87,17 +87,18 @@
             // 
             this.tbFileDir.AllowDrop = true;
             this.tbFileDir.Location = new System.Drawing.Point(12, 596);
+            this.tbFileDir.Multiline = true;
             this.tbFileDir.Name = "tbFileDir";
-            this.tbFileDir.Size = new System.Drawing.Size(438, 21);
+            this.tbFileDir.Size = new System.Drawing.Size(438, 30);
             this.tbFileDir.TabIndex = 3;
             this.tbFileDir.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragDrop);
             this.tbFileDir.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragEnter);
             // 
             // btnCompileAll
             // 
-            this.btnCompileAll.Location = new System.Drawing.Point(26, 639);
+            this.btnCompileAll.Location = new System.Drawing.Point(12, 639);
             this.btnCompileAll.Name = "btnCompileAll";
-            this.btnCompileAll.Size = new System.Drawing.Size(169, 40);
+            this.btnCompileAll.Size = new System.Drawing.Size(140, 40);
             this.btnCompileAll.TabIndex = 0;
             this.btnCompileAll.Text = "编译并插入到SQLite中";
             this.btnCompileAll.UseVisualStyleBackColor = true;
@@ -239,11 +240,11 @@
             // 
             // btnCompileExcel
             // 
-            this.btnCompileExcel.Location = new System.Drawing.Point(259, 639);
+            this.btnCompileExcel.Location = new System.Drawing.Point(170, 639);
             this.btnCompileExcel.Name = "btnCompileExcel";
-            this.btnCompileExcel.Size = new System.Drawing.Size(169, 40);
+            this.btnCompileExcel.Size = new System.Drawing.Size(140, 40);
             this.btnCompileExcel.TabIndex = 0;
-            this.btnCompileExcel.Text = "仅仅编译Excel";
+            this.btnCompileExcel.Text = "仅编译Excel";
             this.btnCompileExcel.UseVisualStyleBackColor = true;
             this.btnCompileExcel.Click += new System.EventHandler(this.btnCompileExcel_Click);
             // 
@@ -259,11 +260,11 @@
             // 
             // btnUpdateDB
             // 
-            this.btnUpdateDB.Location = new System.Drawing.Point(660, 482);
+            this.btnUpdateDB.Location = new System.Drawing.Point(322, 639);
             this.btnUpdateDB.Name = "btnUpdateDB";
-            this.btnUpdateDB.Size = new System.Drawing.Size(169, 40);
+            this.btnUpdateDB.Size = new System.Drawing.Size(140, 40);
             this.btnUpdateDB.TabIndex = 0;
-            this.btnUpdateDB.Text = "插入到Sqlite";
+            this.btnUpdateDB.Text = "仅插入到Sqlite";
             this.btnUpdateDB.UseVisualStyleBackColor = true;
             this.btnUpdateDB.Click += new System.EventHandler(this.btnUpdateDB_Click);
             // 

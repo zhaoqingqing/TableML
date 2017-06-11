@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using TableML.Compiler;
@@ -23,7 +22,7 @@ namespace TableMLGUI
         /// <summary>
         /// tml文件后缀
         /// </summary>
-        public string TmlExtensions = ".k";
+        public string TmlExtensions = ".tsv";
 
         public string NameSpace = "AppSettings";
 
@@ -31,7 +30,16 @@ namespace TableMLGUI
         {
             get { return cbSimpleRule.Checked; }
         }
-
+        /// <summary>
+        /// 框中的文件列表
+        /// </summary>
+        public string[] fileList
+        {
+            get
+            {
+                return tbFileList.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            }
+        }
         public MainForm()
         {
             InitializeComponent();
@@ -48,6 +56,10 @@ namespace TableMLGUI
             var srcExcelPath = ConfigurationManager.AppSettings.Get("srcExcelPath");
             var excelSrc = useAbsolutePath ? srcExcelPath : Path.GetFullPath(Application.StartupPath + srcExcelPath);
             this.tbFileDir.Text = excelSrc;
+           
+            //tml文件格式
+            var tmlFileEx = ConfigurationManager.AppSettings.Get("TmlExtensions");
+            if (!string.IsNullOrEmpty(tmlFileEx)) TmlExtensions = tmlFileEx;
 
             //tml路径
             var genTmlPath = ConfigurationManager.AppSettings.Get("GenTmlPath");
@@ -68,6 +80,7 @@ namespace TableMLGUI
             this.txtTmlPath.Text = dstClientTml;
         }
 
+        #region  文件拖拽到列表
         private void FileField_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -110,17 +123,7 @@ namespace TableMLGUI
             }
             this.tbFileDir.Text = dragDir;
         }
-
-        /// <summary>
-        /// 框中的文件列表
-        /// </summary>
-        public string[] fileList
-        {
-            get
-            {
-                return tbFileList.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            }
-        }
+        #endregion
 
         private void btnCompileSelect_Click(object sender, EventArgs e)
         {
@@ -189,7 +192,7 @@ namespace TableMLGUI
         /// 编译所有的excel
         /// </summary>
         /// <param name="msgResult">是否弹出编译结果</param>
-        private void CompileAllExcel(bool msgResult = false)
+        public void CompileAllExcel(bool msgResult = false)
         {
             //编译整个目录
             var startPath = Environment.CurrentDirectory;
@@ -205,6 +208,7 @@ namespace TableMLGUI
                templateString, "AppSettings", ".k", null, !string.IsNullOrEmpty(GenCodePath));
             if (msgResult) { ShowCompileResult(results.Count); }
         }
+
 
         private void btnCompileAll_Click(object sender, EventArgs e)
         {
@@ -293,7 +297,9 @@ namespace TableMLGUI
 
         private void btnSqlite_Click(object sender, EventArgs e)
         {
-            SQLiteHelper.TestInsert();
+            this.Hide();
+            
+//            SQLiteHelper.TestInsert();
         }
 
         private void btnUpdateDB_Click(object sender, EventArgs e)
@@ -304,6 +310,15 @@ namespace TableMLGUI
         private void btnCompileExcel_Click(object sender, EventArgs e)
         {
             CompileAllExcel();
+        }
+
+        /// <summary>
+        /// 命令行模式编译并插入到sqlite中
+        /// </summary>
+        public void CMDCompile()
+        {
+            CompileAllExcel();
+            SQLiteHelper.UpdateDB(GenTmlPath);
         }
     }
 }
