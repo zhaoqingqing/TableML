@@ -226,12 +226,12 @@ namespace TableMLGUI
 
         private void btnOpenCodeDir_Click(object sender, EventArgs e)
         {
-            Process.Start(GenCodePath);
+            FileHelper.OpenFolder(GenCodePath);
         }
 
         private void btnOpenTmlDir_Click(object sender, EventArgs e)
         {
-            Process.Start(GenTmlPath);
+            FileHelper.OpenFolder(GenTmlPath);
         }
 
         private void btnCheckNameEmpty_Click(object sender, EventArgs e)

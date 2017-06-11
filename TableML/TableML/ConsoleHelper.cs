@@ -25,6 +25,12 @@ public class ConsoleHelper
         Console.ResetColor();
     }
 
+    public static void ConfirmationWithBlankLine(string message, params object[] args)
+    {
+        Confirmation(message,args);
+        Console.WriteLine();
+    }
+
     public static void Confirmation(string message, params object[] args)
     {
         Console.BackgroundColor = ConsoleColor.Black;
