@@ -26,16 +26,22 @@ public partial class SQLiteHelper
             {
                 conn.ConnectionString = string.Format("Data Source={0}", dbfile);
                 conn.Open();
+                DbCommand dbCmd = conn.CreateCommand();
+
+                //执行创建表，表名如果有数字，需要加[]
+                var tableSql = string.Format("DROP TABLE IF EXISTS [{0}]", tabName);
+                ConsoleHelper.ConfirmationWithBlankLine("创建表sql:{0}", tableSql);
+                dbCmd.CommandText = tableSql;
+                dbCmd.ExecuteNonQuery();
 
                 // 创建数据表
                 string sql = string.Format("create table [{0}] ([id] INTEGER PRIMARY KEY, [value] TEXT COLLATE NOCASE)", tabName);
-                DbCommand cmd = conn.CreateCommand();
-                cmd.Connection = conn;
-                cmd.CommandText = sql;
-                cmd.ExecuteNonQuery();
+                dbCmd.Connection = conn;
+                dbCmd.CommandText = sql;
+                dbCmd.ExecuteNonQuery();
 
                 // 添加参数
-                cmd.Parameters.Add(cmd.CreateParameter());
+                dbCmd.Parameters.Add(dbCmd.CreateParameter());
 
                 // 开始计时
                 Stopwatch watch = new Stopwatch();
@@ -45,13 +51,12 @@ public partial class SQLiteHelper
                 DbTransaction trans = conn.BeginTransaction();
                 try
                 {
-
-                    // 连续插入1000条记录
+                    // 连续插入xxx条记录
                     for (int i = 0; i < maxCount; i++)
                     {
-                        cmd.CommandText = string.Format("insert into [{0}] ([value]) values (?)", tabName);
-                        cmd.Parameters[0].Value = i.ToString();
-                        cmd.ExecuteNonQuery();
+                        dbCmd.CommandText = string.Format("insert into [{0}] ([value]) values (?)", tabName);
+                        dbCmd.Parameters[0].Value = i.ToString();
+                        dbCmd.ExecuteNonQuery();
                     }
 
                     trans.Commit();
