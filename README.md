@@ -110,6 +110,18 @@ batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, OutputDirectory, CodeF
 
 先读取Excel的行，再读取列，把数据写入到tml文件中。
 
+## 内存溢出
+
+如果在使用TableMLGUI时，特别占用内存，建议把excel另存为csv格式，或者减少单个excel文件的大小，以减少内存占用。
+
+## For SQLite
+
+TableMLGUI提供一键将excel数据插入到sqlite中。
+
+采用sql的事务机制，在插入大量数据环境下，耗时更短。
+
+同时在控制台输出sql语句方便调试查错。
+
 
 
 # 自动读取配置代码生成
