@@ -2,9 +2,9 @@
 
 namespace TableMLGUI
 {
-    public partial class OtherForm : Form
+    public partial class HelpForm : Form
     {
-        public OtherForm()
+        public HelpForm()
         {
             InitializeComponent();
         }

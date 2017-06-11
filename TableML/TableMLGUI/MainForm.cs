@@ -49,17 +49,28 @@ namespace TableMLGUI
 
         public void Init()
         {
-            string useAbsolutePathStr = ConfigurationManager.AppSettings.Get("UseAbsolutePath").ToLower();
+            string useAbsolutePathStr = ConfigurationManager.AppSettings.Get("UseAbsolutePath").Trim().ToLower();
             bool useAbsolutePath = useAbsolutePathStr == "true" || useAbsolutePathStr == "1";
 
             //源始excel路径
             var srcExcelPath = ConfigurationManager.AppSettings.Get("srcExcelPath");
             var excelSrc = useAbsolutePath ? srcExcelPath : Path.GetFullPath(Application.StartupPath + srcExcelPath);
             this.tbFileDir.Text = excelSrc;
-           
+
+            //sql的database文件存放路径
+            var sqlDBPath = ConfigurationManager.AppSettings.Get("DBPath");
+            if (!string.IsNullOrEmpty(sqlDBPath))
+            {
+               var sqlDataPath = useAbsolutePath? sqlDBPath : Path.GetFullPath(Application.StartupPath + sqlDBPath);
+                SQLiteHelper.Init(sqlDataPath);
+            }
+
             //tml文件格式
             var tmlFileEx = ConfigurationManager.AppSettings.Get("TmlExtensions");
-            if (!string.IsNullOrEmpty(tmlFileEx)) TmlExtensions = tmlFileEx;
+            if (!string.IsNullOrEmpty(tmlFileEx))
+            {
+                TmlExtensions = tmlFileEx;
+            }
 
             //tml路径
             var genTmlPath = ConfigurationManager.AppSettings.Get("GenTmlPath");
@@ -205,7 +216,7 @@ namespace TableMLGUI
             string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
 
             var results = batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, GenTmlPath, GenCodePath,
-               templateString, "AppSettings", ".k", null, !string.IsNullOrEmpty(GenCodePath));
+               templateString, "AppSettings", TmlExtensions, null, !string.IsNullOrEmpty(GenCodePath));
             if (msgResult) { ShowCompileResult(results.Count); }
         }
 
@@ -297,9 +308,7 @@ namespace TableMLGUI
 
         private void btnSqlite_Click(object sender, EventArgs e)
         {
-            this.Hide();
-            
-//            SQLiteHelper.TestInsert();
+            SQLiteHelper.TestInsert();
         }
 
         private void btnUpdateDB_Click(object sender, EventArgs e)

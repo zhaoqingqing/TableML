@@ -1,6 +1,6 @@
 ﻿namespace TableMLGUI
 {
-    partial class OtherForm
+    partial class HelpForm
     {
         /// <summary>
         /// Required designer variable.

@@ -35,6 +35,11 @@ public partial class SQLiteHelper
 
 
 
+    public static void Init(string dbPath)
+    {
+        dbfile = dbPath;
+    }
+
     public static bool CheckIsSqlKeyword(string key)
     {
         foreach (var v in SQL_KEYWORDS)
@@ -212,12 +217,11 @@ public partial class SQLiteHelper
         sb.AppendFormat("CREATE TABLE [{0}] (", fileName);
         for (int i = 0; i < columnNames.Length; i++)
         {
-            //DROP是SQL关键字，TODO：需要加上所有关键字限定
-            if (CheckIsSqlKeyword(columnNames[i]))
-            {
-                //NOTE 字段名可以包含sql关键字
-                ConsoleHelper.Warning("表{0}的字段名含有sql关键字{1}", fileName, columnNames[i]);
-            }
+            //NOTE 如果表字段名是SQLite关键字用[]
+            //            if (CheckIsSqlKeyword(columnNames[i]))
+            //            {
+            //                ConsoleHelper.Warning("表{0}的字段名含有sql关键字{1}", fileName, columnNames[i]);
+            //            }
             sb.AppendFormat("[{0}]", columnNames[i]);
             if (i <= columnTypes.Length - 1)
             {
