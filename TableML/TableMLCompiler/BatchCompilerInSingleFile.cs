@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -336,7 +337,11 @@ namespace TableML.Compiler
             {
                 return;
             }
-            var savePath = System.Environment.CurrentDirectory + "/" + "compile_result.csv";
+            var startPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            //下面获取到的路径都是启动的路径，而不是exe所在的路径
+//            var startPath = AppDomain.CurrentDomain.BaseDirectory;
+//            var startPath = System.Environment.CurrentDirectory;
+            var savePath = startPath + "/" + "compile_result.csv";
             if (File.Exists(savePath) )
             {
                 File.Delete(savePath);
