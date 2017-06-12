@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
+using TableMLGUI;
 using Array = System.Array;
 
 /// <summary>
@@ -138,6 +139,7 @@ public partial class SQLiteHelper
                 finally
                 {
                     trans.Dispose();
+                    conn.Close();
                 }
 
                 // 停止计时
@@ -169,7 +171,15 @@ public partial class SQLiteHelper
 
         foreach (FileInfo fileInfo in fileList)
         {
-            pathList.Add(fileInfo.FullName);
+            //过滤符合格式的文件，如果data.db也在此目录，则会被占用！！！
+            if (ConfigData.TmlExtension.Contains(fileInfo.Extension))
+            {
+                pathList.Add(fileInfo.FullName);
+            }
+            else
+            {
+                ConsoleHelper.Warning("{0} 过滤掉", fileInfo.Name);
+            }
         }
         UpdateDB(pathList.ToArray());
     }
@@ -189,9 +199,9 @@ public partial class SQLiteHelper
             return false;
         }
         var fileName = Path.GetFileNameWithoutExtension(filePath);
-
+        //TODO 处理当文件不是文本格式时
         string[] lines = File.ReadAllLines(filePath);
-        //TODO 当文件内容为空时的处理
+        //当文件内容为空时的处理
         if (lines == null || lines.Length <= 0)
         {
             ConsoleHelper.Error("{0} 内容为空！", fileName);

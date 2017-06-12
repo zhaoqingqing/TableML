@@ -56,6 +56,7 @@
             this.btnHelp = new System.Windows.Forms.Button();
             this.groupBoxCS = new System.Windows.Forms.GroupBox();
             this.groupBoxOther = new System.Windows.Forms.GroupBox();
+            this.btnClearConsole = new System.Windows.Forms.Button();
             this.groupBoxTools.SuspendLayout();
             this.groupBoxCS.SuspendLayout();
             this.groupBoxOther.SuspendLayout();
@@ -339,6 +340,7 @@
             // 
             this.groupBoxOther.Controls.Add(this.btnOpenCodeDir);
             this.groupBoxOther.Controls.Add(this.btnSqlite);
+            this.groupBoxOther.Controls.Add(this.btnClearConsole);
             this.groupBoxOther.Controls.Add(this.btnOpenTmlDir);
             this.groupBoxOther.Controls.Add(this.btnOpenDB);
             this.groupBoxOther.Location = new System.Drawing.Point(467, 445);
@@ -347,6 +349,16 @@
             this.groupBoxOther.TabIndex = 7;
             this.groupBoxOther.TabStop = false;
             this.groupBoxOther.Text = "其它辅助项";
+            // 
+            // btnClearConsole
+            // 
+            this.btnClearConsole.Location = new System.Drawing.Point(193, 79);
+            this.btnClearConsole.Name = "btnClearConsole";
+            this.btnClearConsole.Size = new System.Drawing.Size(110, 40);
+            this.btnClearConsole.TabIndex = 0;
+            this.btnClearConsole.Text = "清空控制台输出";
+            this.btnClearConsole.UseVisualStyleBackColor = true;
+            this.btnClearConsole.Click += new System.EventHandler(this.btnClearConsole_Click);
             // 
             // MainForm
             // 
@@ -409,6 +421,7 @@
         private System.Windows.Forms.Button btnHelp;
         private System.Windows.Forms.GroupBox groupBoxCS;
         private System.Windows.Forms.GroupBox groupBoxOther;
+        private System.Windows.Forms.Button btnClearConsole;
     }
 }
 

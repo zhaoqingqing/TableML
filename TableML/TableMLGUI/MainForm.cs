@@ -361,5 +361,10 @@ namespace TableMLGUI
             HelpForm helpForm = new HelpForm();
             helpForm.Show();
         }
+
+        private void btnClearConsole_Click(object sender, EventArgs e)
+        {
+            Console.Clear();
+        }
     }
 }
