@@ -355,5 +355,11 @@ namespace TableMLGUI
             var dirPath = Path.GetDirectoryName(sqlDataPath);
             FileHelper.OpenFolder(dirPath);
         }
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            HelpForm helpForm = new HelpForm();
+            helpForm.Show();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Configuration;
+using System.Windows.Forms;
 
 namespace TableMLGUI
 {
@@ -7,6 +8,14 @@ namespace TableMLGUI
         public HelpForm()
         {
             InitializeComponent();
+            DoStart();
+        }
+
+        public void DoStart()
+        {
+            string helpUrl = ConfigurationManager.AppSettings.Get("HelpUrl").Trim();
+            webBrowser.ScriptErrorsSuppressed = true;
+            webBrowser.Navigate(helpUrl);
         }
     }
 }

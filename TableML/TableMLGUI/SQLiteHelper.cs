@@ -120,7 +120,8 @@ public partial class SQLiteHelper
                         ConsoleHelper.Confirmation("{0}", fileName);
                     }
                     if (failList.Count > 0)
-                    {   //不打印 没有失败
+                    {
+                        //不打印 没有失败
                         ConsoleHelper.Error("更新失败{0}张表", failList.Count);
                     }
                     foreach (var fileName in failList)
@@ -133,6 +134,10 @@ public partial class SQLiteHelper
                     trans.Rollback();
                     ConsoleHelper.Error("回滚事务,Message:{0}", ex.Message);
                     ConsoleHelper.Error("Exception:{0}", ex);
+                }
+                finally
+                {
+                    trans.Dispose();
                 }
 
                 // 停止计时

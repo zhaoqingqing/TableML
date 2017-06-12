@@ -52,6 +52,13 @@
             this.btnUpdateDB = new System.Windows.Forms.Button();
             this.cbGenCS = new System.Windows.Forms.CheckBox();
             this.btnOpenDB = new System.Windows.Forms.Button();
+            this.groupBoxTools = new System.Windows.Forms.GroupBox();
+            this.btnHelp = new System.Windows.Forms.Button();
+            this.groupBoxCS = new System.Windows.Forms.GroupBox();
+            this.groupBoxOther = new System.Windows.Forms.GroupBox();
+            this.groupBoxTools.SuspendLayout();
+            this.groupBoxCS.SuspendLayout();
+            this.groupBoxOther.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCompileSelect
@@ -88,7 +95,7 @@
             // tbFileDir
             // 
             this.tbFileDir.AllowDrop = true;
-            this.tbFileDir.Location = new System.Drawing.Point(12, 596);
+            this.tbFileDir.Location = new System.Drawing.Point(5, 596);
             this.tbFileDir.Multiline = true;
             this.tbFileDir.Name = "tbFileDir";
             this.tbFileDir.Size = new System.Drawing.Size(438, 30);
@@ -98,7 +105,7 @@
             // 
             // btnCompileAll
             // 
-            this.btnCompileAll.Location = new System.Drawing.Point(12, 639);
+            this.btnCompileAll.Location = new System.Drawing.Point(3, 639);
             this.btnCompileAll.Name = "btnCompileAll";
             this.btnCompileAll.Size = new System.Drawing.Size(140, 40);
             this.btnCompileAll.TabIndex = 0;
@@ -128,7 +135,7 @@
             // 
             // btnUpdateCSSyntax
             // 
-            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(660, 361);
+            this.btnUpdateCSSyntax.Location = new System.Drawing.Point(193, 139);
             this.btnUpdateCSSyntax.Name = "btnUpdateCSSyntax";
             this.btnUpdateCSSyntax.Size = new System.Drawing.Size(169, 40);
             this.btnUpdateCSSyntax.TabIndex = 0;
@@ -138,14 +145,14 @@
             // 
             // txtCodePath
             // 
-            this.txtCodePath.Location = new System.Drawing.Point(474, 36);
+            this.txtCodePath.Location = new System.Drawing.Point(7, 20);
             this.txtCodePath.Name = "txtCodePath";
             this.txtCodePath.Size = new System.Drawing.Size(398, 21);
             this.txtCodePath.TabIndex = 1;
             // 
             // btnSyncCode
             // 
-            this.btnSyncCode.Location = new System.Drawing.Point(474, 73);
+            this.btnSyncCode.Location = new System.Drawing.Point(7, 57);
             this.btnSyncCode.Name = "btnSyncCode";
             this.btnSyncCode.Size = new System.Drawing.Size(169, 40);
             this.btnSyncCode.TabIndex = 0;
@@ -155,7 +162,7 @@
             // 
             // btnSyncTml
             // 
-            this.btnSyncTml.Location = new System.Drawing.Point(474, 182);
+            this.btnSyncTml.Location = new System.Drawing.Point(7, 166);
             this.btnSyncTml.Name = "btnSyncTml";
             this.btnSyncTml.Size = new System.Drawing.Size(169, 40);
             this.btnSyncTml.TabIndex = 0;
@@ -165,14 +172,14 @@
             // 
             // txtTmlPath
             // 
-            this.txtTmlPath.Location = new System.Drawing.Point(474, 145);
+            this.txtTmlPath.Location = new System.Drawing.Point(7, 129);
             this.txtTmlPath.Name = "txtTmlPath";
             this.txtTmlPath.Size = new System.Drawing.Size(398, 21);
             this.txtTmlPath.TabIndex = 1;
             // 
             // btnCheckNameRepet
             // 
-            this.btnCheckNameRepet.Location = new System.Drawing.Point(474, 246);
+            this.btnCheckNameRepet.Location = new System.Drawing.Point(7, 24);
             this.btnCheckNameRepet.Name = "btnCheckNameRepet";
             this.btnCheckNameRepet.Size = new System.Drawing.Size(169, 40);
             this.btnCheckNameRepet.TabIndex = 0;
@@ -182,7 +189,7 @@
             // 
             // btnOpenCodeDir
             // 
-            this.btnOpenCodeDir.Location = new System.Drawing.Point(474, 422);
+            this.btnOpenCodeDir.Location = new System.Drawing.Point(4, 20);
             this.btnOpenCodeDir.Name = "btnOpenCodeDir";
             this.btnOpenCodeDir.Size = new System.Drawing.Size(110, 40);
             this.btnOpenCodeDir.TabIndex = 0;
@@ -192,7 +199,7 @@
             // 
             // btnOpenTmlDir
             // 
-            this.btnOpenTmlDir.Location = new System.Drawing.Point(603, 422);
+            this.btnOpenTmlDir.Location = new System.Drawing.Point(133, 20);
             this.btnOpenTmlDir.Name = "btnOpenTmlDir";
             this.btnOpenTmlDir.Size = new System.Drawing.Size(110, 40);
             this.btnOpenTmlDir.TabIndex = 0;
@@ -202,7 +209,7 @@
             // 
             // btnCheckNameEmpty
             // 
-            this.btnCheckNameEmpty.Location = new System.Drawing.Point(474, 301);
+            this.btnCheckNameEmpty.Location = new System.Drawing.Point(7, 79);
             this.btnCheckNameEmpty.Name = "btnCheckNameEmpty";
             this.btnCheckNameEmpty.Size = new System.Drawing.Size(169, 40);
             this.btnCheckNameEmpty.TabIndex = 0;
@@ -222,7 +229,7 @@
             // 
             // btnCheckCSKW
             // 
-            this.btnCheckCSKW.Location = new System.Drawing.Point(660, 301);
+            this.btnCheckCSKW.Location = new System.Drawing.Point(193, 79);
             this.btnCheckCSKW.Name = "btnCheckCSKW";
             this.btnCheckCSKW.Size = new System.Drawing.Size(169, 40);
             this.btnCheckCSKW.TabIndex = 0;
@@ -232,7 +239,7 @@
             // 
             // btnUpdateSelectCSSyntax
             // 
-            this.btnUpdateSelectCSSyntax.Location = new System.Drawing.Point(474, 361);
+            this.btnUpdateSelectCSSyntax.Location = new System.Drawing.Point(7, 139);
             this.btnUpdateSelectCSSyntax.Name = "btnUpdateSelectCSSyntax";
             this.btnUpdateSelectCSSyntax.Size = new System.Drawing.Size(169, 40);
             this.btnUpdateSelectCSSyntax.TabIndex = 0;
@@ -242,7 +249,7 @@
             // 
             // btnCompileExcel
             // 
-            this.btnCompileExcel.Location = new System.Drawing.Point(170, 639);
+            this.btnCompileExcel.Location = new System.Drawing.Point(153, 639);
             this.btnCompileExcel.Name = "btnCompileExcel";
             this.btnCompileExcel.Size = new System.Drawing.Size(140, 40);
             this.btnCompileExcel.TabIndex = 0;
@@ -252,7 +259,7 @@
             // 
             // btnSqlite
             // 
-            this.btnSqlite.Location = new System.Drawing.Point(474, 482);
+            this.btnSqlite.Location = new System.Drawing.Point(4, 80);
             this.btnSqlite.Name = "btnSqlite";
             this.btnSqlite.Size = new System.Drawing.Size(169, 40);
             this.btnSqlite.TabIndex = 0;
@@ -262,7 +269,7 @@
             // 
             // btnUpdateDB
             // 
-            this.btnUpdateDB.Location = new System.Drawing.Point(322, 639);
+            this.btnUpdateDB.Location = new System.Drawing.Point(310, 639);
             this.btnUpdateDB.Name = "btnUpdateDB";
             this.btnUpdateDB.Size = new System.Drawing.Size(140, 40);
             this.btnUpdateDB.TabIndex = 0;
@@ -282,7 +289,7 @@
             // 
             // btnOpenDB
             // 
-            this.btnOpenDB.Location = new System.Drawing.Point(732, 422);
+            this.btnOpenDB.Location = new System.Drawing.Point(262, 20);
             this.btnOpenDB.Name = "btnOpenDB";
             this.btnOpenDB.Size = new System.Drawing.Size(140, 40);
             this.btnOpenDB.TabIndex = 0;
@@ -290,27 +297,69 @@
             this.btnOpenDB.UseVisualStyleBackColor = true;
             this.btnOpenDB.Click += new System.EventHandler(this.btnOpenDB_Click);
             // 
+            // groupBoxTools
+            // 
+            this.groupBoxTools.Controls.Add(this.btnCheckNameEmpty);
+            this.groupBoxTools.Controls.Add(this.btnUpdateCSSyntax);
+            this.groupBoxTools.Controls.Add(this.btnUpdateSelectCSSyntax);
+            this.groupBoxTools.Controls.Add(this.btnCheckNameRepet);
+            this.groupBoxTools.Controls.Add(this.btnCheckCSKW);
+            this.groupBoxTools.Location = new System.Drawing.Point(467, 245);
+            this.groupBoxTools.Name = "groupBoxTools";
+            this.groupBoxTools.Size = new System.Drawing.Size(405, 188);
+            this.groupBoxTools.TabIndex = 7;
+            this.groupBoxTools.TabStop = false;
+            this.groupBoxTools.Text = "检查Excel错误";
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.Cursor = System.Windows.Forms.Cursors.Help;
+            this.btnHelp.Location = new System.Drawing.Point(752, 676);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(120, 40);
+            this.btnHelp.TabIndex = 0;
+            this.btnHelp.Text = "我要帮助";
+            this.btnHelp.UseVisualStyleBackColor = true;
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
+            // groupBoxCS
+            // 
+            this.groupBoxCS.Controls.Add(this.txtCodePath);
+            this.groupBoxCS.Controls.Add(this.btnSyncCode);
+            this.groupBoxCS.Controls.Add(this.btnSyncTml);
+            this.groupBoxCS.Controls.Add(this.txtTmlPath);
+            this.groupBoxCS.Location = new System.Drawing.Point(467, 16);
+            this.groupBoxCS.Name = "groupBoxCS";
+            this.groupBoxCS.Size = new System.Drawing.Size(405, 215);
+            this.groupBoxCS.TabIndex = 7;
+            this.groupBoxCS.TabStop = false;
+            this.groupBoxCS.Text = "For CSharp版本使用";
+            // 
+            // groupBoxOther
+            // 
+            this.groupBoxOther.Controls.Add(this.btnOpenCodeDir);
+            this.groupBoxOther.Controls.Add(this.btnSqlite);
+            this.groupBoxOther.Controls.Add(this.btnOpenTmlDir);
+            this.groupBoxOther.Controls.Add(this.btnOpenDB);
+            this.groupBoxOther.Location = new System.Drawing.Point(467, 445);
+            this.groupBoxOther.Name = "groupBoxOther";
+            this.groupBoxOther.Size = new System.Drawing.Size(405, 181);
+            this.groupBoxOther.TabIndex = 7;
+            this.groupBoxOther.TabStop = false;
+            this.groupBoxOther.Text = "其它辅助项";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 728);
+            this.Controls.Add(this.groupBoxCS);
+            this.Controls.Add(this.groupBoxTools);
+            this.Controls.Add(this.groupBoxOther);
             this.Controls.Add(this.cbGenCS);
             this.Controls.Add(this.cbSimpleRule);
-            this.Controls.Add(this.txtTmlPath);
-            this.Controls.Add(this.btnOpenDB);
-            this.Controls.Add(this.btnOpenTmlDir);
-            this.Controls.Add(this.btnOpenCodeDir);
-            this.Controls.Add(this.btnSyncTml);
-            this.Controls.Add(this.txtCodePath);
-            this.Controls.Add(this.btnSyncCode);
-            this.Controls.Add(this.btnCheckCSKW);
-            this.Controls.Add(this.btnCheckNameEmpty);
-            this.Controls.Add(this.btnCheckNameRepet);
             this.Controls.Add(this.btnUpdateDB);
-            this.Controls.Add(this.btnSqlite);
-            this.Controls.Add(this.btnUpdateSelectCSSyntax);
-            this.Controls.Add(this.btnUpdateCSSyntax);
+            this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbFileDir);
@@ -321,6 +370,10 @@
             this.Controls.Add(this.btnCompileSelect);
             this.Name = "MainForm";
             this.Text = "Excel配置表编译 For C#";
+            this.groupBoxTools.ResumeLayout(false);
+            this.groupBoxCS.ResumeLayout(false);
+            this.groupBoxCS.PerformLayout();
+            this.groupBoxOther.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -352,6 +405,10 @@
         private System.Windows.Forms.Button btnUpdateDB;
         private System.Windows.Forms.CheckBox cbGenCS;
         private System.Windows.Forms.Button btnOpenDB;
+        private System.Windows.Forms.GroupBox groupBoxTools;
+        private System.Windows.Forms.Button btnHelp;
+        private System.Windows.Forms.GroupBox groupBoxCS;
+        private System.Windows.Forms.GroupBox groupBoxOther;
     }
 }
 
