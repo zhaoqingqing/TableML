@@ -2,6 +2,10 @@
 
 项目地址：https://github.com/zhaoqingqing/TableML
 
+如果在使用过程中遇到问题和发现bug，欢迎提出讨论。
+
+
+
 ## 读懂配置文件
 
 ### 打开配置文件
@@ -45,3 +49,43 @@
 
 ![https://github.com/zhaoqingqing/TableML/blob/custom/Document/tablemlgui_main.png](https://github.com/zhaoqingqing/TableML/blob/custom/Document/tablemlgui_main.png)
 
+### 命令行模式
+
+命令行模式目前支持批量编译全部的excel，并将数据插入到sqlite中，一个bat双击就OK了。
+
+
+
+### 编译全部或部分
+
+- 编译并插入到sqlite中
+
+  - 如果你需要编译全部的excel，就选择它。
+
+    ​
+
+- 编译指定的几个excel
+  - 如果仅仅想编译指定的几个excel，把要的excel拖到框中，选择 **编译上面框中的excel**
+
+
+
+### 辅助功能
+
+这里是一些辅助的功能，你可以看看。
+
+- 组- For CSharp版本使用 
+
+  - 如果是把数据插入到sqlite中，这部分功能不会用到，我们目前就是。
+
+  ​
+
+- 组- 检查Excel错误
+
+  - 当你的表导出出现错误时，可以选择性的使用这里的一些功能
+
+
+
+- 组- 其它
+
+  - 这里是一些文件夹打开类的功能
+
+  ​	 
