@@ -210,8 +210,17 @@ namespace TableML.Compiler
                     result = cell.StringCellValue;
                     break;
                 case CellType.Formula:
-                    //获取公式的值
-                    result = cell.CellFormula;
+                    //NOTE 单元格为公式，分类型
+                    switch (cell.CachedFormulaResultType)
+                    {
+                        //已测试的公式:SUM,& 
+                        case CellType.Numeric:
+                            result = cell.NumericCellValue.ToString();
+                            break;
+                        case CellType.String:
+                            result = cell.StringCellValue;
+                            break;
+                    }
                     break;
                 case CellType.Blank:
                     result = "";
