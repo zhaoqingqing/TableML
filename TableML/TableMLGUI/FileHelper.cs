@@ -42,7 +42,7 @@ public partial class FileHelper
     /// </summary>  
     /// <param name="strPath">文件路径</param>  
     /// <returns>所有文件</returns>  
-    public static IList<FileInfo> GetAllFiles(string strPath)
+    public static IList<FileInfo> GetAllFiles(string strPath,string searchPattern = null)
     {
         List<FileInfo> lstFiles = new List<FileInfo>();
         List<string> lstDirect = new List<string>();
@@ -56,7 +56,7 @@ public partial class FileHelper
             try
             {
                 diFliles = new DirectoryInfo(lstDirect[idx]);
-                lstFiles.AddRange(diFliles.GetFiles());
+                lstFiles.AddRange(diFliles.GetFiles(searchPattern));
             }
             catch
             {

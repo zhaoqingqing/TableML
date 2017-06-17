@@ -14,6 +14,7 @@ namespace TableMLGUI
         /// 输出tml文件路径
         /// </summary>
         public string GenTmlPath = "..\\client_setting";
+        public string srcFullPath;
 
         /// <summary>
         /// 生成的代码路径
@@ -65,14 +66,16 @@ namespace TableMLGUI
             //源始excel路径
             var srcExcelPath = ConfigurationManager.AppSettings.Get("srcExcelPath");
             var excelSrc = useAbsolutePath ? srcExcelPath : Path.GetFullPath(Application.StartupPath + srcExcelPath);
-            this.tbFileDir.Text = excelSrc;
-
+            this.tbSrcPath.Text = excelSrc;
+            srcFullPath = Path.GetFullPath(Application.StartupPath + srcExcelPath);
             //sql的database文件存放路径
             var sqlDBPath = ConfigurationManager.AppSettings.Get("DBPath");
+            var sqlScriptsPath = ConfigurationManager.AppSettings.Get("sqlScriptsPath");
             if (!string.IsNullOrEmpty(sqlDBPath))
             {
                 sqlDataPath = useAbsolutePath ? sqlDBPath : Path.GetFullPath(Application.StartupPath + sqlDBPath);
-                SQLiteHelper.Init(sqlDataPath);
+                var sqlStPath = useAbsolutePath ? sqlScriptsPath : Path.GetFullPath(Application.StartupPath + sqlScriptsPath);
+                SQLiteHelper.Init(sqlDataPath, sqlStPath);
             }
 
             //tml文件格式
@@ -99,6 +102,13 @@ namespace TableMLGUI
             var dstClientTmlPath = ConfigurationManager.AppSettings.Get("dstClientTmlPath");
             var dstClientTml = useAbsolutePath ? dstClientTmlPath : Path.GetFullPath(Application.StartupPath + dstClientTmlPath);
             this.txtTmlPath.Text = dstClientTml;
+
+            openFileDialog1.InitialDirectory = srcFullPath;
+            openFileDialog1.DefaultExt = "*.xls,*.tsv,*.csv";
+            openFileDialog1.Multiselect = true;
+            openFileDialog1.SupportMultiDottedExtensions = true;
+
+            groupBoxCS.Visible = cbGenCS.Checked;
         }
 
         #region  文件拖拽到列表
@@ -142,7 +152,7 @@ namespace TableMLGUI
                 Console.WriteLine("Error !{0} 目录不存在或不是目录", dragDir);
                 return;
             }
-            this.tbFileDir.Text = dragDir;
+            this.tbSrcPath.Text = dragDir;
         }
         #endregion
 
@@ -229,7 +239,7 @@ namespace TableMLGUI
             var startPath = Environment.CurrentDirectory;
             Console.WriteLine("当前目录：{0}", startPath);
 
-            var srcDirectory = tbFileDir.Text;
+            var srcDirectory = tbSrcPath.Text;
 
             var batchCompiler = new BatchCompiler();
 
@@ -365,6 +375,29 @@ namespace TableMLGUI
         private void btnClearConsole_Click(object sender, EventArgs e)
         {
             Console.Clear();
+        }
+
+        private void btnFileBrowser_Click(object sender, EventArgs e)
+        {
+            DialogResult result = openFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                var selectFiles = openFileDialog1.FileNames;
+                foreach (string file in selectFiles)
+                {
+                    tbFileList.Text += file + "\r\n";
+                }
+            }
+        }
+
+        private void cbGenCS_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBoxCS.Visible = cbGenCS.Checked;
+        }
+
+        private void btnExecuteSql_Click(object sender, EventArgs e)
+        {
+            SQLiteHelper.ExecuteSql();
         }
     }
 }

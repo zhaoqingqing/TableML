@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using TableMLGUI;
 using Array = System.Array;
 
@@ -25,32 +26,18 @@ public partial class SQLiteHelper
     /// 从第几行开始是有效数据
     /// </summary>
     private const int StartRowIndex = 2;
+
     //数据库文件
-    private static string dbfile = "data.db";
-    /// <summary>
-    /// sqlite关键字
-    /// </summary>
-    static string[] SQL_KEYWORDS = new string[]{
-        "drop", "index", "group", "sort", "replace"
-    };
+    public static string dbfile = "data.db";
+    public static string SqlScriptsPath = "";
 
+    //保存sql语句
+    private static StringBuilder sqlBuilder = new StringBuilder();
 
-
-    public static void Init(string dbPath)
+    public static void Init(string dbPath, string sqlScriptsPath)
     {
         dbfile = dbPath;
-    }
-
-    public static bool CheckIsSqlKeyword(string key)
-    {
-        foreach (var v in SQL_KEYWORDS)
-        {
-            if (key.Equals(v, System.StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-        }
-        return false;
+        SqlScriptsPath = sqlScriptsPath;
     }
 
     /// <summary>
@@ -185,13 +172,12 @@ public partial class SQLiteHelper
     }
 
 
-
     /// <summary>
     /// 更新单张数据表
     /// </summary>
     /// <param name="filePath"></param>
     /// <param name="dbCmd"></param>
-    public static bool UpdateTable(string filePath, DbCommand dbCmd)
+    public static bool UpdateTable(string filePath, DbCommand dbCmd, bool genSql = true)
     {
         if (File.Exists(filePath) == false)
         {
@@ -220,12 +206,16 @@ public partial class SQLiteHelper
             ConsoleHelper.Error("{0} 表头列数{1},数据类型列数{2}", fileName, columnNames.Length, columnTypes.Length);
         }
 
-        //执行创建表，表名如果有数字，需要加[]
-        var tableSql = string.Format("DROP TABLE IF EXISTS [{0}]", fileName);
-        ConsoleHelper.ConfirmationWithBlankLine("创建表sql:{0}", tableSql);
-        dbCmd.CommandText = tableSql;
-        dbCmd.ExecuteNonQuery();
 
+        //执行创建表，表名如果有数字，需要加[]
+        var checkTableSql = string.Format("DROP TABLE IF EXISTS [{0}]", fileName);
+        ConsoleHelper.ConfirmationWithBlankLine("创建表sql:{0}", checkTableSql);
+        dbCmd.CommandText = checkTableSql;
+        dbCmd.ExecuteNonQuery();
+        if (genSql)
+        {
+            sqlBuilder.AppendLine(checkTableSql);
+        }
 
         //执行创建表的字段名和数据类型
         var sb = new System.Text.StringBuilder();
@@ -256,11 +246,14 @@ public partial class SQLiteHelper
         }
         sb.Remove(sb.Length - 1, 1);
         sb.Append(")");
-        string sql = sb.ToString();
-        ConsoleHelper.ConfirmationWithBlankLine("创建字段和数据类型sql:{0}", sql);
-        dbCmd.CommandText = sql;
+        string tableSql = sb.ToString();
+        ConsoleHelper.ConfirmationWithBlankLine("创建字段和数据类型sql:{0}", tableSql);
+        dbCmd.CommandText = tableSql;
         dbCmd.ExecuteNonQuery();
-
+        if (genSql)
+        {
+            sqlBuilder.AppendLine(tableSql);
+        }
 
         //执行数据插入
         int addNum = 0;
@@ -294,12 +287,102 @@ public partial class SQLiteHelper
             ConsoleHelper.ConfirmationWithBlankLine("插入数据sql:{0}", inserSql);
             dbCmd.CommandText = inserSql;
             addNum += dbCmd.ExecuteNonQuery();
-
+            if (genSql)
+            {
+                sqlBuilder.AppendLine(inserSql);
+            }
+        }
+        if (genSql)
+        {
+            var saveSql = SqlScriptsPath + "\\" + fileName + ".sql";
+            if (File.Exists(saveSql))
+            {
+                File.Delete(saveSql);
+            }
+            File.WriteAllText(saveSql, sqlBuilder.ToString());
+            ConsoleHelper.Confirmation("为表{0}生成的sql脚本", fileName);
         }
         ConsoleHelper.Confirmation("已创建 {0} 表，并插入了 {1} 条数据", fileName, addNum);
         return true;
     }
 
+
+    public static bool ExecuteSql()
+    {
+        bool result = true;
+        var files = FileHelper.GetAllFiles(SqlScriptsPath, "*.sql");
+        if (files == null || files.Count <= 0)
+        {
+            ConsoleHelper.Warning("{0} 下*.sql文件数量为0", SqlScriptsPath);
+            return true;
+        }
+        if (File.Exists(dbfile) == false)
+        {
+            // 创建数据库文件
+            SQLiteConnection.CreateFile(dbfile);
+        }
+
+        DbProviderFactory factory = SQLiteFactory.Instance;
+        using (DbConnection conn = factory.CreateConnection())
+        {
+            // 连接数据库
+            if (conn != null)
+            {
+                conn.ConnectionString = string.Format("Data Source={0}", dbfile);
+                conn.Open();
+
+                DbCommand dbCmd = conn.CreateCommand();
+                dbCmd.Connection = conn;
+
+                // 开始计时
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
+
+                //NOTE 所有的插入操作只开启一个事务,这样插入大数据更快！
+                DbTransaction trans = conn.BeginTransaction();
+                try
+                {
+                    var addNum = 0;
+                    //执行sql语句
+                    foreach (FileInfo fileInfo in files)
+                    {
+                        /*
+                        TODO 从文件中读取到的sql，要把\r\n变成\n，并且其它转义符号也去掉
+                        或者直接执行sql文件，而不是sql语句
+                         */
+                        var sql = File.ReadAllText(fileInfo.FullName,Encoding.UTF8);
+                        dbCmd.CommandText = sql;
+                        addNum += dbCmd.ExecuteNonQuery();
+                    }
+                    trans.Commit();
+                    ConsoleHelper.WriteLine("提交事务完成");
+                    ConsoleHelper.WriteLine("操作成功{0}张表", addNum);
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    ConsoleHelper.Error("回滚事务,Message:{0}", ex.Message);
+                    ConsoleHelper.Error("Exception:{0}", ex);
+                }
+                finally
+                {
+                    trans.Dispose();
+                    conn.Close();
+                }
+
+                // 停止计时
+                watch.Stop();
+
+                ConsoleHelper.Confirmation("执行耗时：{0} s", watch.Elapsed.TotalSeconds);
+            }
+            else
+            {
+                ConsoleHelper.Error("{0} 连接失败！", dbfile);
+            }
+        }
+
+        return result;
+    }
 }
 
 

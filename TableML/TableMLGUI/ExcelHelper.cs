@@ -209,7 +209,6 @@ namespace TableMLGUI
                         MessageBox.Show("没有重复字段", "重复字段");
                     }
                     return repet.Length == 0;
-                    break;
                 case CheckType.Empty:
                     if (empty.Length >= 1)
                     {
@@ -221,7 +220,6 @@ namespace TableMLGUI
                         MessageBox.Show("没有空白字段", "空白字段");
                     }
                     return empty.Length == 0;
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -233,8 +231,12 @@ namespace TableMLGUI
             int count = 0;
             foreach (string filePath in filePaths)
             {
-                CheckExcel(filePath, CheckType.Repet);
+                if (CheckExcel(filePath, CheckType.Repet))
+                {
+                    count++;
+                }
             }
+            Console.WriteLine("check name repet:{0}",count);
         }
 
         /// <summary>

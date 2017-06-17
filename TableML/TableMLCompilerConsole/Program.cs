@@ -42,7 +42,7 @@ namespace TableCompilerConsole
     /// </summary>
     class TableCompilerConsole
     {
-        public static void Main_(string[] args)
+        public static void Main(string[] args)
         {
             var options = new Option();
             if (CommandLine.Parser.Default.ParseArguments(args, options))

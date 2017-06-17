@@ -31,7 +31,7 @@
             this.btnCompileSelect = new System.Windows.Forms.Button();
             this.tbFileList = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.tbFileDir = new System.Windows.Forms.TextBox();
+            this.tbSrcPath = new System.Windows.Forms.TextBox();
             this.btnCompileAll = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -57,6 +57,10 @@
             this.groupBoxCS = new System.Windows.Forms.GroupBox();
             this.groupBoxOther = new System.Windows.Forms.GroupBox();
             this.btnClearConsole = new System.Windows.Forms.Button();
+            this.cbGenSql = new System.Windows.Forms.CheckBox();
+            this.btnFileBrowser = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.btnExecuteSql = new System.Windows.Forms.Button();
             this.groupBoxTools.SuspendLayout();
             this.groupBoxCS.SuspendLayout();
             this.groupBoxOther.SuspendLayout();
@@ -64,9 +68,9 @@
             // 
             // btnCompileSelect
             // 
-            this.btnCompileSelect.Location = new System.Drawing.Point(46, 443);
+            this.btnCompileSelect.Location = new System.Drawing.Point(228, 454);
             this.btnCompileSelect.Name = "btnCompileSelect";
-            this.btnCompileSelect.Size = new System.Drawing.Size(300, 50);
+            this.btnCompileSelect.Size = new System.Drawing.Size(215, 40);
             this.btnCompileSelect.TabIndex = 0;
             this.btnCompileSelect.Text = "编译上面框中的Excel";
             this.btnCompileSelect.UseVisualStyleBackColor = true;
@@ -93,16 +97,16 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "请拖入需要编译的单个或多个Excel文件(可手动增加或删除路径)";
             // 
-            // tbFileDir
+            // tbSrcPath
             // 
-            this.tbFileDir.AllowDrop = true;
-            this.tbFileDir.Location = new System.Drawing.Point(5, 596);
-            this.tbFileDir.Multiline = true;
-            this.tbFileDir.Name = "tbFileDir";
-            this.tbFileDir.Size = new System.Drawing.Size(438, 30);
-            this.tbFileDir.TabIndex = 3;
-            this.tbFileDir.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragDrop);
-            this.tbFileDir.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragEnter);
+            this.tbSrcPath.AllowDrop = true;
+            this.tbSrcPath.Location = new System.Drawing.Point(5, 596);
+            this.tbSrcPath.Multiline = true;
+            this.tbSrcPath.Name = "tbSrcPath";
+            this.tbSrcPath.Size = new System.Drawing.Size(438, 30);
+            this.tbSrcPath.TabIndex = 3;
+            this.tbSrcPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragDrop);
+            this.tbSrcPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragEnter);
             // 
             // btnCompileAll
             // 
@@ -260,7 +264,7 @@
             // 
             // btnSqlite
             // 
-            this.btnSqlite.Location = new System.Drawing.Point(4, 80);
+            this.btnSqlite.Location = new System.Drawing.Point(4, 135);
             this.btnSqlite.Name = "btnSqlite";
             this.btnSqlite.Size = new System.Drawing.Size(169, 40);
             this.btnSqlite.TabIndex = 0;
@@ -281,12 +285,13 @@
             // cbGenCS
             // 
             this.cbGenCS.AutoSize = true;
-            this.cbGenCS.Location = new System.Drawing.Point(342, 524);
+            this.cbGenCS.Location = new System.Drawing.Point(228, 524);
             this.cbGenCS.Name = "cbGenCS";
             this.cbGenCS.Size = new System.Drawing.Size(108, 16);
             this.cbGenCS.TabIndex = 6;
             this.cbGenCS.Text = "生成CSharp代码";
             this.cbGenCS.UseVisualStyleBackColor = true;
+            this.cbGenCS.CheckedChanged += new System.EventHandler(this.cbGenCS_CheckedChanged);
             // 
             // btnOpenDB
             // 
@@ -294,7 +299,7 @@
             this.btnOpenDB.Name = "btnOpenDB";
             this.btnOpenDB.Size = new System.Drawing.Size(140, 40);
             this.btnOpenDB.TabIndex = 0;
-            this.btnOpenDB.Text = "打开SQLite的data.db";
+            this.btnOpenDB.Text = "打开生成的data.db";
             this.btnOpenDB.UseVisualStyleBackColor = true;
             this.btnOpenDB.Click += new System.EventHandler(this.btnOpenDB_Click);
             // 
@@ -314,13 +319,14 @@
             // 
             // btnHelp
             // 
+            this.btnHelp.BackColor = System.Drawing.SystemColors.Highlight;
             this.btnHelp.Cursor = System.Windows.Forms.Cursors.Help;
             this.btnHelp.Location = new System.Drawing.Point(752, 676);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(120, 40);
             this.btnHelp.TabIndex = 0;
             this.btnHelp.Text = "我要帮助";
-            this.btnHelp.UseVisualStyleBackColor = true;
+            this.btnHelp.UseVisualStyleBackColor = false;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // groupBoxCS
@@ -340,6 +346,7 @@
             // 
             this.groupBoxOther.Controls.Add(this.btnOpenCodeDir);
             this.groupBoxOther.Controls.Add(this.btnSqlite);
+            this.groupBoxOther.Controls.Add(this.btnExecuteSql);
             this.groupBoxOther.Controls.Add(this.btnClearConsole);
             this.groupBoxOther.Controls.Add(this.btnOpenTmlDir);
             this.groupBoxOther.Controls.Add(this.btnOpenDB);
@@ -352,13 +359,49 @@
             // 
             // btnClearConsole
             // 
-            this.btnClearConsole.Location = new System.Drawing.Point(193, 79);
+            this.btnClearConsole.Location = new System.Drawing.Point(193, 134);
             this.btnClearConsole.Name = "btnClearConsole";
             this.btnClearConsole.Size = new System.Drawing.Size(110, 40);
             this.btnClearConsole.TabIndex = 0;
             this.btnClearConsole.Text = "清空控制台输出";
             this.btnClearConsole.UseVisualStyleBackColor = true;
             this.btnClearConsole.Click += new System.EventHandler(this.btnClearConsole_Click);
+            // 
+            // cbGenSql
+            // 
+            this.cbGenSql.AutoSize = true;
+            this.cbGenSql.Checked = true;
+            this.cbGenSql.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbGenSql.Location = new System.Drawing.Point(353, 524);
+            this.cbGenSql.Name = "cbGenSql";
+            this.cbGenSql.Size = new System.Drawing.Size(90, 16);
+            this.cbGenSql.TabIndex = 6;
+            this.cbGenSql.Text = "生成SQL脚本";
+            this.cbGenSql.UseVisualStyleBackColor = true;
+            // 
+            // btnFileBrowser
+            // 
+            this.btnFileBrowser.Location = new System.Drawing.Point(21, 454);
+            this.btnFileBrowser.Name = "btnFileBrowser";
+            this.btnFileBrowser.Size = new System.Drawing.Size(133, 40);
+            this.btnFileBrowser.TabIndex = 0;
+            this.btnFileBrowser.Text = "浏览......";
+            this.btnFileBrowser.UseVisualStyleBackColor = true;
+            this.btnFileBrowser.Click += new System.EventHandler(this.btnFileBrowser_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // btnExecuteSql
+            // 
+            this.btnExecuteSql.Location = new System.Drawing.Point(7, 79);
+            this.btnExecuteSql.Name = "btnExecuteSql";
+            this.btnExecuteSql.Size = new System.Drawing.Size(110, 40);
+            this.btnExecuteSql.TabIndex = 0;
+            this.btnExecuteSql.Text = "执行Sql脚本";
+            this.btnExecuteSql.UseVisualStyleBackColor = true;
+            this.btnExecuteSql.Click += new System.EventHandler(this.btnExecuteSql_Click);
             // 
             // MainForm
             // 
@@ -368,17 +411,19 @@
             this.Controls.Add(this.groupBoxCS);
             this.Controls.Add(this.groupBoxTools);
             this.Controls.Add(this.groupBoxOther);
+            this.Controls.Add(this.cbGenSql);
             this.Controls.Add(this.cbGenCS);
             this.Controls.Add(this.cbSimpleRule);
             this.Controls.Add(this.btnUpdateDB);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbFileDir);
+            this.Controls.Add(this.tbSrcPath);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbFileList);
             this.Controls.Add(this.btnCompileExcel);
             this.Controls.Add(this.btnCompileAll);
+            this.Controls.Add(this.btnFileBrowser);
             this.Controls.Add(this.btnCompileSelect);
             this.Name = "MainForm";
             this.Text = "Excel配置表编译 For C#";
@@ -396,7 +441,7 @@
         private System.Windows.Forms.Button btnCompileSelect;
         private System.Windows.Forms.TextBox tbFileList;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox tbFileDir;
+        private System.Windows.Forms.TextBox tbSrcPath;
         private System.Windows.Forms.Button btnCompileAll;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
@@ -422,6 +467,10 @@
         private System.Windows.Forms.GroupBox groupBoxCS;
         private System.Windows.Forms.GroupBox groupBoxOther;
         private System.Windows.Forms.Button btnClearConsole;
+        private System.Windows.Forms.CheckBox cbGenSql;
+        private System.Windows.Forms.Button btnFileBrowser;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button btnExecuteSql;
     }
 }
 
