@@ -68,6 +68,27 @@ TableML.exe --Src setting --To setting2 --CodeFile Code.cs
 5. 打开目录 **TableML\TableMLCompilerConsole\bin\Release** 可以看到已经生成了**TableML.exe**
 
 
+**TableML**
+
+- tml(tsv)文件读取接口
+
+**TableMLCompiler**
+
+- 对excel/csv 源文件进行编译
+
+**TableMLCompilerConsole**
+
+- 提供命令行，根据条件对excel进行编译
+
+**TableMLGUI**
+
+- 提供GUI界面，增加编译选定excel，将数据导入到sqlite中
+- 增加excel的查错，输出操作日志
+
+**TableMLTests**
+
+- 编译功能的单元测试
+
 ### 自定义配置
 
 **1. 从第2列(指定列)开始读**
