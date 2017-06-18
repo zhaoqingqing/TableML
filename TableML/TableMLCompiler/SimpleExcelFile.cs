@@ -106,24 +106,30 @@ namespace TableML.Compiler
             //NOTE 从第0行开始读
             // 列头名(字段名) 
             var headerRow = Worksheet.GetRow(5);
-            //npoi的列数是从0开始,最大列是从1开始
-            var firstColuIdx = headerRow.FirstCellNum;
+            //npoi的列数是从0开始,而excel的列数是从1开始
+
             _columnCount = headerRow.LastCellNum;
             // 列总数保存
             int columnCount = GetColumnCount();
 
-            //NOTE by qingqing-zhao 从指定的列开始读取
+            //NOTE by qingqing-zhao 列名：从指定的列开始读取
+            int emptyColumn = 0;
             for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
             {
                 var cell = headerRow.GetCell(columnIndex);
                 var headerName = cell != null ? cell.ToString().Trim() : ""; // trim!
                 var realIdx = columnIndex - StartColumnIdx;
+                if (string.IsNullOrEmpty(headerName))
+                {
+                    //NOTE 如果列名是空，当作注释处理
+                    emptyColumn += 1;
+                    headerName = string.Concat("#", emptyColumn);
+                }
                 ColName2Index[headerName] = realIdx;
                 Index2ColName[realIdx] = headerName;
             }
             // 表头声明(数据类型)
             var statementRow = Worksheet.GetRow(4);
-            int emptyColumn2 = 0;
             for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
             {
                 var realIdx = columnIndex - StartColumnIdx;
