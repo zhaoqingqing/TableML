@@ -31,9 +31,6 @@ public partial class SQLiteHelper
     public static string dbfile = "data.db";
     public static string SqlScriptsPath = "";
 
-    //保存sql语句
-    private static StringBuilder sqlBuilder = new StringBuilder();
-
     public static void Init(string dbPath, string sqlScriptsPath)
     {
         dbfile = dbPath;
@@ -205,7 +202,8 @@ public partial class SQLiteHelper
         {
             ConsoleHelper.Error("{0} 表头列数{1},数据类型列数{2}", fileName, columnNames.Length, columnTypes.Length);
         }
-
+        //保存sql语句
+        StringBuilder sqlBuilder = new StringBuilder();
 
         //执行创建表，表名如果有数字，需要加[]
         var checkTableSql = string.Format("DROP TABLE IF EXISTS [{0}]", fileName);
@@ -350,7 +348,7 @@ public partial class SQLiteHelper
                         TODO 从文件中读取到的sql，要把\r\n变成\n，并且其它转义符号也去掉
                         或者直接执行sql文件，而不是sql语句
                          */
-                        var sql = File.ReadAllText(fileInfo.FullName,Encoding.UTF8);
+                        var sql = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
                         dbCmd.CommandText = sql;
                         addNum += dbCmd.ExecuteNonQuery();
                     }
