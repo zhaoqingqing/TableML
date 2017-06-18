@@ -9,13 +9,11 @@ using NPOI.SS.Util;
 namespace TableML.Compiler
 {
     /// <summary>
-    /// 简单的NPOI Excel封装, 支持xls, xlsx 和 tsv
+    /// 对NPOI Excel封装, 支持xls, xlsx 和 tsv
     /// 带有头部、声明、注释
     /// </summary>
     public class SimpleExcelFile : ITableSourceFile
     {
-        //private Workbook Workbook_;
-        //private Worksheet Worksheet_;
         public Dictionary<string, int> ColName2Index { get; set; }
         public Dictionary<int, string> Index2ColName { get; set; }
         public Dictionary<string, string> ColName2Statement { get; set; } //  string,or something
@@ -32,13 +30,13 @@ namespace TableML.Compiler
         /// </summary>
         public const int StartColumnIdx = 1;
 
-        //private DataTable DataTable_;
         private string Path;
         private IWorkbook Workbook;
         private ISheet Worksheet;
-        //private TableFile _tableFile;
-        //public bool IsLoadSuccess = true;
+        public bool IsLoadSuccess = true;
         private int _columnCount;
+        private int sheetCount;
+        public int SheetCount { get { return sheetCount; } private set { sheetCount = value; } }
 
         public SimpleExcelFile(string excelPath)
         {
@@ -67,8 +65,8 @@ namespace TableML.Compiler
                 {
                     //                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
                     ConsoleHelper.Error(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
+                    IsLoadSuccess = false;
                     return;
-                    //IsLoadSuccess = false;
                 }
             }
 
@@ -78,14 +76,33 @@ namespace TableML.Compiler
                 ConsoleHelper.Error(filePath + " Null Workbook");
                 return;
             }
+            SheetCount = Workbook.NumberOfSheets;
+            //for (int idx = 0; idx < sheetCount; idx++)
+            {
+                ParseSheet(filePath, 0);
+            }
 
+        }
 
-            Worksheet = Workbook.GetSheetAt(0);
+        /// <summary>
+        /// 检查excel是否符合输出规范
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public bool CheckRule(string filePath, int sheetIdx)
+        {
+            if (Workbook == null)
+            {
+                //                    throw new Exception(filePath + " Null Workbook");
+                ConsoleHelper.Error(filePath + " Null Workbook");
+                return false;
+            }
+            Worksheet = Workbook.GetSheetAt(sheetIdx);
             if (Worksheet == null)
             {
                 //                    throw new Exception(filePath + " Null Worksheet");
                 ConsoleHelper.Error(filePath + " Null Worksheet");
-                return;
+                return false;
             }
 
             var sheetRowCount = GetWorksheetCount();
@@ -93,10 +110,28 @@ namespace TableML.Compiler
             {
                 //                    throw new Exception(string.Format("{0} At lease {1} rows of this excel", filePath, sheetRowCount));
                 ConsoleHelper.Error(string.Format("{0} At lease {1} rows of this excel", filePath, sheetRowCount));
-                return;
+                return false;
 
             }
+            var row = Worksheet.GetRow(1);
+            if (row == null || row.Cells.Count < 2)
+            {
+                //                throw new Exception(filePath + "第二行至少需要3列");
+                ConsoleHelper.Error(filePath + "第二行至少需要3列");
+                return false;
+            }
+            return true;
+        }
 
+        /// <summary>
+        /// 解析excel的sheet
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="sheetIdx"></param>
+        public void ParseSheet(string filePath, int sheetIdx)
+        {
+            if (CheckRule(filePath, sheetIdx) == false) { return; }
+            if (Worksheet == null) return;
             /**表头结构如下所示：
             *   Id  Name    CDTime
             *   int string int
@@ -175,7 +210,6 @@ namespace TableML.Compiler
                 }
                 ColName2Comment[colName] = commentString;
             }
-
         }
 
         public string CombieLine(string commentString, string lineStr)
@@ -260,8 +294,11 @@ namespace TableML.Compiler
         /// <param name="row"></param>
         public void ClearRow(int row)
         {
-            var theRow = Worksheet.GetRow(row);
-            Worksheet.RemoveRow(theRow);
+            if (Worksheet != null)
+            {
+                var theRow = Worksheet.GetRow(row);
+                Worksheet.RemoveRow(theRow);
+            }
         }
 
         public float GetFloat(string columnName, int row)
@@ -281,6 +318,7 @@ namespace TableML.Compiler
         /// <returns></returns>
         public string GetString(string columnName, int dataRow)
         {
+            if (Worksheet == null) return null;
             dataRow += PreserverRowCount;
 
             var theRow = Worksheet.GetRow(dataRow);
@@ -310,13 +348,14 @@ namespace TableML.Compiler
         /// <returns></returns>
         private int GetWorksheetCount()
         {
-            return Worksheet.LastRowNum + 1;
+            return Worksheet == null ? 0 : Worksheet.LastRowNum + 1;
         }
 
         private ICellStyle GreyCellStyleCache;
 
         public void SetRowGrey(int row)
         {
+            if (Worksheet == null) { return; }
             var theRow = Worksheet.GetRow(row);
             foreach (var cell in theRow.Cells)
             {
@@ -341,6 +380,7 @@ namespace TableML.Compiler
                 ConsoleHelper.Error(string.Format("No Column: {0} of File: {1}", columnName, Path));
                 return;
             }
+            if (Worksheet == null) return;
             var theRow = Worksheet.GetRow(row);
             if (theRow == null)
                 theRow = Worksheet.CreateRow(row);
@@ -406,12 +446,14 @@ namespace TableML.Compiler
             return _columnCount - StartColumnIdx;
         }
 
+
+
         /// <summary>
         /// 读表中的字段获取输出文件名
         /// 做好约定输出tml文件名在指定的单元格，不用遍历整表让解析更快
         /// </summary>
         /// <returns></returns>
-        public static string GetOutFileName(string filePath)
+        public static string GetOutFileName(string filePath, int sheetIdx = 0)
         {
             IWorkbook workbook;
             using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // no isolation
@@ -427,7 +469,7 @@ namespace TableML.Compiler
                     return "";
                 }
             }
-            var worksheet = workbook.GetSheetAt(0);
+            var worksheet = workbook.GetSheetAt(sheetIdx);
             if (worksheet == null)
             {
                 //                throw new Exception(filePath + "Null Worksheet");

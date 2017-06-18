@@ -97,7 +97,7 @@ namespace TableML.Compiler
                 }
                 else
                 {
-                    //NOTE by qingqing-zhao 加入\t，从指定的列开始读取，但是dict的索引是从0开始
+                    //NOTE by qingqing-zhao 分隔符为\t 。如果从指定的列开始读取，但是dict的索引是从0开始
                     if (colIndex > 0)
                     {
                         tableBuilder.Append("\t");

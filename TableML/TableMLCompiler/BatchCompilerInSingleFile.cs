@@ -229,6 +229,7 @@ namespace TableML.Compiler
                 var nowFileIndex = -1; // 开头+1， 起始为0
                 foreach (var excelPath in allFiles)
                 {
+                    //TODO 如果要读取每一个sheet
                     nowFileIndex++;
                     var ext = Path.GetExtension(excelPath);
                     var fileName = Path.GetFileNameWithoutExtension(excelPath);

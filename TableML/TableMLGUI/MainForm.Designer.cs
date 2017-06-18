@@ -56,11 +56,11 @@
             this.btnHelp = new System.Windows.Forms.Button();
             this.groupBoxCS = new System.Windows.Forms.GroupBox();
             this.groupBoxOther = new System.Windows.Forms.GroupBox();
+            this.btnExecuteSql = new System.Windows.Forms.Button();
             this.btnClearConsole = new System.Windows.Forms.Button();
             this.cbGenSql = new System.Windows.Forms.CheckBox();
             this.btnFileBrowser = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btnExecuteSql = new System.Windows.Forms.Button();
             this.groupBoxTools.SuspendLayout();
             this.groupBoxCS.SuspendLayout();
             this.groupBoxOther.SuspendLayout();
@@ -123,9 +123,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(10, 563);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(131, 12);
+            this.label2.Size = new System.Drawing.Size(155, 12);
             this.label2.TabIndex = 4;
-            this.label2.Text = "编译这个目录下的Excel";
+            this.label2.Text = "编译这个目录下所有的Excel";
             // 
             // label3
             // 
@@ -227,9 +227,9 @@
             this.cbSimpleRule.AutoSize = true;
             this.cbSimpleRule.Location = new System.Drawing.Point(12, 524);
             this.cbSimpleRule.Name = "cbSimpleRule";
-            this.cbSimpleRule.Size = new System.Drawing.Size(204, 16);
+            this.cbSimpleRule.Size = new System.Drawing.Size(114, 16);
             this.cbSimpleRule.TabIndex = 6;
-            this.cbSimpleRule.Text = "是否 name|type|comment 三行TSV";
+            this.cbSimpleRule.Text = "我是三行简单TSV";
             this.cbSimpleRule.UseVisualStyleBackColor = true;
             // 
             // btnCheckCSKW
@@ -357,6 +357,16 @@
             this.groupBoxOther.TabStop = false;
             this.groupBoxOther.Text = "其它辅助项";
             // 
+            // btnExecuteSql
+            // 
+            this.btnExecuteSql.Location = new System.Drawing.Point(7, 79);
+            this.btnExecuteSql.Name = "btnExecuteSql";
+            this.btnExecuteSql.Size = new System.Drawing.Size(110, 40);
+            this.btnExecuteSql.TabIndex = 0;
+            this.btnExecuteSql.Text = "执行Sql脚本";
+            this.btnExecuteSql.UseVisualStyleBackColor = true;
+            this.btnExecuteSql.Click += new System.EventHandler(this.btnExecuteSql_Click);
+            // 
             // btnClearConsole
             // 
             this.btnClearConsole.Location = new System.Drawing.Point(193, 134);
@@ -392,16 +402,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // btnExecuteSql
-            // 
-            this.btnExecuteSql.Location = new System.Drawing.Point(7, 79);
-            this.btnExecuteSql.Name = "btnExecuteSql";
-            this.btnExecuteSql.Size = new System.Drawing.Size(110, 40);
-            this.btnExecuteSql.TabIndex = 0;
-            this.btnExecuteSql.Text = "执行Sql脚本";
-            this.btnExecuteSql.UseVisualStyleBackColor = true;
-            this.btnExecuteSql.Click += new System.EventHandler(this.btnExecuteSql_Click);
             // 
             // MainForm
             // 
