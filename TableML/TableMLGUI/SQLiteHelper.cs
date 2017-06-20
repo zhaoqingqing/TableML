@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TableMLGUI;
 using Array = System.Array;
@@ -156,7 +157,7 @@ public partial class SQLiteHelper
         foreach (FileInfo fileInfo in fileList)
         {
             //过滤符合格式的文件，如果data.db也在此目录，则会被占用！！！
-            if (ConfigData.TmlExtension.Contains(fileInfo.Extension))
+            if (ConfigData.CanToSqlEx.Contains(fileInfo.Extension))
             {
                 pathList.Add(fileInfo.FullName);
             }

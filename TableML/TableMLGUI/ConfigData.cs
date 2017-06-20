@@ -16,9 +16,9 @@ namespace TableMLGUI
         /// </summary>
         public const string SimpleFileEx = ".tsv";
         /// <summary>
-        /// excel编译后的文件格式
+        ///可以插入到sqlite中的格式
         /// </summary>
-        public const string TmlExtension = ".tsv";
+        public static string[] CanToSqlEx = new string[] { ".tsv","*.tml" };
 
         public static string StartPath
         {
