@@ -156,9 +156,9 @@ namespace TableML.Compiler
                 var realIdx = columnIndex - StartColumnIdx;
                 if (string.IsNullOrEmpty(headerName))
                 {
-                    //NOTE 如果列名是空，当作注释处理
+                    //NOTE 如果列名是空，当作注释处理，因为老表可能已经写了#1，#2
                     emptyColumn += 1;
-                    headerName = string.Concat("#", emptyColumn);
+                    headerName = string.Concat("#Comment#", emptyColumn);
                 }
                 ColName2Index[headerName] = realIdx;
                 Index2ColName[realIdx] = headerName;
