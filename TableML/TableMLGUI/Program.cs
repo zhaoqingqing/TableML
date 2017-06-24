@@ -28,7 +28,7 @@ namespace TableMLGUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
+
             if (args != null && args.Length >= 1)
             {
                 //NOTE 经测试Hide和Visible都无法实现完全不显示GUI
@@ -43,16 +43,19 @@ namespace TableMLGUI
                 }
                 else
                 {
-                    Console.WriteLine("命令行参数长度：{0}", args.Length);
                     //NOTE BAT传递过来的参数可能有换行！
+                    StringBuilder tBuilder = new StringBuilder();
                     StringBuilder argBuilder = new StringBuilder();
                     foreach (string arg in args)
                     {
                         if (string.IsNullOrEmpty(arg)) continue;
+                        tBuilder.AppendLine(arg);
                         var nArg = arg.Replace("\r\n", "").Replace("\n", "");
                         argBuilder.Append(nArg);
                     }
-                    Console.WriteLine("要编译的文件列表：");
+                    Console.WriteLine("命令行参数长度：{0}", args.Length);
+                    Console.WriteLine("内容：{0}", tBuilder.ToString());
+                    Console.WriteLine("处理后的要编译文件列表：");
                     var files = argBuilder.ToString().Split('\"');
                     foreach (string file in files)
                     {
