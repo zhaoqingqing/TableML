@@ -158,35 +158,33 @@ namespace TableMLGUI
 
         private void btnCompileSelect_Click(object sender, EventArgs e)
         {
-            List<string> tmlList = new List<string>();
-            CompileSelect(ref tmlList);
-            //传递编译后的文件列表
-            if (tmlList != null)
-            {
-                SQLiteHelper.UpdateDB(tmlList.ToArray());
-            }
-            else
-            {
-                ConsoleHelper.Error("编译选中的Excel失败,获取编译后文件列表为空！");
-            }
+            CompileSelect();
+        }
+
+        public void CompileSelect(bool msgResult = false)
+        {
+            CompileSelect(fileList, msgResult);
         }
 
         /// <summary>
         /// 编译选中的excel
         /// </summary>
         /// <param name="msgResult"></param>
-        private void CompileSelect(ref List<string> tmlList, bool msgResult = false)
+        public void CompileSelect(string[] fullPaths, bool msgResult = false)
         {
             //编译选定的表
-            Console.Clear();
-
+            List<string> tmlList = new List<string>();
             var startPath = Environment.CurrentDirectory;
             Console.WriteLine("当前目录：{0}", startPath);
             var compiler = new Compiler();
             Dictionary<string, string> dst2src = new Dictionary<string, string>();
             int comileCount = 0;
-            foreach (var filePath in fileList)
+            foreach (var filePath in fullPaths)
             {
+                if (string.IsNullOrEmpty(filePath))
+                {
+                    continue;
+                }
                 Console.WriteLine(filePath);
                 string savePath = null;
                 var ext = Path.GetExtension(filePath).Trim().ToLower();
@@ -226,6 +224,10 @@ namespace TableMLGUI
                 }
             }
             BatchCompiler.SaveCompileResult(dst2src);
+
+            //将结果插入到sqlite中
+            SQLiteHelper.UpdateDB(tmlList.ToArray());
+
             if (msgResult) { ShowCompileResult(comileCount); }
         }
 
