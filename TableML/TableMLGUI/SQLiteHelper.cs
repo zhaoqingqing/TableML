@@ -207,7 +207,7 @@ public partial class SQLiteHelper
         StringBuilder sqlBuilder = new StringBuilder();
 
         //执行创建表，表名如果有数字，需要加[]
-        var checkTableSql = string.Format("DROP TABLE IF EXISTS [{0}]", fileName);
+        var checkTableSql = string.Format("DROP TABLE IF EXISTS [{0}];", fileName);
         ConsoleHelper.ConfirmationWithBlankLine("创建表sql:{0}", checkTableSql);
         dbCmd.CommandText = checkTableSql;
         dbCmd.ExecuteNonQuery();
@@ -244,7 +244,7 @@ public partial class SQLiteHelper
             }
         }
         sb.Remove(sb.Length - 1, 1);
-        sb.Append(")");
+        sb.Append(");");
         string tableSql = sb.ToString();
         ConsoleHelper.ConfirmationWithBlankLine("创建字段和数据类型sql:{0}", tableSql);
         dbCmd.CommandText = tableSql;
@@ -281,11 +281,21 @@ public partial class SQLiteHelper
                 sb2.AppendFormat("\"{0}\",", newValue[j]);
             }
             sb2.Remove(sb2.Length - 1, 1);
-            sb2.Append(")");
+            sb2.Append(");");
             var inserSql = sb2.ToString();
-            ConsoleHelper.ConfirmationWithBlankLine("插入数据sql:{0}", inserSql);
-            dbCmd.CommandText = inserSql;
-            addNum += dbCmd.ExecuteNonQuery();
+            //ConsoleHelper.ConfirmationWithBlankLine("插入数据sql:{0}", inserSql);
+            try
+            {
+                dbCmd.CommandText = inserSql;
+                addNum += dbCmd.ExecuteNonQuery();
+            }
+            catch(Exception e)
+            {
+                ConsoleHelper.Warning(lines[i]);
+                ConsoleHelper.Warning(inserSql);
+                ConsoleHelper.Error(e.Message);
+            }
+            
             if (genSql)
             {
                 sqlBuilder.AppendLine(inserSql);
