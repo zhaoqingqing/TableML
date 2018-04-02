@@ -38,7 +38,7 @@ namespace TableML.Compiler
         private int sheetCount;
         public int SheetCount { get { return sheetCount; } private set { sheetCount = value; } }
 
-        public SimpleExcelFile(string excelPath)
+        public SimpleExcelFile(string excelPath, int index=0)
         {
             Path = excelPath;
             ColName2Index = new Dictionary<string, int>();
@@ -46,14 +46,14 @@ namespace TableML.Compiler
             ColName2Statement = new Dictionary<string, string>();
             ColName2Comment = new Dictionary<string, string>();
             ExcelFileName = System.IO.Path.GetFileName(excelPath);
-            ParseExcel(excelPath);
+            ParseExcel(excelPath, index);
         }
 
         /// <summary>
         /// Parse Excel file to data grid
         /// </summary>
         /// <param name="filePath"></param>
-        private void ParseExcel(string filePath)
+        private void ParseExcel(string filePath, int index)
         {
             using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // no isolation
             {
@@ -79,7 +79,7 @@ namespace TableML.Compiler
             SheetCount = Workbook.NumberOfSheets;
             //for (int idx = 0; idx < sheetCount; idx++)
             {
-                ParseSheet(filePath, 0);
+                ParseSheet(filePath, index);
             }
 
         }
@@ -117,7 +117,7 @@ namespace TableML.Compiler
             if (row == null || row.Cells.Count < 2)
             {
                 //                throw new Exception(filePath + "第二行至少需要3列");
-                ConsoleHelper.Error(filePath + "第二行至少需要3列");
+                ConsoleHelper.Error(filePath + " -> " + Worksheet.SheetName + "第二行至少需要3列");
                 return false;
             }
             return true;
@@ -480,11 +480,16 @@ namespace TableML.Compiler
             if (row == null || row.Cells.Count < 2)
             {
                 //                throw new Exception(filePath + "第二行至少需要3列");
-                ConsoleHelper.Error(filePath + "第二行至少需要3列");
+                ConsoleHelper.Error(filePath + " -> " + worksheet.SheetName + "第二行至少需要3列");
                 return "";
             }
 
             var outFileName = GetCellString(row.Cells[2]);
+            var shouldOutput = GetCellString(row.Cells[1]);
+            if ((shouldOutput.ToInt32_()) == 0)
+            {
+                return "";
+            }
             return outFileName;
         }
     }

@@ -344,7 +344,7 @@ namespace TableML.Compiler
         /// <param name="compileBaseDir"></param>
         /// <param name="doRealCompile">Real do, or just get the template var?</param>
         /// <returns></returns>
-        public TableCompileResult Compile(string path, string compileToFilePath, string compileBaseDir = null, bool doRealCompile = true)
+        public TableCompileResult Compile(string path, string compileToFilePath, int index=0, string compileBaseDir = null, bool doRealCompile = true)
         {
             // 确保目录存在
             compileToFilePath = Path.GetFullPath(compileToFilePath);
@@ -357,7 +357,7 @@ namespace TableML.Compiler
 
             ITableSourceFile sourceFile;
             if (ext == ".tsv") sourceFile = new SimpleTSVFile(path);
-            else sourceFile = new SimpleExcelFile(path);
+            else sourceFile = new SimpleExcelFile(path,index);
 
             var hash = DoCompilerExcelReader(path, sourceFile, compileToFilePath, compileBaseDir, doRealCompile);
             return hash;

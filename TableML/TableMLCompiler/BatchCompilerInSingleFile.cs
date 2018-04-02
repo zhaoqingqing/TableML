@@ -285,7 +285,7 @@ namespace TableML.Compiler
                         {
                             Console.WriteLine("[SettingModule]Compile from {0} to {1}", excelPath, compileToPath);
                             Console.WriteLine(); //美观一下 打印空白行
-                            var compileResult = compiler.Compile(excelPath, compileToPath, compileBaseDir, doCompile);
+                            var compileResult = compiler.Compile(excelPath, compileToPath, 0, compileBaseDir, doCompile);
                             if (genCSCode)
                             {
                                 // 添加模板值

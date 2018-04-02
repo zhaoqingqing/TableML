@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPOI.SS.UserModel;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -166,6 +167,31 @@ namespace TableMLGUI
             CompileSelect(fileList, msgResult);
         }
 
+        private IWorkbook PreParseExcel(string filePath)
+        {
+            IWorkbook Workbook;
+            using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // no isolation
+            {
+                try
+                {
+                    Workbook = WorkbookFactory.Create(file);
+                }
+                catch (Exception e)
+                {
+                    //                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
+                    ConsoleHelper.Error(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
+                    return null;
+                }
+            }
+
+            if (Workbook == null)
+            {
+                //                    throw new Exception(filePath + " Null Workbook");
+                ConsoleHelper.Error(filePath + " Null Workbook");
+                return null;
+            }
+            return Workbook;
+        }
         /// <summary>
         /// 编译选中的excel
         /// </summary>
@@ -186,42 +212,50 @@ namespace TableMLGUI
                     continue;
                 }
                 Console.WriteLine(filePath);
-                string savePath = null;
-                var ext = Path.GetExtension(filePath).Trim().ToLower();
-                if (ext == ".tsv" || IsSimpleRule)
+				//NOTE 编译Excel的全部子页	
+                var workbook = PreParseExcel(filePath);
+                for(int index = 0; index < workbook.NumberOfSheets; index++)
                 {
-                    //如果是tsv格式，即是已经编译好的文件
-                    savePath = GenTmlPath + "\\" + Path.GetFileNameWithoutExtension(filePath) + TmlExtensions;
-                }
-                else
-                {
-                    savePath = GenTmlPath + "\\" + SimpleExcelFile.GetOutFileName(filePath) + TmlExtensions;
-                }
-                //编译表时，生成代码
-                TableCompileResult compileResult = compiler.Compile(filePath, savePath);
-                tmlList.Add(Path.GetFullPath(savePath));
-                var dstFileName = Path.GetFileNameWithoutExtension(savePath);
-                if (dst2src.ContainsKey(dstFileName) == false)
-                {
-                    dst2src.Add(dstFileName, Path.GetFileName(filePath));
-                }
-                Console.WriteLine("编译结果:{0}---->{1}", filePath, savePath);
-                Console.WriteLine();
+                    string savePath = null;
+                    var ext = Path.GetExtension(filePath).Trim().ToLower();
+                    if (ext == ".tsv" || IsSimpleRule)
+                    {
+                        //如果是tsv格式，即是已经编译好的文件
+                        savePath = GenTmlPath + "\\" + Path.GetFileNameWithoutExtension(filePath) + TmlExtensions;
+                    }
+                    else
+                    {
+                        string outputName = SimpleExcelFile.GetOutFileName(filePath, index);
+                        if (outputName == "") continue;
+                        savePath = GenTmlPath + "\\" + outputName + TmlExtensions;
+                    }
+                    //编译表时，生成代码
+                    TableCompileResult compileResult = compiler.Compile(filePath, savePath, index);
+                    tmlList.Add(Path.GetFullPath(savePath));
+                    var dstFileName = Path.GetFileNameWithoutExtension(savePath);
+                    if (dst2src.ContainsKey(dstFileName) == false)
+                    {
+                        dst2src.Add(dstFileName, Path.GetFileName(filePath));
+                    }
+                    Console.WriteLine("编译结果:{0}---->{1}", filePath, savePath);
+                    Console.WriteLine();
 
-                //生成代码
-                BatchCompiler batchCompiler = new BatchCompiler();
-                //NOTE 替换成相对路径(保证最后只有文件名)
-                string repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName + "\\";
-                compileResult.TabFileRelativePath = compileResult.TabFileRelativePath.Replace(repStr, "");
-                if (GenCSCode)
-                {
-                    batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
-                }
+                    //生成代码
+                    BatchCompiler batchCompiler = new BatchCompiler();
+                    //NOTE 替换成相对路径(保证最后只有文件名)
+                    string repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName + "\\";
+                    compileResult.TabFileRelativePath = compileResult.TabFileRelativePath.Replace(repStr, "");
+                    if (GenCSCode)
+                    {
+                        batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
+                    }
 
-                if (compileResult != null)
-                {
-                    comileCount += 1;
+                    if (compileResult != null)
+                    {
+                        comileCount += 1;
+                    }
                 }
+                
             }
             BatchCompiler.SaveCompileResult(dst2src);
 

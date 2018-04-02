@@ -87,7 +87,7 @@ int	string
 		public void TestCompileXls()
 		{
 			var compiler = new Compiler();
-			compiler.Compile("./TestSettings/TestExcel.xls", Path.GetFullPath("./TestExcelXls.tml"), Path.GetFullPath("./"));
+			compiler.Compile("./TestSettings/TestExcel.xls", Path.GetFullPath("./TestExcelXls.tml"),0, Path.GetFullPath("./"));
 		    Assert.True(File.Exists("TestExcelXls.tml"));
 
 		}
@@ -95,7 +95,7 @@ int	string
 		public void TestCompileXlsx()
 		{
 			var compiler = new Compiler();
-			compiler.Compile("TestSettings/TestExcel2.xlsx", Path.GetFullPath("./TestExcelXlsx.tml"), Path.GetFullPath("./"));
+			compiler.Compile("TestSettings/TestExcel2.xlsx", Path.GetFullPath("./TestExcelXlsx.tml"),0, Path.GetFullPath("./"));
 		    Assert.True(File.Exists("TestExcelXlsx.tml"));
 
 		}
