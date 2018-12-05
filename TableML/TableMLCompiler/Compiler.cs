@@ -355,9 +355,19 @@ namespace TableML.Compiler
 
             var ext = Path.GetExtension(path);
 
-            ITableSourceFile sourceFile;
-            if (ext == ".tsv") sourceFile = new SimpleTSVFile(path);
-            else sourceFile = new SimpleExcelFile(path,index);
+            ITableSourceFile sourceFile = null;
+            if (ext == ".tsv")
+            {
+                sourceFile = new SimpleTSVFile(path);
+            }
+            else if (ext.Contains(".xls"))
+            {
+                sourceFile = new SimpleExcelFile(path, index);
+            }
+            else if (ext == ".csv")
+            {
+                sourceFile = new SimpleCSVFile(path);
+            }
 
             var hash = DoCompilerExcelReader(path, sourceFile, compileToFilePath, compileBaseDir, doRealCompile);
             return hash;

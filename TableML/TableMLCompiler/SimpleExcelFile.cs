@@ -10,6 +10,7 @@ namespace TableML.Compiler
 {
     /// <summary>
     /// 对NPOI Excel封装, 支持xls, xlsx 和 tsv
+    /// excel的行数从0开始，列数从1开始
     /// 带有头部、声明、注释
     /// </summary>
     public class SimpleExcelFile : ITableSourceFile
@@ -24,7 +25,7 @@ namespace TableML.Compiler
         /// Header, Statement, Comment, at lease 3 rows
         /// 预留行数
         /// </summary>
-        public const int PreserverRowCount = 16;
+        public const int PreserverRowCount = 12;
         /// <summary>
         /// 从指定列开始读,默认是0
         /// </summary>
