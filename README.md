@@ -12,7 +12,7 @@ TableML, Table Markup Language, 基于电子表格的标记语言，
 ## Example
 
 
-您可以使用Excel编译如下内容，并保存为文件setting/test.xls:
+您可以使用Excel编译如下内容，并保存为文件setting/test.xls(同时支持csv文件):
 
 | Id          | #Something | Value    | Comment        |
 | ----------- | ---------- | -------- | -------------- |
