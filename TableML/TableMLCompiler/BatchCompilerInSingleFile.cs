@@ -214,7 +214,7 @@ namespace TableML.Compiler
             // excel compiler
             var compiler = new Compiler(new CompilerConfig() { ConditionVars = CompileSettingConditionVars });
 
-            var excelExt = new HashSet<string>() { ".xls", ".xlsx", ".tsv" };
+            var excelExt = new HashSet<string>() { ".xls", ".xlsx", ".tsv" ,"*.csv"};
             var copyExt = new HashSet<string>() { ".txt" };
             if (Directory.Exists(sourcePath) == false)
             {
@@ -249,8 +249,11 @@ namespace TableML.Compiler
                         {
                             relativePath = Path.GetFileName(excelPath);
                         }
-                        else
+                        else if (Path.GetExtension(excelPath) == "*.csv")
                         {
+                            relativePath = SimpleCSVFile.GetOutFileName(excelPath);
+                        }
+                        else{
                             relativePath = SimpleExcelFile.GetOutFileName(excelPath);
                         }
                         if (string.IsNullOrEmpty(relativePath))

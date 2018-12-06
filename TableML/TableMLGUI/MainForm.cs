@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using TableML.Compiler;
 
@@ -303,18 +304,18 @@ namespace TableMLGUI
         public void CompileAllExcel(bool msgResult = false)
         {
             //编译整个目录
-            var startPath = Environment.CurrentDirectory;
-            Console.WriteLine("当前目录：{0}", startPath);
-
-            var srcDirectory = tbSrcPath.Text;
-
-            var batchCompiler = new BatchCompiler();
-
-            string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
-
-            var results = batchCompiler.CompileAll(srcDirectory, GenTmlPath, GenCodePath,
-               templateString, NameSpace, TmlExtensions, null, !string.IsNullOrEmpty(GenCodePath), GenCSCode);
-            if (msgResult) { ShowCompileResult(results.Count); }
+             var files = Directory.GetFiles(tbSrcPath.Text, "*.*", SearchOption.AllDirectories)
+                .Where(file=>file.ToLower().EndsWith("csv")||file.ToLower().EndsWith("xls")
+                || file.ToLower().EndsWith("xlsx") || file.ToLower().EndsWith("tsv")).ToList();
+            tbFileList.Text = string.Join("\r\n", files);
+            CompileSelect(files.ToArray(), msgResult);
+            //            var batchCompiler = new BatchCompiler();
+            //
+            //            string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
+            //
+            //            var results = batchCompiler.CompileAll(srcDirectory, GenTmlPath, GenCodePath,
+            //               templateString, NameSpace, TmlExtensions, null, !string.IsNullOrEmpty(GenCodePath), GenCSCode);
+//                        if (msgResult) { ShowCompileResult(results.Count); }
         }
 
 
