@@ -1,3 +1,9 @@
+>  2020-7-30
+
+1. tablemlgui默认勾选为KSFramework格式
+2. 升级target 为.net 4.7 在Rider中编译通过
+
+
 >  2018-12-6
 
 1. 支持编译csv文件，格式可定制

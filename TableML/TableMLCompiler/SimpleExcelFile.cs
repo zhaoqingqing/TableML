@@ -19,18 +19,77 @@ namespace TableML.Compiler
         public Dictionary<int, string> Index2ColName { get; set; }
         public Dictionary<string, string> ColName2Statement { get; set; } //  string,or something
         public Dictionary<string, string> ColName2Comment { get; set; } // string comment
+       
         public string ExcelFileName { get; set; }
+
+        #region excel文件的行和列定义
+
         //NOTE by zhaoqingqing 根据特殊的Excel格式定制
         /// <summary>
         /// Header, Statement, Comment, at lease 3 rows
         /// 预留行数
         /// </summary>
-        public const int PreserverRowCount = 12;
+        public int PreserverRowCount
+        {
+            get { return ExcelConfig.IsKSFrameworkFormat ? 3 : 12; }
+        }
+
         /// <summary>
         /// 从指定列开始读,默认是0
         /// </summary>
-        public const int StartColumnIdx = 1;
-
+        public int StartColumnIdx
+        {
+            get
+            {
+                return ExcelConfig.IsKSFrameworkFormat ? 0 : 1;
+            }
+        }
+		
+        /// <summary>
+        /// 字段名在第几行
+        /// </summary>
+        public int headRowIdx
+        {
+            get
+            {
+                return ExcelConfig.IsKSFrameworkFormat ? 0 : 5;
+            }
+        }
+		
+        /// <summary>
+        /// 数据类型在第几行(比如：string,int,float)
+        /// </summary>
+        public int typeRowIdx
+        {
+            get
+            {
+                return ExcelConfig.IsKSFrameworkFormat ? 1 : 4;
+            }
+        }
+		
+        /// <summary>
+        /// 注释在第几行
+        /// </summary>
+        public int commentRowIdx
+        {
+            get
+            {
+                return ExcelConfig.IsKSFrameworkFormat ? 3 : 15;
+            }
+        }
+		
+        /// <summary>
+        /// 详细注释在第几行(ksframework无此行)
+        /// </summary>
+        public int commentDetailRowIdx
+        {
+            get
+            {
+                return ExcelConfig.IsKSFrameworkFormat ? 3 : 14;
+            }
+        }
+		
+        #endregion
         private string Path;
         private IWorkbook Workbook;
         private ISheet Worksheet;
@@ -141,7 +200,7 @@ namespace TableML.Compiler
 
             //NOTE 从第0行开始读
             // 列头名(字段名) 
-            var headerRow = Worksheet.GetRow(5);
+            var headerRow = Worksheet.GetRow(headRowIdx);
             //npoi的列数是从0开始,而excel的列数是从1开始
 
             _columnCount = headerRow.LastCellNum;
@@ -165,7 +224,7 @@ namespace TableML.Compiler
                 Index2ColName[realIdx] = headerName;
             }
             // 表头声明(数据类型)
-            var statementRow = Worksheet.GetRow(4);
+            var statementRow = Worksheet.GetRow(typeRowIdx);
             for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
             {
                 var realIdx = columnIndex - StartColumnIdx;
@@ -178,9 +237,21 @@ namespace TableML.Compiler
                 var statementString = statementCell != null ? statementCell.ToString() : "";
                 ColName2Statement[colName] = statementString;
             }
-            // 表头注释(字段注释) 我们有两行注释
-            var commentRow = Worksheet.GetRow(15);
-            var commentRowDetail = Worksheet.GetRow(14);
+            
+            IRow commentRow = null;
+            IRow commentRowDetail = null;
+          
+            if (ExcelConfig.IsKSFrameworkFormat)
+            {
+                commentRow = Worksheet.GetRow(commentRowIdx);
+            }
+            else
+            {
+                // 表头注释(字段注释) 我们有两行注释
+                 commentRow = Worksheet.GetRow(commentRowIdx);
+                 commentRowDetail = Worksheet.GetRow(commentDetailRowIdx);
+            }
+
             for (int columnIndex = StartColumnIdx; columnIndex <= columnCount; columnIndex++)
             {
                 var realIdx = columnIndex - StartColumnIdx;
@@ -190,7 +261,11 @@ namespace TableML.Compiler
                 }
                 var colName = Index2ColName[realIdx];
                 var commentCell = commentRow.GetCell(columnIndex);
-                var commentCellDetail = commentRowDetail.GetCell(columnIndex);
+                ICell commentCellDetail = null;
+                if (commentRowDetail != null)
+                {
+                    commentCellDetail = commentRowDetail.GetCell(columnIndex);
+                }
                 string commentString = string.Empty;
                 if (commentCell != null)
                 {
@@ -326,7 +401,7 @@ namespace TableML.Compiler
             if (theRow == null)
                 theRow = Worksheet.CreateRow(dataRow);
 
-            var colIndex = ColName2Index[columnName] + SimpleExcelFile.StartColumnIdx;
+            var colIndex = ColName2Index[columnName] + StartColumnIdx;
             var cell = theRow.GetCell(colIndex);
             if (cell == null)
                 cell = theRow.CreateCell(colIndex);
@@ -456,6 +531,10 @@ namespace TableML.Compiler
         /// <returns></returns>
         public static string GetOutFileName(string filePath, int sheetIdx = 0)
         {
+            if (ExcelConfig.IsKSFrameworkFormat)
+            {
+                return System.IO.Path.GetFileNameWithoutExtension(filePath);
+            }
             IWorkbook workbook;
             using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // no isolation
             {

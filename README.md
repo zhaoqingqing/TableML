@@ -1,4 +1,3 @@
-
 # TableML
 
 TableML, Table Markup Language, 基于电子表格的标记语言，
@@ -67,7 +66,6 @@ TableML.exe --Src setting --To setting2 --CodeFile Code.cs
 4. 建议把项目的输出设为**Release**，然后选择 **菜单栏** - **生成** - **生成TableMLCompilerConsole** 
 5. 打开目录 **TableML\TableMLCompilerConsole\bin\Release** 可以看到已经生成了**TableML.exe**
 
-
 **TableML**
 
 - tml(tsv)文件读取接口
@@ -123,7 +121,16 @@ batchCompiler.CompileTableMLAllInSingleFile(srcDirectory, OutputDirectory, CodeF
 
 扩展`SimpleExcelFile.PreserverRowCount = 预留行`
 
-修改` SimpleExcelFile.ParseExcel`中的`Worksheet.GetRow(5);`
+根据实际表格格式修改SimpleExcelFile.headRowIdx，typeRowIdx等字段数量
+
+
+
+### For KSFramwork
+
+对于[KSFramework](https://github.com/mr-kelly/KSFramework) 会使用到这两个工程中的dll
+
+- TableML
+- TableMLCompiler
 
 
 
@@ -145,12 +152,12 @@ TableMLGUI提供一键将excel数据插入到sqlite中。
 
 
 
-# 自动读取配置代码生成
+## 自动读取配置代码生成
 
 TableML编译器内置Liquid模板引擎。您可以自定义模板内容，来为不同的语言生成读表类。
 
 TableML是[KSFramework](https://github.com/mr-kelly/KSFramework)的一部分，用于游戏配置表读取代码，支持热重载、分表等机制。
 
-# TableML for C#/Mono/Xamarin
+## TableML for C#/Mono/Xamarin
 
 TableML目前只提供C#版本。当前TableML使用基于Xamarin Studio开发，TableML的C#版本具备了跨平台特性（Windows/Mac/Linux）。

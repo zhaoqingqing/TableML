@@ -363,6 +363,10 @@ namespace TableML.Compiler
         /// <returns></returns>
         public static string GetOutFileName(string filePath)
         {
+            if (ExcelConfig.IsKSFrameworkFormat)
+            {
+                return System.IO.Path.GetFileNameWithoutExtension(filePath);
+            }
             var outFileName = string.Empty;
             using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {

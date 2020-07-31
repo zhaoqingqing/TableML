@@ -37,6 +37,15 @@ namespace TableMLGUI
         {
             get { return cbSimpleRule.Checked; }
         }
+        
+        /// <summary>
+        /// ksframework的表格默认格式
+        /// </summary>
+        public bool IsKSFrameworkRule
+        {
+            get { return cbKSFormat.Checked; }
+        }
+        
         public bool GenCSCode
         {
             get { return cbGenCS.Checked; }
@@ -111,6 +120,7 @@ namespace TableMLGUI
             openFileDialog1.SupportMultiDottedExtensions = true;
 
             groupBoxCS.Visible = cbGenCS.Checked;
+            InitExcelFormat();
         }
 
         #region  文件拖拽到列表
@@ -231,7 +241,10 @@ namespace TableMLGUI
                     {
                         string savePath = null;
                         string outputName = SimpleExcelFile.GetOutFileName(filePath, index);
-                        if (string.IsNullOrEmpty(outputName)) { continue; }
+                        if (string.IsNullOrEmpty(outputName))
+                        {
+                            continue;
+                        }
                         savePath = GenTmlPath + "\\" + outputName + TmlExtensions;
                         //编译成tml
                         TableCompileResult compileResult = compiler.Compile(filePath, savePath, index);
@@ -466,6 +479,20 @@ namespace TableMLGUI
         private void btnExecuteSql_Click(object sender, EventArgs e)
         {
             SQLiteHelper.ExecuteSql();
+        }
+
+        private void cbKSFormat_Click(object sender, EventArgs e)
+        {
+            InitExcelFormat(true);
+        }
+
+        void InitExcelFormat(bool show_msg = false)
+        {
+            if (show_msg)
+            {
+                MessageBox.Show("是否选中"+cbKSFormat.Checked);
+            }
+            ExcelConfig.IsKSFrameworkFormat = IsKSFrameworkRule;
         }
     }
 }

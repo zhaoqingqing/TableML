@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TableMLCompiler</RootNamespace>
     <AssemblyName>TableMLCompiler</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="BatchCompilerInSingleFile.cs" />
     <Compile Include="CompilerConfig.cs" />
+    <Compile Include="ExcelConfig.cs" />
     <Compile Include="ITableSourceFile.cs" />
     <Compile Include="SimpleCSVFile.cs" />
     <Compile Include="SimpleTSVFile.cs" />
