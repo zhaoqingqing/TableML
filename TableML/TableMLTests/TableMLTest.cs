@@ -39,11 +39,14 @@ int	string
         [SetUp, OneTimeSetUp]
         public void Init()
         {
-           //excel目录设置失败，手动写
-            //var dllDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            var dllDir = @"d:\Git\TableML\TableML\TableMLTests\";
-            Directory.SetCurrentDirectory(dllDir);
+           //程序的运行目录
+            var dllDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            dllDir = dllDir + ".\\..\\..\\";
+            dllDir = Path.GetFullPath(dllDir);
+            //var dllDir = @"d:\Git\TableML\TableML\TableMLTests\";
             Console.WriteLine(dllDir);
+            Directory.SetCurrentDirectory(dllDir);
+            
         }
 
         [Test]
@@ -122,8 +125,9 @@ int	string
 		{
 			var bc = new BatchCompiler();
 			var results = bc.CompileTableMLAll("TestSettings", "TestSettingsResult", "TestSettings.cs.gen", DefaultTemplate.GenCodeTemplate, "AppSettings", ".tml", null, true);
-
-			Assert.AreEqual(4, results.Count);
+			//根据实际情况目录下有多少个excel文件
+			var files = Directory.GetFiles("TestSettings", "*", SearchOption.AllDirectories);
+			Assert.AreEqual(files.Length, results.Count);
 			Assert.True(File.Exists("TestSettings.cs.gen"));
 		}
     }
