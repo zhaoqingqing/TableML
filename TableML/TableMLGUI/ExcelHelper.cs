@@ -29,8 +29,8 @@ namespace TableMLGUI
 
         public static void UpdateAllTableSyntax()
         {
-            var findPath = System.Environment.CurrentDirectory + ".\\..\\Src";
-            //var findPath = @"e:\3dsn\plan\005ConfigTable\Src\";
+            var findPath = System.Environment.CurrentDirectory + ".\\..\\SettingSource";
+            //var findPath = @"e:\3dsn\plan\005ConfigTable\SettingSource\";
             var files = Directory.GetFiles(findPath, "*.xls", SearchOption.AllDirectories);
             Console.WriteLine("开始更新{0}张Excel表", files.Length);
             var count = 0;
@@ -123,7 +123,6 @@ namespace TableMLGUI
         /// <returns></returns>
         public static bool CheckExcel(string filePath, CheckType type, int rowIdx = 5)
         {
-            bool fileChange = false;
             IWorkbook Workbook;
             ISheet Worksheet;
             using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // no isolation
@@ -249,7 +248,6 @@ namespace TableMLGUI
 
         public static void CheckNameEmpty(string[] filePaths)
         {
-            int count = 0;
             foreach (string filePath in filePaths)
             {
                 CheckExcel(filePath, CheckType.Empty);
@@ -258,7 +256,6 @@ namespace TableMLGUI
 
         public static void CheckHasKeyWords(string[] filePaths)
         {
-            int count = 0;
             foreach (string filePath in filePaths)
             {
                 CheckExcel(filePath, CheckType.HasKeyWords);

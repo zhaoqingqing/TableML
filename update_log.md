@@ -1,3 +1,9 @@
+> 2020-8-3
+
+	1. 界面大调整，去掉旧项目的部分功能
+ 	2. 默认禁用sqlite功能，相应的隐藏部分按钮
+ 	3. 路径预定义改为KSFramework(App.config)
+
 >  2020-7-30
 
 1. tablemlgui默认勾选为KSFramework格式

@@ -45,12 +45,9 @@ namespace TableMLGUI
         {
             get { return cbKSFormat.Checked; }
         }
-        
-        public bool GenCSCode
-        {
-            get { return cbGenCS.Checked; }
-        }
 
+        public bool UseSqlLite = false;
+        
         /// <summary>
         /// 框中的文件列表
         /// </summary>
@@ -65,7 +62,7 @@ namespace TableMLGUI
         {
             InitializeComponent();
             Init();
-            //tbFileList.Text = @"e:\3dsn\plan\005ConfigTable\Src\NPC配置表.xlsx";
+            //tbFileList.Text = @"e:\3dsn\plan\005ConfigTable\SettingSource\NPC配置表.xlsx";
         }
 
 
@@ -79,6 +76,13 @@ namespace TableMLGUI
             var excelSrc = useAbsolutePath ? srcExcelPath : Path.GetFullPath(Application.StartupPath + srcExcelPath);
             this.tbSrcPath.Text = excelSrc;
             srcFullPath = Path.GetFullPath(Application.StartupPath + srcExcelPath);
+            
+            string UseSqlLiteStr = ConfigurationManager.AppSettings.Get("UseSqlLite").Trim().ToLower();
+            UseSqlLite = UseSqlLiteStr == "true" || UseSqlLiteStr == "1";
+            //未启用sqlite功能，隐藏相关界面
+            btnCompileAll.Visible = UseSqlLite;
+            btnUpdateDB.Visible = UseSqlLite;
+
             //sql的database文件存放路径
             var sqlDBPath = ConfigurationManager.AppSettings.Get("DBPath");
             var sqlScriptsPath = ConfigurationManager.AppSettings.Get("sqlScriptsPath");
@@ -107,19 +111,19 @@ namespace TableMLGUI
             //客户端代码路径
             var dstClientCodePath = ConfigurationManager.AppSettings.Get("dstClientCodePath");
             var dstClientCode = useAbsolutePath ? dstClientCodePath : Path.GetFullPath(Application.StartupPath + dstClientCodePath);
-            this.txtCodePath.Text = dstClientCode;
+//            this.txtCodePath.Text = dstClientCode;
 
             //客户端tml路径
             var dstClientTmlPath = ConfigurationManager.AppSettings.Get("dstClientTmlPath");
             var dstClientTml = useAbsolutePath ? dstClientTmlPath : Path.GetFullPath(Application.StartupPath + dstClientTmlPath);
-            this.txtTmlPath.Text = dstClientTml;
+//            this.txtTmlPath.Text = dstClientTml;
 
             openFileDialog1.InitialDirectory = srcFullPath;
             openFileDialog1.DefaultExt = "*.xls,*.tsv,*.csv";
             openFileDialog1.Multiselect = true;
             openFileDialog1.SupportMultiDottedExtensions = true;
 
-            groupBoxCS.Visible = cbGenCS.Checked;
+
             InitExcelFormat();
         }
 
@@ -234,10 +238,12 @@ namespace TableMLGUI
                 }
                 Console.WriteLine(filePath);
                 var ext = Path.GetExtension(filePath).Trim().ToLower();
-                if (ext.Contains(".xls"))
+                if (ext.Contains(".xls") || ext.Contains(".xlsx"))
                 {
                     var workbook = PreParseExcel(filePath);
-                    for (int index = 0; index < workbook.NumberOfSheets; index++)
+                    //ksframework只编译第一个sheet页
+                    var sheetCount = IsKSFrameworkRule ? 1 : workbook.NumberOfSheets;
+                    for (int index = 0; index < sheetCount; index++)
                     {
                         string savePath = null;
                         string outputName = SimpleExcelFile.GetOutFileName(filePath, index);
@@ -303,9 +309,11 @@ namespace TableMLGUI
 
             }
             BatchCompiler.SaveCompileResult(dst2src);
-
-            //将结果插入到sqlite中
-            SQLiteHelper.UpdateDB(tmlList.ToArray());
+            if (UseSqlLite)
+            {
+                //将结果插入到sqlite中
+                SQLiteHelper.UpdateDB(tmlList.ToArray());
+            }
 
             if (msgResult) { ShowCompileResult(comileCount); }
         }
@@ -322,20 +330,16 @@ namespace TableMLGUI
                 || file.ToLower().EndsWith("xlsx") || file.ToLower().EndsWith("tsv")).ToList();
             tbFileList.Text = string.Join("\r\n", files);
             CompileSelect(files.ToArray(), msgResult);
-            //            var batchCompiler = new BatchCompiler();
-            //
-            //            string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
-            //
-            //            var results = batchCompiler.CompileAll(srcDirectory, GenTmlPath, GenCodePath,
-            //               templateString, NameSpace, TmlExtensions, null, !string.IsNullOrEmpty(GenCodePath), GenCSCode);
-//                        if (msgResult) { ShowCompileResult(results.Count); }
         }
 
 
         private void btnCompileAll_Click(object sender, EventArgs e)
         {
             CompileAllExcel();
-            SQLiteHelper.UpdateDB(GenTmlPath);
+            if (UseSqlLite)
+            {
+                SQLiteHelper.UpdateDB(GenTmlPath);
+            }
         }
 
         public void ShowCompileResult(int count)
@@ -350,24 +354,24 @@ namespace TableMLGUI
 
         private void btnSyncCode_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(txtCodePath.Text) == false)
-            {
-                Directory.CreateDirectory(txtCodePath.Text);
-            }
-            FileHelper.CopyFolder(GenCodePath, txtCodePath.Text);
-            Console.WriteLine("copy {0} to \r\n {1}", GenCodePath, txtCodePath.Text);
-            MessageBox.Show(string.Format("{0}\r\n同步完成", txtCodePath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+//            if (Directory.Exists(txtCodePath.Text) == false)
+//            {
+//                Directory.CreateDirectory(txtCodePath.Text);
+//            }
+//            FileHelper.CopyFolder(GenCodePath, txtCodePath.Text);
+//            Console.WriteLine("copy {0} to \r\n {1}", GenCodePath, txtCodePath.Text);
+//            MessageBox.Show(string.Format("{0}\r\n同步完成", txtCodePath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnSyncTml_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(txtTmlPath.Text) == false)
-            {
-                Directory.CreateDirectory(txtTmlPath.Text);
-            }
-            FileHelper.CopyFolder(GenTmlPath, txtTmlPath.Text);
-            Console.WriteLine("copy {0} to \r\n {1}", GenTmlPath, txtTmlPath.Text);
-            MessageBox.Show(string.Format("{0}\r\n同步完成", txtTmlPath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+//            if (Directory.Exists(txtTmlPath.Text) == false)
+//            {
+//                Directory.CreateDirectory(txtTmlPath.Text);
+//            }
+//            FileHelper.CopyFolder(GenTmlPath, txtTmlPath.Text);
+//            Console.WriteLine("copy {0} to \r\n {1}", GenTmlPath, txtTmlPath.Text);
+//            MessageBox.Show(string.Format("{0}\r\n同步完成", txtTmlPath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnCheckNameRepet_Click(object sender, EventArgs e)
@@ -424,7 +428,14 @@ namespace TableMLGUI
 
         private void btnUpdateDB_Click(object sender, EventArgs e)
         {
-            SQLiteHelper.UpdateDB(GenTmlPath);
+            if (UseSqlLite)
+            {
+                SQLiteHelper.UpdateDB(GenTmlPath);
+            }
+            else
+            {
+                MessageBox.Show("未启用Sqlite功能，请在App.config中启用", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void btnCompileExcel_Click(object sender, EventArgs e)
@@ -438,7 +449,10 @@ namespace TableMLGUI
         public void CMDCompile()
         {
             CompileAllExcel();
-            SQLiteHelper.UpdateDB(GenTmlPath);
+            if (UseSqlLite)
+            {
+                SQLiteHelper.UpdateDB(GenTmlPath);
+            }
         }
 
         private void btnOpenDB_Click(object sender, EventArgs e)
@@ -470,12 +484,7 @@ namespace TableMLGUI
                 }
             }
         }
-
-        private void cbGenCS_CheckedChanged(object sender, EventArgs e)
-        {
-            groupBoxCS.Visible = cbGenCS.Checked;
-        }
-
+        
         private void btnExecuteSql_Click(object sender, EventArgs e)
         {
             SQLiteHelper.ExecuteSql();
