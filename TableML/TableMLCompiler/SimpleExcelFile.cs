@@ -74,7 +74,7 @@ namespace TableML.Compiler
         {
             get
             {
-                return ExcelConfig.IsKSFrameworkFormat ? 3 : 15;
+                return ExcelConfig.IsKSFrameworkFormat ? 2 : 15;
             }
         }
 		
@@ -85,7 +85,7 @@ namespace TableML.Compiler
         {
             get
             {
-                return ExcelConfig.IsKSFrameworkFormat ? 3 : 14;
+                return ExcelConfig.IsKSFrameworkFormat ? 2 : 14;
             }
         }
 		
