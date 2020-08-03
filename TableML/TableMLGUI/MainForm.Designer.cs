@@ -58,9 +58,6 @@
             this.groupBoxTools.SuspendLayout();
             this.groupBoxOther.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // btnCompileSelect
-            // 
             this.btnCompileSelect.Location = new System.Drawing.Point(266, 643);
             this.btnCompileSelect.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCompileSelect.Name = "btnCompileSelect";
@@ -69,9 +66,6 @@
             this.btnCompileSelect.Text = "编译上面框中的Excel";
             this.btnCompileSelect.UseVisualStyleBackColor = true;
             this.btnCompileSelect.Click += new System.EventHandler(this.btnCompileSelect_Click);
-            // 
-            // tbFileList
-            // 
             this.tbFileList.AllowDrop = true;
             this.tbFileList.Location = new System.Drawing.Point(24, 44);
             this.tbFileList.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -82,18 +76,12 @@
             this.tbFileList.TabIndex = 1;
             this.tbFileList.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbFileList_DragDrop);
             this.tbFileList.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbFileList_DragEnter);
-            // 
-            // label1
-            // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(24, 8);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(345, 17);
             this.label1.TabIndex = 2;
             this.label1.Text = "请拖入需要编译的单个或多个Excel文件(可手动增加或删除路径)";
-            // 
-            // tbSrcPath
-            // 
             this.tbSrcPath.AllowDrop = true;
             this.tbSrcPath.Location = new System.Drawing.Point(6, 844);
             this.tbSrcPath.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -103,9 +91,6 @@
             this.tbSrcPath.TabIndex = 3;
             this.tbSrcPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragDrop);
             this.tbSrcPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragEnter);
-            // 
-            // btnCompileAll
-            // 
             this.btnCompileAll.Location = new System.Drawing.Point(3, 905);
             this.btnCompileAll.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCompileAll.Name = "btnCompileAll";
@@ -114,18 +99,12 @@
             this.btnCompileAll.Text = "编译并插入到SQLite中";
             this.btnCompileAll.UseVisualStyleBackColor = true;
             this.btnCompileAll.Click += new System.EventHandler(this.btnCompileAll_Click);
-            // 
-            // label2
-            // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 798);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(157, 17);
             this.label2.TabIndex = 4;
             this.label2.Text = "编译这个目录下所有的Excel";
-            // 
-            // label3
-            // 
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.SystemColors.ActiveCaption;
@@ -134,20 +113,14 @@
             this.label3.Size = new System.Drawing.Size(242, 17);
             this.label3.TabIndex = 5;
             this.label3.Text = "任务栏点击我选TableGUI，可查看输出日志";
-            // 
-            // btnUpdateCSSyntax
-            // 
             this.btnUpdateCSSyntax.Location = new System.Drawing.Point(155, 102);
             this.btnUpdateCSSyntax.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnUpdateCSSyntax.Name = "btnUpdateCSSyntax";
-            this.btnUpdateCSSyntax.Size = new System.Drawing.Size(140, 40);
+            this.btnUpdateCSSyntax.Size = new System.Drawing.Size(128, 40);
             this.btnUpdateCSSyntax.TabIndex = 0;
-            this.btnUpdateCSSyntax.Text = "批量改表的字段类型";
+            this.btnUpdateCSSyntax.Text = "批量修改字段类型";
             this.btnUpdateCSSyntax.UseVisualStyleBackColor = true;
             this.btnUpdateCSSyntax.Click += new System.EventHandler(this.btnUpdateCSSyntax_Click);
-            // 
-            // btnCheckNameRepet
-            // 
             this.btnCheckNameRepet.Location = new System.Drawing.Point(8, 34);
             this.btnCheckNameRepet.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCheckNameRepet.Name = "btnCheckNameRepet";
@@ -156,9 +129,6 @@
             this.btnCheckNameRepet.Text = "检查字段名重复";
             this.btnCheckNameRepet.UseVisualStyleBackColor = true;
             this.btnCheckNameRepet.Click += new System.EventHandler(this.btnCheckNameRepet_Click);
-            // 
-            // btnOpenCodeDir
-            // 
             this.btnOpenCodeDir.Location = new System.Drawing.Point(8, 28);
             this.btnOpenCodeDir.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnOpenCodeDir.Name = "btnOpenCodeDir";
@@ -167,9 +137,6 @@
             this.btnOpenCodeDir.Text = "打开生成的代码";
             this.btnOpenCodeDir.UseVisualStyleBackColor = true;
             this.btnOpenCodeDir.Click += new System.EventHandler(this.btnOpenCodeDir_Click);
-            // 
-            // btnOpenTmlDir
-            // 
             this.btnOpenTmlDir.Location = new System.Drawing.Point(155, 28);
             this.btnOpenTmlDir.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnOpenTmlDir.Name = "btnOpenTmlDir";
@@ -178,9 +145,6 @@
             this.btnOpenTmlDir.Text = "打开编译后的表";
             this.btnOpenTmlDir.UseVisualStyleBackColor = true;
             this.btnOpenTmlDir.Click += new System.EventHandler(this.btnOpenTmlDir_Click);
-            // 
-            // btnCheckNameEmpty
-            // 
             this.btnCheckNameEmpty.Location = new System.Drawing.Point(155, 34);
             this.btnCheckNameEmpty.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCheckNameEmpty.Name = "btnCheckNameEmpty";
@@ -189,9 +153,6 @@
             this.btnCheckNameEmpty.Text = "检查字段名空白";
             this.btnCheckNameEmpty.UseVisualStyleBackColor = true;
             this.btnCheckNameEmpty.Click += new System.EventHandler(this.btnCheckNameEmpty_Click);
-            // 
-            // cbSimpleRule
-            // 
             this.cbSimpleRule.AutoSize = true;
             this.cbSimpleRule.Location = new System.Drawing.Point(14, 742);
             this.cbSimpleRule.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -200,10 +161,7 @@
             this.cbSimpleRule.TabIndex = 6;
             this.cbSimpleRule.Text = "我是三行简单TSV";
             this.cbSimpleRule.UseVisualStyleBackColor = true;
-            // 
-            // btnCheckCSKW
-            // 
-            this.btnCheckCSKW.Location = new System.Drawing.Point(292, 34);
+            this.btnCheckCSKW.Location = new System.Drawing.Point(296, 34);
             this.btnCheckCSKW.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCheckCSKW.Name = "btnCheckCSKW";
             this.btnCheckCSKW.Size = new System.Drawing.Size(170, 40);
@@ -211,20 +169,14 @@
             this.btnCheckCSKW.Text = "检查字段名是否C#关键字";
             this.btnCheckCSKW.UseVisualStyleBackColor = true;
             this.btnCheckCSKW.Click += new System.EventHandler(this.btnCheckCSKW_Click);
-            // 
-            // btnUpdateSelectCSSyntax
-            // 
-            this.btnUpdateSelectCSSyntax.Location = new System.Drawing.Point(9, 102);
+            this.btnUpdateSelectCSSyntax.Location = new System.Drawing.Point(8, 102);
             this.btnUpdateSelectCSSyntax.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnUpdateSelectCSSyntax.Name = "btnUpdateSelectCSSyntax";
-            this.btnUpdateSelectCSSyntax.Size = new System.Drawing.Size(140, 40);
+            this.btnUpdateSelectCSSyntax.Size = new System.Drawing.Size(128, 40);
             this.btnUpdateSelectCSSyntax.TabIndex = 0;
-            this.btnUpdateSelectCSSyntax.Text = "改框中表的字段类型";
+            this.btnUpdateSelectCSSyntax.Text = "改上面表字段类型";
             this.btnUpdateSelectCSSyntax.UseVisualStyleBackColor = true;
             this.btnUpdateSelectCSSyntax.Click += new System.EventHandler(this.btnUpdateSelectCSSyntax_Click);
-            // 
-            // btnCompileExcel
-            // 
             this.btnCompileExcel.Location = new System.Drawing.Point(178, 905);
             this.btnCompileExcel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCompileExcel.Name = "btnCompileExcel";
@@ -233,9 +185,6 @@
             this.btnCompileExcel.Text = "编译Excel";
             this.btnCompileExcel.UseVisualStyleBackColor = true;
             this.btnCompileExcel.Click += new System.EventHandler(this.btnCompileExcel_Click);
-            // 
-            // btnSqlite
-            // 
             this.btnSqlite.Location = new System.Drawing.Point(8, 163);
             this.btnSqlite.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnSqlite.Name = "btnSqlite";
@@ -244,9 +193,6 @@
             this.btnSqlite.Text = "插入十万条测试数据";
             this.btnSqlite.UseVisualStyleBackColor = true;
             this.btnSqlite.Click += new System.EventHandler(this.btnSqlite_Click);
-            // 
-            // btnUpdateDB
-            // 
             this.btnUpdateDB.Location = new System.Drawing.Point(362, 905);
             this.btnUpdateDB.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnUpdateDB.Name = "btnUpdateDB";
@@ -255,9 +201,6 @@
             this.btnUpdateDB.Text = "仅插入到Sqlite";
             this.btnUpdateDB.UseVisualStyleBackColor = true;
             this.btnUpdateDB.Click += new System.EventHandler(this.btnUpdateDB_Click);
-            // 
-            // btnOpenDB
-            // 
             this.btnOpenDB.Location = new System.Drawing.Point(155, 93);
             this.btnOpenDB.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnOpenDB.Name = "btnOpenDB";
@@ -266,9 +209,6 @@
             this.btnOpenDB.Text = "打开生成的data.db";
             this.btnOpenDB.UseVisualStyleBackColor = true;
             this.btnOpenDB.Click += new System.EventHandler(this.btnOpenDB_Click);
-            // 
-            // groupBoxTools
-            // 
             this.groupBoxTools.Controls.Add(this.btnCheckNameEmpty);
             this.groupBoxTools.Controls.Add(this.btnUpdateCSSyntax);
             this.groupBoxTools.Controls.Add(this.btnUpdateSelectCSSyntax);
@@ -282,9 +222,6 @@
             this.groupBoxTools.TabIndex = 7;
             this.groupBoxTools.TabStop = false;
             this.groupBoxTools.Text = "检查Excel错误";
-            // 
-            // btnHelp
-            // 
             this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnHelp.BackColor = System.Drawing.SystemColors.Highlight;
             this.btnHelp.Cursor = System.Windows.Forms.Cursors.Help;
@@ -296,9 +233,6 @@
             this.btnHelp.Text = "我要帮助";
             this.btnHelp.UseVisualStyleBackColor = false;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
-            // 
-            // groupBoxOther
-            // 
             this.groupBoxOther.Controls.Add(this.btnOpenCodeDir);
             this.groupBoxOther.Controls.Add(this.btnSqlite);
             this.groupBoxOther.Controls.Add(this.btnOpenTmlDir);
@@ -314,9 +248,6 @@
             this.groupBoxOther.TabIndex = 7;
             this.groupBoxOther.TabStop = false;
             this.groupBoxOther.Text = "其它辅助项";
-            // 
-            // btnExecuteSql
-            // 
             this.btnExecuteSql.Location = new System.Drawing.Point(8, 93);
             this.btnExecuteSql.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnExecuteSql.Name = "btnExecuteSql";
@@ -325,9 +256,6 @@
             this.btnExecuteSql.Text = "执行Sql脚本";
             this.btnExecuteSql.UseVisualStyleBackColor = true;
             this.btnExecuteSql.Click += new System.EventHandler(this.btnExecuteSql_Click);
-            // 
-            // btnClearConsole
-            // 
             this.btnClearConsole.Location = new System.Drawing.Point(304, 28);
             this.btnClearConsole.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnClearConsole.Name = "btnClearConsole";
@@ -336,9 +264,6 @@
             this.btnClearConsole.Text = "清空控制台输出";
             this.btnClearConsole.UseVisualStyleBackColor = true;
             this.btnClearConsole.Click += new System.EventHandler(this.btnClearConsole_Click);
-            // 
-            // btnFileBrowser
-            // 
             this.btnFileBrowser.Location = new System.Drawing.Point(24, 643);
             this.btnFileBrowser.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnFileBrowser.Name = "btnFileBrowser";
@@ -347,13 +272,7 @@
             this.btnFileBrowser.Text = "浏览......";
             this.btnFileBrowser.UseVisualStyleBackColor = true;
             this.btnFileBrowser.Click += new System.EventHandler(this.btnFileBrowser_Click);
-            // 
-            // openFileDialog1
-            // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // cbKSFormat
-            // 
             this.cbKSFormat.AutoSize = true;
             this.cbKSFormat.Checked = true;
             this.cbKSFormat.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -365,9 +284,6 @@
             this.cbKSFormat.Text = "KSFramework格式";
             this.cbKSFormat.UseVisualStyleBackColor = true;
             this.cbKSFormat.Click += new System.EventHandler(this.cbKSFormat_Click);
-            // 
-            // MainForm
-            // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1031, 1031);
