@@ -161,15 +161,15 @@ namespace TableML.Compiler
             if (Worksheet == null)
             {
                 //                    throw new Exception(filePath + " Null Worksheet");
-                ConsoleHelper.Error(filePath + " Null Worksheet");
+                ConsoleHelper.Error(string.Format("{0} ,sheetIdx:{1} is Null Worksheet",filePath ,sheetIdx));
                 return false;
             }
-
+            
             var sheetRowCount = GetWorksheetCount();
             if (sheetRowCount < PreserverRowCount)
             {
-                //                    throw new Exception(string.Format("{0} At lease {1} rows of this excel", filePath, sheetRowCount));
-                ConsoleHelper.Error(string.Format("{0} At lease {1} rows of this excel", filePath, sheetRowCount));
+                //                    throw new Exception(string.Format("{0} ,sheetIdx:{1} At lease {2} rows of this excel", filePath,sheetIdx, PreserverRowCount));
+                ConsoleHelper.Error(string.Format("{0} ,sheetIdx:{1} At lease {2} rows of this excel", filePath,sheetIdx, PreserverRowCount));
                 return false;
 
             }
@@ -177,7 +177,7 @@ namespace TableML.Compiler
             if (row == null || row.Cells.Count < 2)
             {
                 //                throw new Exception(filePath + "第二行至少需要3列");
-                ConsoleHelper.Error(filePath + " -> " + Worksheet.SheetName + "第二行至少需要3列");
+                ConsoleHelper.Error("{0}, sheetIdx:{1} ,name:{2} 的第二行至少需要3列",filePath ,sheetIdx, Worksheet.SheetName);
                 return false;
             }
             return true;
