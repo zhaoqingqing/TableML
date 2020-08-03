@@ -7,7 +7,7 @@ using DotLiquid;
 namespace TableML.Compiler
 {
     /// <summary>
-    /// ÓÃÓÚliquidÄ£°å
+    /// ç”¨äºliquidæ¨¡æ¿
     /// </summary>
     public class TableTemplateVars
     {
@@ -21,7 +21,7 @@ namespace TableML.Compiler
         public List<string> RelativePaths = new List<string>();
 
         /// <summary>
-        ///  ¹¹½¨³ÉÒ»¸öÊı×é"aaa", "bbb"
+        ///  æ„å»ºæˆä¸€ä¸ªæ•°ç»„"aaa", "bbb"
         /// </summary>
         public string TabFilePaths
         {
@@ -50,13 +50,13 @@ namespace TableML.Compiler
         public Hash PrimaryKeyField
         {
             get
-            {   //Èç¹û¼ÓÉÏÅĞ¶Ï»áµ¼ÖÂ²¿·ÖÉú³ÉµÄ ParsePrimaryKey() Ã»ÓĞÀàĞÍ
-                //if (Fields != null && Fields.Count > 0)
-                //{
-                //    return Fields[0];
-                //}
-                //return null;
-                return Fields[0];
+            {   //å¦‚æœåŠ ä¸Šåˆ¤æ–­ä¼šå¯¼è‡´éƒ¨åˆ†ç”Ÿæˆçš„ ParsePrimaryKey() æ²¡æœ‰ç±»å‹
+                if (Fields != null && Fields.Count > 0)
+                {
+                    return Fields[0];
+                }
+                return null;
+//                return Fields[0];
             }
         }
 
@@ -75,7 +75,7 @@ namespace TableML.Compiler
 
             TabFileNames = compileResult.ExcelFile.ExcelFileName;
             ClassName = DefaultClassNameParse(tabFileRelativePath);
-            // ¿É×Ô¶¨ÒåClass Name
+            // å¯è‡ªå®šä¹‰Class Name
             if (CustomClassNameFunc != null)
                 ClassName = CustomClassNameFunc(ClassName, tabFileRelativePath);
 
@@ -93,10 +93,10 @@ namespace TableML.Compiler
         /// <returns></returns>
         string DefaultClassNameParse(string tabFilePath)
         {
-            // Î´´¦ÀíÂ·¾¶µÄÀàÃû, È¥µôºó×ºÀ©Õ¹Ãû
+            // æœªå¤„ç†è·¯å¾„çš„ç±»å, å»æ‰åç¼€æ‰©å±•å
             var classNameOrigin = Path.ChangeExtension(tabFilePath, null);
 
-            // ×ÓÄ¿Â¼ºÏ²¢£¬Ê××ÖÄ¸´óĞ´, ×é³Éclass name
+            // å­ç›®å½•åˆå¹¶ï¼Œé¦–å­—æ¯å¤§å†™, ç»„æˆclass name
             var className = classNameOrigin.Replace("/", "_").Replace("\\", "_");
             className = className.Replace(" ", "");
             className = string.Join("", (from name
@@ -104,7 +104,7 @@ namespace TableML.Compiler
                     select (name[0].ToString().ToUpper() + name.Substring(1, name.Length - 1)))
                 .ToArray());
 
-            // È¥µô+»ò#ºÅºóÃæµÄ×Ö·û
+            // å»æ‰+æˆ–#å·åé¢çš„å­—ç¬¦
             var plusSignIndex = className.IndexOf("+");
             className = className.Substring(0, plusSignIndex == -1 ? className.Length : plusSignIndex);
             plusSignIndex = className.IndexOf("#");
