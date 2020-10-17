@@ -15,13 +15,14 @@ namespace TableMLGUI
         /// <summary>
         /// 输出tml文件路径
         /// </summary>
-        public string GenTmlPath = "..\\client_setting";
+        public string GenTmlPath;
         public string srcFullPath;
 
         /// <summary>
         /// 生成的代码路径
         /// </summary>
-        public string GenCodePath = "..\\client_code\\";
+        public string GenCodePath;
+        public string GenLuaPath ;
         /// <summary>
         /// tml文件后缀
         /// </summary>
@@ -107,7 +108,9 @@ namespace TableMLGUI
             //代码路径
             var genCodePath = ConfigurationManager.AppSettings.Get("GenCodePath");
             GenCodePath = useAbsolutePath ? genCodePath : Path.GetFullPath(Application.StartupPath + genCodePath);
-
+            var genLuaPath = ConfigurationManager.AppSettings.Get("GenLuaPath");
+            GenLuaPath = useAbsolutePath ? genLuaPath : Path.GetFullPath(Application.StartupPath + genLuaPath);
+            #region 用于拷贝文件到指定路径下
             //客户端代码路径
             var dstClientCodePath = ConfigurationManager.AppSettings.Get("dstClientCodePath");
             var dstClientCode = useAbsolutePath ? dstClientCodePath : Path.GetFullPath(Application.StartupPath + dstClientCodePath);
@@ -117,7 +120,7 @@ namespace TableMLGUI
             var dstClientTmlPath = ConfigurationManager.AppSettings.Get("dstClientTmlPath");
             var dstClientTml = useAbsolutePath ? dstClientTmlPath : Path.GetFullPath(Application.StartupPath + dstClientTmlPath);
 //            this.txtTmlPath.Text = dstClientTml;
-
+            #endregion
             openFileDialog1.InitialDirectory = srcFullPath;
             openFileDialog1.DefaultExt = "*.xls,*.tsv,*.csv";
             openFileDialog1.Multiselect = true;
@@ -229,6 +232,7 @@ namespace TableMLGUI
                     BatchCompiler batchCompiler = new BatchCompiler();
                     batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
                 }
+                //TODO 生成lua代码
             };
             foreach (var filePath in fullPaths)
             {
@@ -502,6 +506,11 @@ namespace TableMLGUI
                 MessageBox.Show("是否选中"+cbKSFormat.Checked);
             }
             ExcelConfig.IsKSFrameworkFormat = IsKSFrameworkRule;
+        }
+
+        private void btnOpenLuaDir_Click(object sender, EventArgs e)
+        {
+            FileHelper.OpenFolder(GenLuaPath);
         }
     }
 }
