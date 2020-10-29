@@ -16,7 +16,7 @@ import zipfile
 import shutil
 
 src_path = r"E:\Code\TableML\TableML\TableMLGUI\bin\Release"
-dst_path = r"E:\Code\KSFramework_master_2018\KSFramework\Product\Tableml_GUI"
+dst_path = r"E:\Code\KSFramework\KSFramework\Product\Tableml_GUI"
 
 zip_name = ".\\tableml_gui.zip"
 
@@ -61,9 +61,8 @@ if __name__ == "__main__":
             shutil.rmtree(dst_path)
             print("exist path,delete", dst_path)
         shutil.copytree(src_path, dst_path)
-
+        print("zip finish")
     except Exception as ex:
         print(ex)
     finally:
-        print("zip finish")
         input("Press <Enter>")
