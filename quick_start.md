@@ -2,15 +2,13 @@
 
 项目地址：https://github.com/zhaoqingqing/TableML
 
-项目介绍：
+项目介绍：[README.md](./README.md)
 
-更新日志：
+更新日志：  [update_log.md](./update_log.md) 
 
 ### 读取CSV
 
-目前NPOI并不直接支持CSV文件(类似纯文本的格式)
-
-> 更新于2018-12-6，已添加到csv文件的支持
+由于NPOI并不支持读取CSV文件(类似纯文本的格式)，在2018-12-6，我添加了解析csv的支持
 
 ### 技术支持
 
@@ -59,7 +57,7 @@
 
 ### 主界面预览
 
-![https://github.com/zhaoqingqing/TableML/blob/custom/Document/tablemlgui_main.png](https://github.com/zhaoqingqing/TableML/blob/custom/Document/tablemlgui_main.png)
+![./Document/tablemlgui_main.png](./Document/tablemlgui_main.png)
 
 ### 命令行模式
 
@@ -73,7 +71,7 @@
 
   - 如果你需要编译全部的excel，就选择它。
 
-    ​
+    
 
 - 编译指定的几个excel
 
@@ -89,7 +87,7 @@
 
   - 如果是把数据插入到sqlite中，这部分功能不会用到，我们目前就是。
 
-  ​
+  
 
 - 组- 检查Excel错误
 
@@ -99,11 +97,15 @@
 
 - 组- 其它
 
-  - 这里是一些文件夹打开类的功能
+  - 这里是可以快捷地打开程序预定义的文件夹
 
-    ​ 
+     
 
-在编译excel后，会在应用程序目录生成一个**compile_result.csv**，表中记录着
+在编译excel后，会在应用程序目录生成一个**compile_result.csv**，表中记录格式如下：
 
-`编译后表名[文件名] <=> 源始Excel文件名`方便查看（当源始Excel文件名是中文时不能做表名时）
+```json
+编译后表名[文件名] <=> 源始Excel文件名
+```
+
+这个配置的作用是当源始Excel文件名是中文时，与生成的csv做一个映射表。
 

@@ -8,6 +8,10 @@ TableML, Table Markup Language, 基于电子表格的标记语言，
 
 目前提供C#版本的运行时、编译器、代码生成器。
 
+快速开始： [quick_start.md](./quick_start.md) 
+
+更新日志：  [update_log.md](./update_log.md) 
+
 ## Example
 
 
@@ -41,7 +45,6 @@ TableML.exe --Src setting --To setting2 --CodeFile Code.cs
 
 另外附带一份Code.cs，自动生成的代码。
 
-
 ## TableML编辑规则
 
 以上的例子中，展示了TableML的大部分特性：
@@ -57,14 +60,23 @@ TableML.exe --Src setting --To setting2 --CodeFile Code.cs
 - 行内容的第一个单元格内容，以#开头或Comment开头，改行被视为注释行，编译器忽略
 - 可以使用预编译指令#if和#endif，条件式控制编译的行
 
+## 开发者指南
 
-## 工程使用说明
+### 命令行方式
 
 1. 通过git clone 或者download master的方式将工程下载到本地
 2. 建议使用visual studio2012及更高版本打开 **TableML\TableML.sln**
 3. 在vs中设置**TableMLCompilerConsole** 为启动项目(解决方案面板，选中项目，**右键** - **设为启动项目**)
 4. 建议把项目的输出设为**Release**，然后选择 **菜单栏** - **生成** - **生成TableMLCompilerConsole** 
 5. 打开目录 **TableML\TableMLCompilerConsole\bin\Release** 可以看到已经生成了**TableML.exe**
+
+### GUI方式
+
+1. 通过git clone 或者download master的方式将工程下载到本地
+2. 建议使用visual studio2012及更高版本打开 **TableML\TableML.sln**
+3. 在vs中设置**TableMLGUI** 为启动项目(解决方案面板，选中项目，**右键** - **设为启动项目**)
+4. 开发过程中设置为Debug，生产环境项目设为**Release**，然后按下快捷键F5
+5. 在弹出的GUI窗口中进行编译Excel
 
 **TableML**
 
@@ -76,7 +88,7 @@ TableML.exe --Src setting --To setting2 --CodeFile Code.cs
 
 **TableMLCompilerConsole**
 
-- 提供命令行，根据条件对excel进行编译
+- 命令行窗口，根据条件对excel进行编译
 
 **TableMLGUI**
 
