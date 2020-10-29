@@ -47,7 +47,7 @@
             this.ClientSize = new System.Drawing.Size(1008, 729);
             this.Controls.Add(this.webBrowser);
             this.Name = "HelpForm";
-            this.Text = "前端导表工具-使用帮助";
+            this.Text = "导表工具-使用帮助";
             this.ResumeLayout(false);
 
         }
