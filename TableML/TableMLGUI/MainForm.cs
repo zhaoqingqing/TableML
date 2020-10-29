@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using TableML.Compiler;
 
@@ -29,7 +30,7 @@ namespace TableMLGUI
         public string TmlExtensions = ".tsv";
 
         public string NameSpace = "AppSettings";
-        private string sqlDataPath;
+        private string sqlDBPath;
 
         /// <summary>
         /// 简单三行格式文件
@@ -47,7 +48,20 @@ namespace TableMLGUI
             get { return cbKSFormat.Checked; }
         }
 
-        public bool UseSqlLite = false;
+        private bool _useSqlite = false;
+        public bool UseSqlite { get
+            {
+                return _useSqlite;
+            }
+            set
+            {
+                if (_useSqlite != value)
+                {
+                    _useSqlite = value;
+                    UpdateSqlVisible();
+                }
+            }
+        }
         
         /// <summary>
         /// 框中的文件列表
@@ -78,20 +92,18 @@ namespace TableMLGUI
             this.tbSrcPath.Text = excelSrc;
             srcFullPath = Path.GetFullPath(Application.StartupPath + srcExcelPath);
             
-            string UseSqlLiteStr = ConfigurationManager.AppSettings.Get("UseSqlLite").Trim().ToLower();
-            UseSqlLite = UseSqlLiteStr == "true" || UseSqlLiteStr == "1";
-            //未启用sqlite功能，隐藏相关界面
-            btnCompileAll.Visible = UseSqlLite;
-            btnUpdateDB.Visible = UseSqlLite;
+            string UseSqliteStr = ConfigurationManager.AppSettings.Get("UseSqlite").Trim().ToLower();
+            UseSqlite = UseSqliteStr == "true" || UseSqliteStr == "1";
 
             //sql的database文件存放路径
-            var sqlDBPath = ConfigurationManager.AppSettings.Get("DBPath");
-            var sqlScriptsPath = ConfigurationManager.AppSettings.Get("sqlScriptsPath");
-            if (!string.IsNullOrEmpty(sqlDBPath))
+            var dbPath = ConfigurationManager.AppSettings.Get("DBPath");
+            var _sqlScriptsPath = ConfigurationManager.AppSettings.Get("sqlScriptsPath");
+            if (!string.IsNullOrEmpty(dbPath))
             {
-                sqlDataPath = useAbsolutePath ? sqlDBPath : Path.GetFullPath(Application.StartupPath + sqlDBPath);
-                var sqlStPath = useAbsolutePath ? sqlScriptsPath : Path.GetFullPath(Application.StartupPath + sqlScriptsPath);
-                SQLiteHelper.Init(sqlDataPath, sqlStPath);
+                this.sqlDBPath = useAbsolutePath ? dbPath : Path.GetFullPath(Application.StartupPath + dbPath);
+                var sqlScriptPath = useAbsolutePath ? _sqlScriptsPath : Path.GetFullPath(Application.StartupPath + _sqlScriptsPath);
+                FileHelper.CheckFolder(sqlScriptPath);
+                SQLiteHelper.Init(this.sqlDBPath, sqlScriptPath);
             }
 
             //tml文件格式
@@ -178,6 +190,7 @@ namespace TableMLGUI
         private void btnCompileSelect_Click(object sender, EventArgs e)
         {
             CompileSelect();
+            if(UseSqlite) SQLiteHelper.UpdateDB(GenTmlPath);
         }
 
         public void CompileSelect(bool msgResult = false)
@@ -313,7 +326,7 @@ namespace TableMLGUI
 
             }
             BatchCompiler.SaveCompileResult(dst2src);
-            if (UseSqlLite)
+            if (UseSqlite)
             {
                 //将结果插入到sqlite中
                 SQLiteHelper.UpdateDB(tmlList.ToArray());
@@ -340,7 +353,7 @@ namespace TableMLGUI
         private void btnCompileAll_Click(object sender, EventArgs e)
         {
             CompileAllExcel();
-            if (UseSqlLite)
+            if (UseSqlite)
             {
                 SQLiteHelper.UpdateDB(GenTmlPath);
             }
@@ -432,7 +445,7 @@ namespace TableMLGUI
 
         private void btnUpdateDB_Click(object sender, EventArgs e)
         {
-            if (UseSqlLite)
+            if (UseSqlite)
             {
                 SQLiteHelper.UpdateDB(GenTmlPath);
             }
@@ -445,6 +458,10 @@ namespace TableMLGUI
         private void btnCompileExcel_Click(object sender, EventArgs e)
         {
             CompileAllExcel();
+            if (UseSqlite)
+            {
+                SQLiteHelper.UpdateDB(GenTmlPath);
+            }
         }
 
         /// <summary>
@@ -453,7 +470,7 @@ namespace TableMLGUI
         public void CMDCompile()
         {
             CompileAllExcel();
-            if (UseSqlLite)
+            if (UseSqlite)
             {
                 SQLiteHelper.UpdateDB(GenTmlPath);
             }
@@ -461,7 +478,7 @@ namespace TableMLGUI
 
         private void btnOpenDB_Click(object sender, EventArgs e)
         {
-            var dirPath = Path.GetDirectoryName(sqlDataPath);
+            var dirPath = Path.GetDirectoryName(sqlDBPath);
             FileHelper.OpenFolder(dirPath);
         }
 
@@ -511,6 +528,29 @@ namespace TableMLGUI
         private void btnOpenLuaDir_Click(object sender, EventArgs e)
         {
             FileHelper.OpenFolder(GenLuaPath);
+        }
+
+        private void Cb_sql_CheckedChanged(object sender, EventArgs e)
+        {
+            var box = sender as CheckBox;
+            if (box!=null)
+            {
+                UseSqlite = box.Checked;
+                //NOTE：使用此方法会重新生成app.config,导致里面的注释丢失，所以使用AppConfigHelper
+                /*var newKeyValue =  box.Checked ? "1" : "0";
+                Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                config.AppSettings.Settings["UseSqlite"].Value = newKeyValue;
+                config.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection("appSettings");*/
+                AppConfigHelper.SetValue("UseSqlite", box.Checked ? "1" : "0");
+                ConsoleHelper.Log($"是否开启导出到sqlite?{box.Checked} ,config:{AppConfigHelper.GetValue("UseSqlite")}");
+
+            }
+        }
+
+        void UpdateSqlVisible()
+        {
+            btnUpdateDB.Visible = UseSqlite;
         }
     }
 }

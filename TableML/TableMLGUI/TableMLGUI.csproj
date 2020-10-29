@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfigHelper.cs" />
     <Compile Include="ConfigData.cs" />
     <Compile Include="ExcelHelper.cs" />
     <Compile Include="FileHelper.cs" />

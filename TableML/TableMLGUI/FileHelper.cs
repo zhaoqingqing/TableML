@@ -222,4 +222,16 @@ public partial class FileHelper
             Console.WriteLine("[error] {0} not exist", path);
         }
     }
+
+    /// <summary>
+    /// 检查目录，如果不存在则创建
+    /// </summary>
+    /// <param name="path"></param>
+    public static void CheckFolder(string path)
+    {
+        if (Directory.Exists(path) == false)
+        {
+            Directory.CreateDirectory(path);
+        }
+    }
 }

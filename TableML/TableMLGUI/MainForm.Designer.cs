@@ -32,7 +32,6 @@
             this.tbFileList = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbSrcPath = new System.Windows.Forms.TextBox();
-            this.btnCompileAll = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.btnUpdateCSSyntax = new System.Windows.Forms.Button();
@@ -56,6 +55,7 @@
             this.btnFileBrowser = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.cbKSFormat = new System.Windows.Forms.CheckBox();
+            this.cb_sql = new System.Windows.Forms.CheckBox();
             this.groupBoxTools.SuspendLayout();
             this.groupBoxOther.SuspendLayout();
             this.SuspendLayout();
@@ -101,16 +101,6 @@
             this.tbSrcPath.TabIndex = 3;
             this.tbSrcPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragDrop);
             this.tbSrcPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragEnter);
-            // 
-            // btnCompileAll
-            // 
-            this.btnCompileAll.Location = new System.Drawing.Point(3, 639);
-            this.btnCompileAll.Name = "btnCompileAll";
-            this.btnCompileAll.Size = new System.Drawing.Size(140, 40);
-            this.btnCompileAll.TabIndex = 0;
-            this.btnCompileAll.Text = "编译并插入到SQLite中";
-            this.btnCompileAll.UseVisualStyleBackColor = true;
-            this.btnCompileAll.Click += new System.EventHandler(this.btnCompileAll_Click);
             // 
             // label2
             // 
@@ -268,7 +258,7 @@
             // 
             // btnHelp
             // 
-            this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnHelp.BackColor = System.Drawing.SystemColors.Highlight;
             this.btnHelp.Cursor = System.Windows.Forms.Cursors.Help;
             this.btnHelp.Location = new System.Drawing.Point(268, 120);
@@ -345,13 +335,26 @@
             this.cbKSFormat.AutoSize = true;
             this.cbKSFormat.Checked = true;
             this.cbKSFormat.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbKSFormat.Location = new System.Drawing.Point(228, 524);
+            this.cbKSFormat.Location = new System.Drawing.Point(179, 523);
             this.cbKSFormat.Name = "cbKSFormat";
             this.cbKSFormat.Size = new System.Drawing.Size(114, 16);
             this.cbKSFormat.TabIndex = 6;
             this.cbKSFormat.Text = "KSFramework格式";
             this.cbKSFormat.UseVisualStyleBackColor = true;
             this.cbKSFormat.Click += new System.EventHandler(this.cbKSFormat_Click);
+            // 
+            // cb_sql
+            // 
+            this.cb_sql.AutoSize = true;
+            this.cb_sql.Checked = true;
+            this.cb_sql.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cb_sql.Location = new System.Drawing.Point(329, 524);
+            this.cb_sql.Name = "cb_sql";
+            this.cb_sql.Size = new System.Drawing.Size(96, 16);
+            this.cb_sql.TabIndex = 6;
+            this.cb_sql.Text = "导出到SQLite";
+            this.cb_sql.UseVisualStyleBackColor = true;
+            this.cb_sql.CheckedChanged += new System.EventHandler(this.Cb_sql_CheckedChanged);
             // 
             // MainForm
             // 
@@ -360,6 +363,7 @@
             this.ClientSize = new System.Drawing.Size(884, 728);
             this.Controls.Add(this.groupBoxTools);
             this.Controls.Add(this.groupBoxOther);
+            this.Controls.Add(this.cb_sql);
             this.Controls.Add(this.cbKSFormat);
             this.Controls.Add(this.cbSimpleRule);
             this.Controls.Add(this.btnUpdateDB);
@@ -369,7 +373,6 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbFileList);
             this.Controls.Add(this.btnCompileExcel);
-            this.Controls.Add(this.btnCompileAll);
             this.Controls.Add(this.btnFileBrowser);
             this.Controls.Add(this.btnCompileSelect);
             this.Name = "MainForm";
@@ -378,6 +381,7 @@
             this.groupBoxOther.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         private System.Windows.Forms.Button btnOpenLuaDir;
@@ -389,7 +393,6 @@
         private System.Windows.Forms.TextBox tbFileList;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbSrcPath;
-        private System.Windows.Forms.Button btnCompileAll;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnUpdateCSSyntax;
@@ -411,6 +414,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button btnExecuteSql;
         private System.Windows.Forms.CheckBox cbKSFormat;
+        private System.Windows.Forms.CheckBox cb_sql;
     }
 }
 
