@@ -138,7 +138,7 @@ namespace TableMLGUI
             openFileDialog1.Multiselect = true;
             openFileDialog1.SupportMultiDottedExtensions = true;
 
-
+            cb_sql.Checked = UseSqlite;
             InitExcelFormat();
         }
 
@@ -543,7 +543,7 @@ namespace TableMLGUI
                 config.Save(ConfigurationSaveMode.Modified);
                 ConfigurationManager.RefreshSection("appSettings");*/
                 AppConfigHelper.SetValue("UseSqlite", box.Checked ? "1" : "0");
-                ConsoleHelper.Log($"是否开启导出到sqlite?{box.Checked} ,config:{AppConfigHelper.GetValue("UseSqlite")}");
+                ConsoleHelper.Log($"是否启用导出到sqlite?{box.Checked} ,config:{AppConfigHelper.GetValue("UseSqlite")}");
 
             }
         }
