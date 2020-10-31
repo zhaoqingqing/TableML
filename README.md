@@ -12,6 +12,8 @@ TableML, Table Markup Language, 基于电子表格的标记语言，
 
 更新日志：  [update_log.md](./update_log.md) 
 
+![GUI界面](./Document/tabml_gui_v2.png)
+
 ## Example
 
 
