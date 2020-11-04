@@ -30,7 +30,7 @@ public partial class SQLiteHelper
 
                 //执行创建表，表名如果有数字，需要加[]
                 var tableSql = string.Format("DROP TABLE IF EXISTS [{0}]", tabName);
-                ConsoleHelper.ConfirmationWithBlankLine("创建表sql:{0}", tableSql);
+                ConsoleHelper.InfoWithNewLine("创建表sql:{0}", tableSql);
                 dbCmd.CommandText = tableSql;
                 dbCmd.ExecuteNonQuery();
 
@@ -60,19 +60,19 @@ public partial class SQLiteHelper
                     }
 
                     trans.Commit();
-                    ConsoleHelper.WriteLine("提交事务");
-                    ConsoleHelper.Confirmation("创建表{0},并插入{1}条测试数据", tabName, maxCount);
+                    ConsoleHelper.Log("提交事务");
+                    ConsoleHelper.Info("创建表{0},并插入{1}条测试数据", tabName, maxCount);
                 }
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    ConsoleHelper.WriteLine("回滚事务,Exception:{0}", ex.Message);
+                    ConsoleHelper.Log("回滚事务,Exception:{0}", ex.Message);
                     throw;
                 }
 
                 // 停止计时
                 watch.Stop();
-                ConsoleHelper.Confirmation("执行耗时：{0} s", watch.Elapsed.TotalSeconds);
+                ConsoleHelper.Info("执行耗时：{0} s", watch.Elapsed.TotalSeconds);
             }
             else
             {

@@ -359,7 +359,7 @@ namespace TableML.Compiler
                     sw.WriteLine("{0},{1}", kv.Key, kv.Value);
                 }
             }
-            ConsoleHelper.ConfirmationWithBlankLine("共编译{0}表，编译结果保存在：{1}", dst2Src.Count, savePath);
+            ConsoleHelper.InfoWithNewLine("共编译{0}表，编译结果保存在：{1}", dst2Src.Count, savePath);
         }
 
 

@@ -62,7 +62,7 @@ namespace TableMLGUI
                         Console.WriteLine(file);
                     }
                     type = StartType.CompileMulti;
-                    ConsoleHelper.ConfirmationWithBlankLine(templete, "编译指定的");
+                    ConsoleHelper.InfoWithNewLine(templete, "编译指定的");
 
                     MainForm mainForm = new MainForm();
                     mainForm.CompileSelect(files);

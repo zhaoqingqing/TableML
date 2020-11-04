@@ -11,10 +11,10 @@ using Array = System.Array;
 
 /// <summary>
 /// 作者：qingqing-zhao 邮箱：569032731@qq.com
-/// 对sqlite的封装，方便快速插入数据到sqlite
+/// 功能：对sqlite的封装，方便快速插入数据到sqlite
 /// 笔记：
-/// 1. 表名和字段名加上[]，防止sql语句执行失败
-/// 2. 数据列数不能大于表头列数
+///     1. 表名和字段名加上[]，防止sql语句执行失败
+///     2. 数据列数不能大于表头列数
 /// 
 /// </summary>
 public partial class SQLiteHelper
@@ -99,11 +99,11 @@ public partial class SQLiteHelper
                     }
 
                     trans.Commit();
-                    ConsoleHelper.WriteLine("提交事务完成");
-                    ConsoleHelper.Confirmation("更新成功{0}张表", successList.Count);
+                    ConsoleHelper.Log("提交事务完成");
+                    ConsoleHelper.Info("更新成功{0}张表", successList.Count);
                     foreach (var fileName in successList)
                     {
-                        ConsoleHelper.Confirmation("{0}", fileName);
+                        ConsoleHelper.Info("{0}", fileName);
                     }
                     if (failList.Count > 0)
                     {
@@ -130,7 +130,7 @@ public partial class SQLiteHelper
                 // 停止计时
                 watch.Stop();
 
-                ConsoleHelper.Confirmation("执行耗时：{0} s", watch.Elapsed.TotalSeconds);
+                ConsoleHelper.Info("执行耗时：{0} s", watch.Elapsed.TotalSeconds);
             }
             else
             {
@@ -208,7 +208,7 @@ public partial class SQLiteHelper
 
         //执行创建表，表名如果有数字，需要加[]
         var checkTableSql = string.Format("DROP TABLE IF EXISTS [{0}];", fileName);
-        ConsoleHelper.ConfirmationWithBlankLine("创建表sql:{0}", checkTableSql);
+        ConsoleHelper.InfoWithNewLine("创建表sql:{0}", checkTableSql);
         dbCmd.CommandText = checkTableSql;
         dbCmd.ExecuteNonQuery();
         if (genSql)
@@ -222,10 +222,6 @@ public partial class SQLiteHelper
         for (int i = 0; i < columnNames.Length; i++)
         {
             //NOTE 如果表字段名是SQLite关键字用[]
-            //            if (CheckIsSqlKeyword(columnNames[i]))
-            //            {
-            //                ConsoleHelper.Warning("表{0}的字段名含有sql关键字{1}", fileName, columnNames[i]);
-            //            }
             sb.AppendFormat("[{0}]", columnNames[i]);
             if (i <= columnTypes.Length - 1)
             {
@@ -246,7 +242,7 @@ public partial class SQLiteHelper
         sb.Remove(sb.Length - 1, 1);
         sb.Append(");");
         string tableSql = sb.ToString();
-        ConsoleHelper.ConfirmationWithBlankLine("创建字段和数据类型sql:{0}", tableSql);
+        ConsoleHelper.InfoWithNewLine("创建字段和数据类型sql:{0}", tableSql);
         dbCmd.CommandText = tableSql;
         dbCmd.ExecuteNonQuery();
         if (genSql)
@@ -309,9 +305,9 @@ public partial class SQLiteHelper
                 File.Delete(saveSql);
             }
             File.WriteAllText(saveSql, sqlBuilder.ToString());
-            ConsoleHelper.Confirmation("为表{0}生成的sql脚本", fileName);
+            ConsoleHelper.Info("为表{0}生成的sql脚本", fileName);
         }
-        ConsoleHelper.Confirmation("已创建 {0} 表，并插入了 {1} 条数据", fileName, addNum);
+        ConsoleHelper.Info("已创建 {0} 表，并插入了 {1} 条数据", fileName, addNum);
         return true;
     }
 
@@ -364,8 +360,8 @@ public partial class SQLiteHelper
                         addNum += dbCmd.ExecuteNonQuery();
                     }
                     trans.Commit();
-                    ConsoleHelper.WriteLine("提交事务完成");
-                    ConsoleHelper.WriteLine("操作成功{0}张表", addNum);
+                    ConsoleHelper.Log("提交事务完成");
+                    ConsoleHelper.Log("操作成功{0}张表", addNum);
                 }
                 catch (Exception ex)
                 {
@@ -382,7 +378,7 @@ public partial class SQLiteHelper
                 // 停止计时
                 watch.Stop();
 
-                ConsoleHelper.Confirmation("执行耗时：{0} s", watch.Elapsed.TotalSeconds);
+                ConsoleHelper.Info("执行耗时：{0} s", watch.Elapsed.TotalSeconds);
             }
             else
             {
