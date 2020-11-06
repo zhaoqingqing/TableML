@@ -123,7 +123,6 @@ namespace TableML.Compiler
                 }
                 catch (Exception e)
                 {
-                    //                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
                     ConsoleHelper.Error(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
                     IsLoadSuccess = false;
                     return;
@@ -132,11 +131,11 @@ namespace TableML.Compiler
 
             if (Workbook == null)
             {
-                //                    throw new Exception(filePath + " Null Workbook");
                 ConsoleHelper.Error(filePath + " Null Workbook");
                 return;
             }
             SheetCount = Workbook.NumberOfSheets;
+            //NOTE 只解析指定的sheet页
             //for (int idx = 0; idx < sheetCount; idx++)
             {
                 ParseSheet(filePath, index);
@@ -153,14 +152,12 @@ namespace TableML.Compiler
         {
             if (Workbook == null)
             {
-                //                    throw new Exception(filePath + " Null Workbook");
                 ConsoleHelper.Error(filePath + " Null Workbook");
                 return false;
             }
             Worksheet = Workbook.GetSheetAt(sheetIdx);
             if (Worksheet == null)
             {
-                //                    throw new Exception(filePath + " Null Worksheet");
                 ConsoleHelper.Error(string.Format("{0} ,sheetIdx:{1} is Null Worksheet",filePath ,sheetIdx));
                 return false;
             }
@@ -168,7 +165,6 @@ namespace TableML.Compiler
             var sheetRowCount = GetWorksheetCount();
             if (sheetRowCount < PreserverRowCount)
             {
-                //                    throw new Exception(string.Format("{0} ,sheetIdx:{1} At lease {2} rows of this excel", filePath,sheetIdx, PreserverRowCount));
                 ConsoleHelper.Error(string.Format("{0} ,sheetIdx:{1} At lease {2} rows of this excel", filePath,sheetIdx, PreserverRowCount));
                 return false;
 
@@ -176,7 +172,6 @@ namespace TableML.Compiler
             var row = Worksheet.GetRow(1);
             if (row == null || row.Cells.Count < 2)
             {
-                //                throw new Exception(filePath + "第二行至少需要3列");
                 ConsoleHelper.Error("{0}, sheetIdx:{1} ,name:{2} 的第二行至少需要3列",filePath ,sheetIdx, Worksheet.SheetName);
                 return false;
             }
@@ -192,7 +187,7 @@ namespace TableML.Compiler
         {
             if (CheckRule(filePath, sheetIdx) == false) { return; }
             if (Worksheet == null) return;
-            /**表头结构如下所示：
+            /***表头结构如下所示：
             *   Id  Name    CDTime
             *   int string int
             *   编号 名称 CD时间

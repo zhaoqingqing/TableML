@@ -10,7 +10,10 @@ namespace TableML.Compiler
     /// <summary>
     /// 解析csv,内容格式和excel一样
     /// csv行数从1开始，列数从0开始
-    /// 带有头部、声明、注释
+    /// 表头结构如下所示(非此格式可修改)：
+    ///     Id  Name    CDTime
+    ///     int string int
+    ///     编号 名称 CD时间
     /// </summary>
     public class SimpleCSVFile : ITableSourceFile
     {
@@ -103,11 +106,6 @@ namespace TableML.Compiler
                 {
                     csvReader = new CsvReader(reader);
                     csvReader = new CsvReader(reader);
-                    /**表头结构如下所示：
-                    *   Id  Name    CDTime
-                    *   int string int
-                    *   编号 名称 CD时间
-                    */
                     var tmpLine = 0;
                     while (csvReader.Read())
                     {

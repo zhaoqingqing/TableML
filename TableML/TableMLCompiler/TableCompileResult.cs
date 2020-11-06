@@ -20,7 +20,10 @@ namespace TableML.Compiler
     {
         public string TabFileFullPath { get; set; }
         public string TabFileRelativePath { get; set; }
-        public List<TableColumnVars> FieldsInternal { get; set; } // column + type
+        /// <summary>
+        /// column + type
+        /// </summary>
+        public List<TableColumnVars> FieldsInternal { get; set; } 
 
         public string PrimaryKey { get; set; }
         public ITableSourceFile ExcelFile { get; internal set; }

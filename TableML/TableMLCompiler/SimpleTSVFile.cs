@@ -6,7 +6,7 @@ using System.Text;
 namespace TableML.Compiler
 {
     /// <summary>
-    /// TSV¸ñÊ½µÄÖ§³Ö
+    /// TSVæ ¼å¼çš„æ”¯æŒ
     /// </summary>
     public class SimpleTSVFile : ITableSourceFile
     {
@@ -37,12 +37,12 @@ namespace TableML.Compiler
 
         private void ParseTsv(string filePath)
         {
-            //NOTE Èç¹û±¨ÎŞ·¨´ò¿ª£¬¿ÉÄÜÊÇÎÄ¼ş±àÂë¸ñÊ½µÄÎÊÌâ£¡
+            //NOTE å¦‚æœæŠ¥æ— æ³•æ‰“å¼€ï¼Œå¯èƒ½æ˜¯æ–‡ä»¶ç¼–ç æ ¼å¼çš„é—®é¢˜ï¼
             _tableFile = TableFile.LoadFromFile(filePath);
             _columnCount = _tableFile.GetColumnCount();
 
 
-            // Í¨¹ıTableFile×¢²áÍ·ĞÅÏ¢
+            // é€šè¿‡TableFileæ³¨å†Œå¤´ä¿¡æ¯
             var commentRow = _tableFile.GetRow(1);
             foreach (var kv in _tableFile.Headers)
             {
@@ -55,7 +55,7 @@ namespace TableML.Compiler
         }
         public int GetRowsCount()
         {
-            return _tableFile.GetRowCount() - 1; // ¼õÈ¥×¢ÊÍĞĞ
+            return _tableFile.GetRowCount() - 1; // å‡å»æ³¨é‡Šè¡Œ
         }
 
         public int GetColumnCount()
@@ -65,7 +65,7 @@ namespace TableML.Compiler
 
         public string GetString(string columnName, int dataRow)
         {
-            return _tableFile.GetRow(dataRow + 1 + 1)[columnName]; // 1ĞĞ¿ªÊ¼£¬²¢ÇÒ¶àÁËËµÃ÷ĞĞ£¬+2
+            return _tableFile.GetRow(dataRow + 1 + 1)[columnName]; // 1è¡Œå¼€å§‹ï¼Œå¹¶ä¸”å¤šäº†è¯´æ˜è¡Œï¼Œ+2
         }
     }
 }

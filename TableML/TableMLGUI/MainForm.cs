@@ -223,6 +223,19 @@ namespace TableMLGUI
             }
             return Workbook;
         }
+        
+        void GenCodeFile (TableCompileResult compileResult,string fileName)
+        {
+            // if (NeedGenCSharp)
+            {
+                //生成代码
+                BatchCompiler batchCompiler = new BatchCompiler();
+                batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
+            }
+            //TODO 生成lua代码
+            LuaHelper.GenLuaFile(compileResult, GenLuaPath + "\\" + fileName + ".lua");
+        }
+        
         /// <summary>
         /// 编译选中的excel
         /// </summary>
@@ -237,16 +250,7 @@ namespace TableMLGUI
             Dictionary<string, string> dst2src = new Dictionary<string, string>();
             int comileCount = 0;
 
-            Action<TableCompileResult> genCSharp = (TableCompileResult compileResult) =>
-            {
-//                if (NeedGenCSharp)
-                {
-                    //生成代码
-                    BatchCompiler batchCompiler = new BatchCompiler();
-                    batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
-                }
-                //TODO 生成lua代码
-            };
+
             foreach (var filePath in fullPaths)
             {
                 if (string.IsNullOrEmpty(filePath))
@@ -282,12 +286,9 @@ namespace TableMLGUI
                         //NOTE 替换成相对路径(保证最后只有文件名)
                         string repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName + "\\";
                         compileResult.TabFileRelativePath = compileResult.TabFileRelativePath.Replace(repStr, "");
-                        genCSharp(compileResult);
-
-                        if (compileResult != null)
-                        {
-                            comileCount += 1;
-                        }
+                        GenCodeFile(compileResult,outputName);
+                        
+                        comileCount += 1;
                     }
                 }
                 else if (ext == ".csv" || ext == ".tsv")
@@ -312,7 +313,7 @@ namespace TableMLGUI
                     //NOTE 替换成相对路径(保证最后只有文件名)
                     string repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName + "\\";
                     compileResult.TabFileRelativePath = compileResult.TabFileRelativePath.Replace(repStr, "");
-                    genCSharp(compileResult);
+                    GenCodeFile(compileResult,outputName);
 
                     if (compileResult != null)
                     {
