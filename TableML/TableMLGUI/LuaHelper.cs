@@ -8,33 +8,44 @@ using TableML.Compiler;
 /// Author：qingqing.zhao (569032731@qq.com)
 /// Date：2020/11/5 16:33
 /// Desc：配置表转成lua文件
+///         使用了C#6的语法
 /// </summary>
 public class LuaHelper
 {
     /// <summary>
     /// 仅仅把配置的表头生成lua字段，不包含具体的数据部分，用于sqlite中的代码提示
     /// </summary>
-    public static void GenLuaFile(TableCompileResult compileResult, string full_path)
+    public static void GenLuaFile(TableCompileResult compileResult, string exportPath)
     {
         if (compileResult.FieldsInternal != null)
         {
-            StringBuilder str = new StringBuilder();
-            str.AppendLine("return{");
+            StringBuilder builder = new StringBuilder();
+            StringBuilder typeBuilder = new StringBuilder();
+            var fileName = Path.GetFileNameWithoutExtension(exportPath);
+            typeBuilder.AppendLine($"---@class {fileName}");
+            builder.AppendLine("return{");
             var count = compileResult.FieldsInternal.Count;
             var end = count - 1;
             for (int i = 0; i < count; i++)
             {
                 var t = compileResult.FieldsInternal[i];
-
-                str.AppendLine(t.Name + (i == end ? "" : ","));
+                builder.AppendLine("\t" + t.Name + (i == end ? "" : ","));
+                typeBuilder.AppendLine($"---@field public {t.Name} {t.Type}");
             }
-            str.AppendLine("}");
-            if (File.Exists(full_path))
+
+            builder.AppendLine("}");
+            if (File.Exists(exportPath))
             {
-                File.Delete(full_path);
+                File.Delete(exportPath);
             }
 
-            File.WriteAllText(full_path, str.ToString());
+            var dirName = Path.GetDirectoryName(exportPath);
+            if (Directory.Exists(dirName) == false)
+            {
+                Directory.CreateDirectory(dirName);
+            }
+
+            File.WriteAllText(exportPath, typeBuilder.ToString() + builder.ToString());
         }
     }
 }

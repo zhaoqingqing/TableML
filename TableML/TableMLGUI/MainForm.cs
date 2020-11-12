@@ -16,14 +16,14 @@ namespace TableMLGUI
         /// <summary>
         /// 输出tml文件路径
         /// </summary>
-        public string GenTmlPath;
+        public string ExportTmlPath;
         public string srcFullPath;
 
         /// <summary>
         /// 生成的代码路径
         /// </summary>
-        public string GenCodePath;
-        public string GenLuaPath ;
+        public string ExportCSharpPath;
+        public string ExportLuaPath ;
         /// <summary>
         /// tml文件后缀
         /// </summary>
@@ -48,16 +48,16 @@ namespace TableMLGUI
             get { return cbKSFormat.Checked; }
         }
 
-        private bool _useSqlite = false;
-        public bool UseSqlite { get
+        private bool _exportToSqlite = false;
+        public bool ExportToSqlite { get
             {
-                return _useSqlite;
+                return _exportToSqlite;
             }
             set
             {
-                if (_useSqlite != value)
+                if (_exportToSqlite != value)
                 {
-                    _useSqlite = value;
+                    _exportToSqlite = value;
                     UpdateSqlVisible();
                 }
             }
@@ -77,9 +77,9 @@ namespace TableMLGUI
         {
             InitializeComponent();
             Init();
-            //tbFileList.Text = @"e:\3dsn\plan\005ConfigTable\SettingSource\NPC配置表.xlsx";
+            //test
+            tbFileList.Text = srcFullPath + @"\Billboard.xlsx";
         }
-
 
         public void Init()
         {
@@ -88,16 +88,15 @@ namespace TableMLGUI
 
             //源始excel路径
             var srcExcelPath = ConfigurationManager.AppSettings.Get("srcExcelPath");
-            var excelSrc = useAbsolutePath ? srcExcelPath : Path.GetFullPath(Application.StartupPath + srcExcelPath);
-            this.tbSrcPath.Text = excelSrc;
-            srcFullPath = Path.GetFullPath(Application.StartupPath + srcExcelPath);
-            
-            string UseSqliteStr = ConfigurationManager.AppSettings.Get("UseSqlite").Trim().ToLower();
-            UseSqlite = UseSqliteStr == "true" || UseSqliteStr == "1";
+            srcFullPath = useAbsolutePath ? Path.GetFullPath(srcExcelPath) : Path.GetFullPath(Application.StartupPath + srcExcelPath);
+            this.tbSrcPath.Text = srcFullPath;
+
+            string exportToSqliteStr = ConfigurationManager.AppSettings.Get("ExportToSqlite").Trim().ToLower();
+            ExportToSqlite = exportToSqliteStr == "true" || exportToSqliteStr == "1";
 
             //sql的database文件存放路径
             var dbPath = ConfigurationManager.AppSettings.Get("DBPath");
-            var _sqlScriptsPath = ConfigurationManager.AppSettings.Get("sqlScriptsPath");
+            var _sqlScriptsPath = ConfigurationManager.AppSettings.Get("ExportSqlScriptsPath");
             if (!string.IsNullOrEmpty(dbPath))
             {
                 this.sqlDBPath = useAbsolutePath ? dbPath : Path.GetFullPath(Application.StartupPath + dbPath);
@@ -114,14 +113,14 @@ namespace TableMLGUI
             }
 
             //tml路径
-            var genTmlPath = ConfigurationManager.AppSettings.Get("GenTmlPath");
-            GenTmlPath = useAbsolutePath ? genTmlPath : Path.GetFullPath(Application.StartupPath + genTmlPath);
+            var genTmlPath = ConfigurationManager.AppSettings.Get("ExportTmlPath");
+            ExportTmlPath = useAbsolutePath ? genTmlPath : Path.GetFullPath(Application.StartupPath + genTmlPath);
 
             //代码路径
-            var genCodePath = ConfigurationManager.AppSettings.Get("GenCodePath");
-            GenCodePath = useAbsolutePath ? genCodePath : Path.GetFullPath(Application.StartupPath + genCodePath);
-            var genLuaPath = ConfigurationManager.AppSettings.Get("GenLuaPath");
-            GenLuaPath = useAbsolutePath ? genLuaPath : Path.GetFullPath(Application.StartupPath + genLuaPath);
+            var genCodePath = ConfigurationManager.AppSettings.Get("ExportCSharpPath");
+            ExportCSharpPath = useAbsolutePath ? genCodePath : Path.GetFullPath(Application.StartupPath + genCodePath);
+            var luaPath = ConfigurationManager.AppSettings.Get("ExportLuaPath");
+            ExportLuaPath = useAbsolutePath ? luaPath : Path.GetFullPath(Application.StartupPath + luaPath);
             #region 用于拷贝文件到指定路径下
             //客户端代码路径
             var dstClientCodePath = ConfigurationManager.AppSettings.Get("dstClientCodePath");
@@ -138,7 +137,7 @@ namespace TableMLGUI
             openFileDialog1.Multiselect = true;
             openFileDialog1.SupportMultiDottedExtensions = true;
 
-            cb_sql.Checked = UseSqlite;
+            cb_sql.Checked = ExportToSqlite;
             InitExcelFormat();
         }
 
@@ -190,7 +189,7 @@ namespace TableMLGUI
         private void btnCompileSelect_Click(object sender, EventArgs e)
         {
             CompileSelect();
-            if(UseSqlite) SQLiteHelper.UpdateDB(GenTmlPath);
+            if(ExportToSqlite) SQLiteHelper.UpdateDB(ExportTmlPath);
         }
 
         public void CompileSelect(bool msgResult = false)
@@ -230,10 +229,10 @@ namespace TableMLGUI
             {
                 //生成代码
                 BatchCompiler batchCompiler = new BatchCompiler();
-                batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, GenCodePath, NameSpace, TmlExtensions, null, true);
+                batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, ExportCSharpPath, NameSpace, TmlExtensions, null, true);
             }
             //TODO 生成lua代码
-            LuaHelper.GenLuaFile(compileResult, GenLuaPath + "\\" + fileName + ".lua");
+            LuaHelper.GenLuaFile(compileResult, ExportLuaPath +  fileName + ".lua");
         }
         
         /// <summary>
@@ -272,7 +271,7 @@ namespace TableMLGUI
                         {
                             continue;
                         }
-                        savePath = GenTmlPath + "\\" + outputName + TmlExtensions;
+                        savePath = ExportTmlPath + "\\" + outputName + TmlExtensions;
                         //编译成tml
                         TableCompileResult compileResult = compiler.Compile(filePath, savePath, index);
                         tmlList.Add(Path.GetFullPath(savePath));
@@ -298,7 +297,7 @@ namespace TableMLGUI
                     {
                         continue;
                     }
-                    var savePath = GenTmlPath + "\\" + outputName + TmlExtensions;
+                    var savePath = ExportTmlPath + "\\" + outputName + TmlExtensions;
                     //编译成tml
                     var compileResult = compiler.Compile(filePath, savePath, 0);
                     tmlList.Add(Path.GetFullPath(savePath));
@@ -327,7 +326,7 @@ namespace TableMLGUI
 
             }
             BatchCompiler.SaveCompileResult(dst2src);
-            if (UseSqlite)
+            if (ExportToSqlite)
             {
                 //将结果插入到sqlite中
                 SQLiteHelper.UpdateDB(tmlList.ToArray());
@@ -354,9 +353,9 @@ namespace TableMLGUI
         private void btnCompileAll_Click(object sender, EventArgs e)
         {
             CompileAllExcel();
-            if (UseSqlite)
+            if (ExportToSqlite)
             {
-                SQLiteHelper.UpdateDB(GenTmlPath);
+                SQLiteHelper.UpdateDB(ExportTmlPath);
             }
         }
 
@@ -402,12 +401,12 @@ namespace TableMLGUI
 
         private void btnOpenCodeDir_Click(object sender, EventArgs e)
         {
-            FileHelper.OpenFolder(GenCodePath);
+            FileHelper.OpenFolder(ExportCSharpPath);
         }
 
         private void btnOpenTmlDir_Click(object sender, EventArgs e)
         {
-            FileHelper.OpenFolder(GenTmlPath);
+            FileHelper.OpenFolder(ExportTmlPath);
         }
 
         private void btnCheckNameEmpty_Click(object sender, EventArgs e)
@@ -446,9 +445,9 @@ namespace TableMLGUI
 
         private void btnUpdateDB_Click(object sender, EventArgs e)
         {
-            if (UseSqlite)
+            if (ExportToSqlite)
             {
-                SQLiteHelper.UpdateDB(GenTmlPath);
+                SQLiteHelper.UpdateDB(ExportTmlPath);
             }
             else
             {
@@ -459,9 +458,9 @@ namespace TableMLGUI
         private void btnCompileExcel_Click(object sender, EventArgs e)
         {
             CompileAllExcel();
-            if (UseSqlite)
+            if (ExportToSqlite)
             {
-                SQLiteHelper.UpdateDB(GenTmlPath);
+                SQLiteHelper.UpdateDB(ExportTmlPath);
             }
         }
 
@@ -471,9 +470,9 @@ namespace TableMLGUI
         public void CMDCompile()
         {
             CompileAllExcel();
-            if (UseSqlite)
+            if (ExportToSqlite)
             {
-                SQLiteHelper.UpdateDB(GenTmlPath);
+                SQLiteHelper.UpdateDB(ExportTmlPath);
             }
         }
 
@@ -528,7 +527,7 @@ namespace TableMLGUI
 
         private void btnOpenLuaDir_Click(object sender, EventArgs e)
         {
-            FileHelper.OpenFolder(GenLuaPath);
+            FileHelper.OpenFolder(ExportLuaPath);
         }
 
         private void Cb_sql_CheckedChanged(object sender, EventArgs e)
@@ -536,7 +535,7 @@ namespace TableMLGUI
             var box = sender as CheckBox;
             if (box!=null)
             {
-                UseSqlite = box.Checked;
+                ExportToSqlite = box.Checked;
                 //NOTE：使用此方法会重新生成app.config,导致里面的注释丢失，所以使用AppConfigHelper
                 /*var newKeyValue =  box.Checked ? "1" : "0";
                 Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -551,7 +550,7 @@ namespace TableMLGUI
 
         void UpdateSqlVisible()
         {
-            btnUpdateDB.Visible = UseSqlite;
+            btnUpdateDB.Visible = ExportToSqlite;
         }
     }
 }
