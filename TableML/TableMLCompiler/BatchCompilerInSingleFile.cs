@@ -36,9 +36,27 @@ using NPOI.Util;
 
 namespace TableML.Compiler
 {
+    //生成CSharp的参数
+    public class GenParam
+    {
+        public string genCodeTemplateString;
+        public string genCodeFilePath;
+        public string nameSpace = "AppSettings";
+        public string changeExtension = ".tml";
+        public string settingCodeIgnorePattern;
+        public bool forceAll = false;
+        public bool genManagerClass = false;
+        public bool genLuaFile = true;//TODO
+        public bool genCSharpFile = true;//TODO
+        public TableCompileResult compileResult;
+        /// <summary>
+        /// 如果是生成Manager Class 一定要在外部初始化此字段
+        /// </summary>
+        public Dictionary<string, TableTemplateVars> templateVars = null;
+    }
+
     /// <summary>
-    /// BatchCompiler , compile
-    /// 扩展BatchCopiler：每张表对应一个代码文件
+    /// 扩展BatchCopiler，用途：每张表的代码生成在独立的文件中而全部放在在一个文件中
     /// </summary>
     public partial class BatchCompiler
     {
@@ -87,29 +105,23 @@ namespace TableML.Compiler
         /// <summary>
         /// 生成代码文件
         /// </summary>
-        /// <param name="results"></param>
-        /// <param name="settingCodeIgnorePattern"></param>
-        /// <param name="forceAll"></param>
-        /// <param name="genManagerClass"></param>
-        /// <param name="templateVars">如果是生成Manager Class 一定要在外部初始化此字段</param>
-        public void GenCodeFile(TableCompileResult compileResult, string genCodeTemplateString, string genCodeFilePath,
-            string nameSpace = "AppSettings", string changeExtension = ".tml", string settingCodeIgnorePattern = null, bool forceAll = false, bool genManagerClass = false, Dictionary<string, TableTemplateVars> templateVars = null)
+        public void GenCodeFile(GenParam param)
         {
             // 根据编译结果，构建vars，同class名字的，进行合并
-            if (!genManagerClass)
+            if (!param.genManagerClass)
             {
-                templateVars = new Dictionary<string, TableTemplateVars>();
+                param.templateVars = new Dictionary<string, TableTemplateVars>();
             }
-            if (!string.IsNullOrEmpty(settingCodeIgnorePattern))
+            if (!string.IsNullOrEmpty(param.settingCodeIgnorePattern))
             {
-                var ignoreRegex = new Regex(settingCodeIgnorePattern);
-                if (ignoreRegex.IsMatch(compileResult.TabFileRelativePath))
+                var ignoreRegex = new Regex(param.settingCodeIgnorePattern);
+                if (ignoreRegex.IsMatch(param.compileResult.TabFileRelativePath))
                     return; // ignore this 
             }
 
-            var customExtraStr = CustomExtraString != null ? CustomExtraString(compileResult) : null;
+            var customExtraStr = CustomExtraString != null ? CustomExtraString(param.compileResult) : null;
 
-            var templateVar = new TableTemplateVars(compileResult, customExtraStr);
+            var templateVar = new TableTemplateVars(param.compileResult, customExtraStr);
 
             // 尝试类过滤
             var ignoreThisClassName = false;
@@ -128,45 +140,45 @@ namespace TableML.Compiler
             }
             if (!ignoreThisClassName)
             {
-                if (!templateVars.ContainsKey(templateVar.ClassName))
+                if (!param.templateVars.ContainsKey(templateVar.ClassName))
                 {
-                    templateVars.Add(templateVar.ClassName, templateVar);
+                    param.templateVars.Add(templateVar.ClassName, templateVar);
                 }
                 else
                 {
-                    templateVars[templateVar.ClassName].RelativePaths.Add(compileResult.TabFileRelativePath);
+                    param.templateVars[templateVar.ClassName].RelativePaths.Add(param.compileResult.TabFileRelativePath);
                 }
             }
 
-            if (!genManagerClass)
+            if (!param.genManagerClass)
             {
                 //首字母大写，符合微软命名规范
-                var newFileName = string.Concat(DefaultClassNameParse(compileResult.TabFileRelativePath), FileNameSuffix, ".cs");
-                if (string.IsNullOrEmpty(genCodeFilePath))
+                var newFileName = string.Concat(DefaultClassNameParse(param.compileResult.TabFileRelativePath), FileNameSuffix, ".cs");
+                if (string.IsNullOrEmpty(param.genCodeFilePath))
                 {
-                    genCodeFilePath += string.Concat(DefaultGenCodeDir, newFileName);
+                    param.genCodeFilePath += string.Concat(DefaultGenCodeDir, newFileName);
                 }
                 else
                 {
-                    genCodeFilePath += newFileName;
+                    param.genCodeFilePath += newFileName;
                 }
             }
             else
             {
-                if (string.IsNullOrEmpty(genCodeFilePath))
+                if (string.IsNullOrEmpty(param.genCodeFilePath))
                 {
-                    genCodeFilePath += string.Concat(DefaultGenCodeDir, ManagerClassName);
+                    param.genCodeFilePath += string.Concat(DefaultGenCodeDir, ManagerClassName);
                 }
                 else
                 {
-                    genCodeFilePath += ManagerClassName;
+                    param.genCodeFilePath += ManagerClassName;
                 }
             }
 
 
             // 整合成字符串模版使用的List
             var templateHashes = new List<Hash>();
-            foreach (var kv in templateVars)
+            foreach (var kv in param.templateVars)
             {
                 //NOTE render 加多一项TabFilName
                 var templateVar2 = kv.Value;
@@ -174,14 +186,14 @@ namespace TableML.Compiler
                 templateHashes.Add(renderTemplateHash);
             }
 
-            if (forceAll)
+            if (param.forceAll)
             {
                 // force 才进行代码编译
-                GenerateCode(genCodeTemplateString, genCodeFilePath, nameSpace, templateHashes);
+                GenerateCode(param.genCodeTemplateString, param.genCodeFilePath, param.nameSpace, templateHashes);
             }
         }
 
-
+		//TODO 修改参数类型
         void GenManagerClass(List<TableCompileResult> results, string genCodeTemplateString, string genCodeFilePath,
             string nameSpace = "AppSettings", string changeExtension = ".tml", string settingCodeIgnorePattern = null, bool forceAll = false)
         {
@@ -189,7 +201,13 @@ namespace TableML.Compiler
             var templateVars = new Dictionary<string, TableTemplateVars>();
             foreach (var compileResult in results)
             {
-                GenCodeFile(compileResult, genCodeTemplateString, genCodeFilePath, nameSpace, changeExtension, settingCodeIgnorePattern, forceAll, true, templateVars);
+                var param = new GenParam()
+                {
+                    compileResult = compileResult, genCodeTemplateString = genCodeTemplateString, genCodeFilePath = genCodeFilePath,
+                    nameSpace = nameSpace, changeExtension = changeExtension, forceAll = forceAll, settingCodeIgnorePattern = settingCodeIgnorePattern,
+                    genManagerClass = true,templateVars = templateVars
+                };
+                GenCodeFile(param);
             }
         }
 
@@ -288,7 +306,8 @@ namespace TableML.Compiler
                         {
                             Console.WriteLine("[SettingModule]Compile from {0} to {1}", excelPath, compileToPath);
                             Console.WriteLine(); //美观一下 打印空白行
-                            var compileResult = compiler.Compile(excelPath, compileToPath, 0, compileBaseDir, doCompile);
+                            //TODO lua文件保存路径
+                            var compileResult = compiler.Compile(new CompilerParam(){path = excelPath,compileToFilePath = compileToPath,compileBaseDir = compileBaseDir,doRealCompile = doCompile});
                             if (genCSCode)
                             {
                                 // 添加模板值
@@ -297,8 +316,12 @@ namespace TableML.Compiler
                                 var compiledFileInfo = new FileInfo(compileToPath);
                                 compiledFileInfo.LastWriteTime = srcFileInfo.LastWriteTime;
                                 //仅仅是生成单个Class，只需要当前的CompileResult
-                                GenCodeFile(compileResult, genCodeTemplateString, genCodeFilePath, nameSpace,
-                                    changeExtension, settingCodeIgnorePattern, forceAll);
+                                var param = new GenParam()
+                                {
+                                    compileResult = compileResult, genCodeTemplateString = genCodeTemplateString, genCodeFilePath = genCodeFilePath,
+                                    nameSpace = nameSpace, changeExtension = changeExtension, forceAll = forceAll,settingCodeIgnorePattern= settingCodeIgnorePattern
+                                };
+                                GenCodeFile(param);
                             }
 
                         }

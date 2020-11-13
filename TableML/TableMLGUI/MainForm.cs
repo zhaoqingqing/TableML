@@ -12,7 +12,6 @@ namespace TableMLGUI
 {
     public partial class MainForm : Form
     {
-
         /// <summary>
         /// 输出tml文件路径
         /// </summary>
@@ -62,7 +61,8 @@ namespace TableMLGUI
                 }
             }
         }
-        
+
+        public bool NeedGenCSharp = true; 
         /// <summary>
         /// 框中的文件列表
         /// </summary>
@@ -225,14 +225,18 @@ namespace TableMLGUI
         
         void GenCodeFile (TableCompileResult compileResult,string fileName)
         {
-            // if (NeedGenCSharp)
+            if (NeedGenCSharp)
             {
-                //生成代码
+                //生成csharp代码
                 BatchCompiler batchCompiler = new BatchCompiler();
-                batchCompiler.GenCodeFile(compileResult, DefaultTemplate.GenSingleClassCodeTemplate, ExportCSharpPath, NameSpace, TmlExtensions, null, true);
+                var param = new GenParam()
+                {
+                    compileResult = compileResult, genCodeTemplateString = DefaultTemplate.GenSingleClassCodeTemplate, genCodeFilePath = ExportCSharpPath,
+                    nameSpace = NameSpace, changeExtension = TmlExtensions, forceAll = true
+                };
+                batchCompiler.GenCodeFile(param);
             }
-            //TODO 生成lua代码
-            LuaHelper.GenLuaFile(compileResult, ExportLuaPath +  fileName + ".lua");
+            //LuaHelper.GenLuaFile(compileResult, ExportLuaPath +  fileName + ".lua");
         }
         
         /// <summary>
@@ -241,10 +245,15 @@ namespace TableMLGUI
         /// <param name="msgResult"></param>
         public void CompileSelect(string[] fullPaths, bool msgResult = false)
         {
+            if (fullPaths == null || fullPaths.Length <= 0)
+            {
+                ConsoleHelper.Error("路径不能传入空，不进行编译");
+                return;
+            }
             //编译选定的表
             List<string> tmlList = new List<string>();
             var startPath = Environment.CurrentDirectory;
-            Console.WriteLine("当前目录：{0}", startPath);
+            ConsoleHelper.Info("当前目录：{0}", startPath);
             var compiler = new Compiler();
             Dictionary<string, string> dst2src = new Dictionary<string, string>();
             int comileCount = 0;
@@ -272,8 +281,10 @@ namespace TableMLGUI
                             continue;
                         }
                         savePath = ExportTmlPath + "\\" + outputName + TmlExtensions;
+                        var saveLuaPath = ExportLuaPath + "\\" + outputName + ".lua";
                         //编译成tml
-                        TableCompileResult compileResult = compiler.Compile(filePath, savePath, index);
+                        var param = new CompilerParam(){path = filePath,compileToFilePath = savePath,compileToLuaFilePath = saveLuaPath,index = index,doRealCompile = true};
+                        TableCompileResult compileResult = compiler.Compile(param);
                         tmlList.Add(Path.GetFullPath(savePath));
                         var dstFileName = Path.GetFileNameWithoutExtension(savePath);
                         if (dst2src.ContainsKey(dstFileName) == false)
@@ -298,8 +309,10 @@ namespace TableMLGUI
                         continue;
                     }
                     var savePath = ExportTmlPath + "\\" + outputName + TmlExtensions;
+                    var saveLuaPath = ExportLuaPath + "\\" + outputName + ".lua";
                     //编译成tml
-                    var compileResult = compiler.Compile(filePath, savePath, 0);
+                    var param = new CompilerParam(){path = filePath,compileToFilePath = savePath,compileToLuaFilePath = saveLuaPath,index = 0,doRealCompile = false};
+                    TableCompileResult compileResult = compiler.Compile(param);
                     tmlList.Add(Path.GetFullPath(savePath));
                     var dstFileName = Path.GetFileNameWithoutExtension(savePath);
                     if (dst2src.ContainsKey(dstFileName) == false)

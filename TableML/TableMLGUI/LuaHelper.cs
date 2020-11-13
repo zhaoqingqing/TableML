@@ -13,7 +13,7 @@ using TableML.Compiler;
 public class LuaHelper
 {
     /// <summary>
-    /// 仅仅把配置的表头生成lua字段，不包含具体的数据部分，用于sqlite中的代码提示
+    /// 仅仅生成lua字段，不包含具体的数据部分，用于sqlite中的代码提示
     /// </summary>
     public static void GenLuaFile(TableCompileResult compileResult, string exportPath)
     {
@@ -23,7 +23,7 @@ public class LuaHelper
             StringBuilder typeBuilder = new StringBuilder();
             var fileName = Path.GetFileNameWithoutExtension(exportPath);
             typeBuilder.AppendLine($"---@class {fileName}");
-            builder.AppendLine("return{");
+            builder.AppendLine("return {");
             var count = compileResult.FieldsInternal.Count;
             var end = count - 1;
             for (int i = 0; i < count; i++)

@@ -67,13 +67,8 @@ namespace TableML.Compiler
         /// <summary>
         /// 生成tml文件内容
         /// </summary>
-        /// <param name="path">源excel的相对路径</param>
-        /// <param name="excelFile"></param>
-        /// <param name="compileToFilePath">编译后的tml文件路径</param>
-        /// <param name="compileBaseDir"></param>
-        /// <param name="doCompile"></param>
         /// <returns></returns>
-        private TableCompileResult DoCompilerExcelReader(string path, ITableSourceFile excelFile, string compileToFilePath = null, string compileBaseDir = null, bool doCompile = true)
+        private TableCompileResult DoCompilerExcelReader(CompilerParam param, ITableSourceFile excelFile)
         {
             var renderVars = new TableCompileResult();
             renderVars.ExcelFile = excelFile;
@@ -81,7 +76,14 @@ namespace TableML.Compiler
 
             var tableBuilder = new StringBuilder();
             var rowBuilder = new StringBuilder();
+            //导出lua配置文件
+            var luaComentBuilder = new StringBuilder();
+            var luaBuilder = new StringBuilder();
+            luaComentBuilder.AppendLine(string.Format("---auto generate by tools\r\n---@class {0}",Path.GetFileNameWithoutExtension(param.path)));
+            luaBuilder.AppendLine("return {");
             var ignoreColumns = new HashSet<int>();
+
+            #region 写入tml第一行
             // Header Column
             foreach (var colNameStr in excelFile.ColName2Index.Keys)
             {
@@ -135,11 +137,14 @@ namespace TableML.Compiler
                         DefaultValue = defaultVal,
                         Comment = excelFile.ColName2Comment[colNameStr],
                     });
+                    luaComentBuilder.AppendLine(string.Format("---@field public {0} {1}",colNameStr,typeName));
                 }
             }
             tableBuilder.Append("\n");
             //以上是tml写入的第一行
+            #endregion
 
+            #region 写入tml第二行
             // Statements rows, keeps
             foreach (var kv in excelFile.ColName2Statement)
             {
@@ -162,21 +167,40 @@ namespace TableML.Compiler
             }
             tableBuilder.Append("\n");
             //以上是tml写入的第二行
-
-
+            #endregion
+            
+            #region 写入tml其它行
             // #if check, 是否正在if false模式, if false时，行被忽略
             var ifCondtioning = true;
-            if (doCompile)
+            if (param.doRealCompile)
             {
                 // 如果不需要真编译，获取头部信息就够了
                 // Data Rows
-                for (var startRow = 0; startRow < excelFile.GetRowsCount(); startRow++)
+                var rowsCount = excelFile.GetRowsCount();
+                var lastRowIdx = rowsCount -1;
+                for (var startRow = 0; startRow < rowsCount; startRow++)
                 {
                     rowBuilder.Length = 0;
                     rowBuilder.Capacity = 0;
                     var columnCount = excelFile.GetColumnCount();
+                    var lastColumnIdx = columnCount -1;
+                    if (ignoreColumns.Count > 0)
+                    {
+                        var temp = new List<int>();
+                        //取出最后一列的索引
+                        for (var loopColumn = 0; loopColumn < columnCount; loopColumn++)
+                        {
+                            if (!ignoreColumns.Contains(loopColumn))
+                            {
+                                temp.Add(loopColumn);
+                            }
+                        }
+
+                        if (temp.Count > 0) lastColumnIdx = temp[temp.Count-1];
+                    }
                     for (var loopColumn = 0; loopColumn < columnCount; loopColumn++)
                     {
+                        //读取每一列的内容
                         if (!ignoreColumns.Contains(loopColumn)) // comment column, ignore 注释列忽略
                         {
                             if (excelFile.Index2ColName.ContainsKey(loopColumn) == false)
@@ -221,38 +245,41 @@ namespace TableML.Compiler
 
                                 if (startRow != 0) // 不是第一行，往添加换行，首列
                                     rowBuilder.Append("\n");
+                                luaBuilder.AppendLine(string.Concat("[",ParseLua(cellStr),"] = {"));
                             }
                             /*
                                 NOTE by qingqing-zhao 因为是从指定的列开始读取，所以>有效列 才加入\t
                                 如果这列是空白的也不需要加入
                             */
-                            if (!string.IsNullOrEmpty(columnName)
-                               && loopColumn > 0
-                               && loopColumn < columnCount) // 最后一列不需加tab
-                            {
-                                rowBuilder.Append("\t");
-                            }
-
+                            bool hasColumn = !string.IsNullOrEmpty(columnName)
+                                                 && loopColumn > 0
+                                                 && loopColumn < columnCount; //列是否有效
+                            if(hasColumn) rowBuilder.Append("\t");
                             // 如果单元格是字符串，换行符改成\\n
                             cellStr = cellStr.Replace("\n", "\\n");
                             rowBuilder.Append(cellStr);
-
+                            //NOTE lua语法如果是字符串则加上"" 
+                            luaBuilder.AppendLine(string.Format("\t{0}={1}{2}", columnName, ParseLua(cellStr), loopColumn != lastColumnIdx ? "," : ""));
                         }
                     }
-
+                  
                     // 如果这行，之后\t或换行符，无其它内容，认为是可以省略的
                     if (!string.IsNullOrEmpty(rowBuilder.ToString().Trim()))
+                    {
                         tableBuilder.Append(rowBuilder);
+                        luaBuilder.AppendLine(string.Concat("}", startRow == lastRowIdx ? "" : ","));
+                    }
                 }
+                luaBuilder.AppendLine("}");
             }
             //以上是tml写入其它行
+            #endregion
 
-
-            var fileName = Path.GetFileNameWithoutExtension(path);
+            var fileName = Path.GetFileNameWithoutExtension(param.path);
             string exportPath;
-            if (!string.IsNullOrEmpty(compileToFilePath))
+            if (!string.IsNullOrEmpty(param.compileToFilePath))
             {
-                exportPath = compileToFilePath;
+                exportPath = param.compileToFilePath;
             }
             else
             {
@@ -263,25 +290,23 @@ namespace TableML.Compiler
             var exportDirPath = Path.GetDirectoryName(exportPath);
             if (!Directory.Exists(exportDirPath))
                 Directory.CreateDirectory(exportDirPath);
-
+            exportDirPath = Path.GetDirectoryName(param.compileToLuaFilePath);
+            if (!Directory.Exists(exportDirPath))
+                Directory.CreateDirectory(exportDirPath);
             // 是否写入文件
-            if (doCompile)
+            if (param.doRealCompile)
             {
-                var dirName = Path.GetDirectoryName(exportPath);
-                if (Directory.Exists(dirName) == false)
-                {
-                    Directory.CreateDirectory(dirName);
-                }
                 File.WriteAllText(exportPath, tableBuilder.ToString());
+                File.WriteAllText(param.compileToLuaFilePath, luaComentBuilder.ToString() + luaBuilder.ToString());
             }
 
 
             // 基于base dir路径
             var tabFilePath = exportPath; // without extension
             var fullTabFilePath = Path.GetFullPath(tabFilePath).Replace("\\", "/"); ;
-            if (!string.IsNullOrEmpty(compileBaseDir))
+            if (!string.IsNullOrEmpty(param.compileBaseDir))
             {
-                var fullCompileBaseDir = Path.GetFullPath(compileBaseDir).Replace("\\", "/"); ;
+                var fullCompileBaseDir = Path.GetFullPath(param.compileBaseDir).Replace("\\", "/"); ;
                 tabFilePath = fullTabFilePath.Replace(fullCompileBaseDir, ""); // 保留后戳
             }
             if (tabFilePath.StartsWith("/"))
@@ -333,7 +358,8 @@ namespace TableML.Compiler
         public TableCompileResult Compile(string path)
         {
             var outputPath = System.IO.Path.ChangeExtension(path, this._config.ExportTabExt);
-            return Compile(path, outputPath);
+            var param = new CompilerParam(){path = path,compileToFilePath = outputPath};
+            return Compile(param);
         }
 
         /// <summary>
@@ -344,34 +370,64 @@ namespace TableML.Compiler
         /// <param name="compileBaseDir"></param>
         /// <param name="doRealCompile">Real do, or just get the template var?</param>
         /// <returns></returns>
-        public TableCompileResult Compile(string path, string compileToFilePath, int index=0, string compileBaseDir = null, bool doRealCompile = true)
+        public TableCompileResult Compile(CompilerParam param)
         {
             // 确保目录存在
-            compileToFilePath = Path.GetFullPath(compileToFilePath);
-            var compileToFileDirPath = Path.GetDirectoryName(compileToFilePath);
+            param.compileToFilePath = Path.GetFullPath(param.compileToFilePath);
+            var compileToFileDirPath = Path.GetDirectoryName(param.compileToFilePath);
 
             if (!Directory.Exists(compileToFileDirPath))
                 Directory.CreateDirectory(compileToFileDirPath);
 
-            var ext = Path.GetExtension(path);
+            var ext = Path.GetExtension(param.path);
 
             ITableSourceFile sourceFile = null;
             if (ext == ".tsv")
             {
-                sourceFile = new SimpleTSVFile(path);
+                sourceFile = new SimpleTSVFile(param.path);
             }
             else if (ext.Contains(".xls"))
             {
-                sourceFile = new SimpleExcelFile(path, index);
+                sourceFile = new SimpleExcelFile(param.path, param.index);
             }
             else if (ext == ".csv")
             {
-                sourceFile = new SimpleCSVFile(path);
+                sourceFile = new SimpleCSVFile(param.path);
             }
-
-            var hash = DoCompilerExcelReader(path, sourceFile, compileToFilePath, compileBaseDir, doRealCompile);
+            var hash = DoCompilerExcelReader(param, sourceFile);
             return hash;
-
         }
+
+        #region 解析lua语法
+
+        public string ParseLua(string src)
+        {
+            if (MyHelper.IsNumber(src))
+            {
+                return src;
+            }
+            //TODO 如果有特殊的需求，需要成自定义的语法
+            //else if (src.StartsWith("{"))
+            return string.Concat("\"", src, "\"");
+        }
+        #endregion
     }
+
+    public class CompilerParam
+    {
+        public string path;
+        public string compileToFilePath;
+        /// <summary>
+        /// TODO 未传入lua路径，则不生成lua file
+        /// </summary>
+        public string compileToLuaFilePath;
+        public int index = 0;
+        public string compileBaseDir = null;
+        /// <summary>
+        /// TODO 对于csv/tsv doRealCompile = false,但也要生成lua file
+        /// </summary>
+        public bool doRealCompile = true;
+        
+    }
+
 }
