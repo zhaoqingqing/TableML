@@ -65,7 +65,7 @@ namespace TableML.Compiler
         }
 
         /// <summary>
-        /// 生成tml文件内容
+        /// 生成tml/tsv/lua文件内容
         /// </summary>
         /// <returns></returns>
         private TableCompileResult DoCompilerExcelReader(CompilerParam param, ITableSourceFile excelFile)
@@ -73,14 +73,24 @@ namespace TableML.Compiler
             var renderVars = new TableCompileResult();
             renderVars.ExcelFile = excelFile;
             renderVars.FieldsInternal = new List<TableColumnVars>();
-
-            var tableBuilder = new StringBuilder();
-            var rowBuilder = new StringBuilder();
+            //NOTE 外部可选是否导出tsv
+            // if (string.IsNullOrEmpty(param.ExportTsvPath))
+            // {
+            //     // use default
+            //     param.ExportTsvPath = Path.GetFileNameWithoutExtension(param.path) + _config.ExportTabExt;
+            // }
+            
+            var tableBuilder = new StringBuilder(); //表头
+            var rowBuilder = new StringBuilder();//表内容
             //导出lua配置文件
-            var luaComentBuilder = new StringBuilder();
+            var luaCommentBuilder = new StringBuilder();
             var luaBuilder = new StringBuilder();
-            luaComentBuilder.AppendLine(string.Format("---auto generate by tools\r\n---@class {0}",Path.GetFileNameWithoutExtension(param.path)));
-            luaBuilder.AppendLine("return {");
+            if (!string.IsNullOrEmpty(param.ExportLuaPath))
+            {
+                luaCommentBuilder.AppendLine(string.Format("---auto generate by tools\r\n---@class {0}", Path.GetFileNameWithoutExtension(param.path)));
+                luaBuilder.AppendLine("return {");
+            }
+
             var ignoreColumns = new HashSet<int>();
 
             #region 写入tml第一行
@@ -102,9 +112,9 @@ namespace TableML.Compiler
                     //NOTE by qingqing-zhao 分隔符为\t 。如果从指定的列开始读取，但是dict的索引是从0开始
                     if (colIndex > 0)
                     {
-                        tableBuilder.Append("\t");
+                        if(param.CanExportTsv) tableBuilder.Append("\t");
                     }
-                    tableBuilder.Append(colNameStr);
+                    if(param.CanExportTsv) tableBuilder.Append(colNameStr);
 
                     string typeName = "string";
                     string defaultVal = "";
@@ -137,10 +147,11 @@ namespace TableML.Compiler
                         DefaultValue = defaultVal,
                         Comment = excelFile.ColName2Comment[colNameStr],
                     });
-                    luaComentBuilder.AppendLine(string.Format("---@field public {0} {1}",colNameStr,typeName));
+                    if(!string.IsNullOrEmpty(param.ExportLuaPath))
+                        luaCommentBuilder.AppendLine(string.Format("---@field public {0} {1}",colNameStr,typeName));
                 }
             }
-            tableBuilder.Append("\n");
+            if(param.CanExportTsv) tableBuilder.Append("\n");
             //以上是tml写入的第一行
             #endregion
 
@@ -161,11 +172,11 @@ namespace TableML.Compiler
                 //NOTE by qingqing-zhao 加入\t，从指定的列开始读取，但是dict的索引是从0开始
                 if (colIndex > 0)
                 {
-                    tableBuilder.Append("\t");
+                    if(param.CanExportTsv) tableBuilder.Append("\t");
                 }
-                tableBuilder.Append(statementStr);
+                if(param.CanExportTsv)  tableBuilder.Append(statementStr);
             }
-            tableBuilder.Append("\n");
+            if(param.CanExportTsv) tableBuilder.Append("\n");
             //以上是tml写入的第二行
             #endregion
             
@@ -244,65 +255,70 @@ namespace TableML.Compiler
 
 
                                 if (startRow != 0) // 不是第一行，往添加换行，首列
-                                    rowBuilder.Append("\n");
-                                luaBuilder.AppendLine(string.Concat("[",ParseLua(cellStr),"] = {"));
+                                {
+                                    if(param.CanExportTsv) rowBuilder.Append("\n");
+                                }
+                                if(!string.IsNullOrEmpty(param.ExportLuaPath))
+                                    luaBuilder.AppendLine(string.Concat("[",ParseLua(cellStr),"] = {"));
                             }
                             /*
                                 NOTE by qingqing-zhao 因为是从指定的列开始读取，所以>有效列 才加入\t
                                 如果这列是空白的也不需要加入
                             */
-                            bool hasColumn = !string.IsNullOrEmpty(columnName)
+                            if(param.CanExportTsv)
+                            {
+                                bool hasColumn = !string.IsNullOrEmpty(columnName)
                                                  && loopColumn > 0
                                                  && loopColumn < columnCount; //列是否有效
-                            if(hasColumn) rowBuilder.Append("\t");
-                            // 如果单元格是字符串，换行符改成\\n
-                            cellStr = cellStr.Replace("\n", "\\n");
-                            rowBuilder.Append(cellStr);
+                                if (hasColumn) rowBuilder.Append("\t");
+                                // 如果单元格是字符串，换行符改成\\n
+                                cellStr = cellStr.Replace("\n", "\\n");
+                                rowBuilder.Append(cellStr);
+                            }
+
                             //NOTE lua语法如果是字符串则加上"" 
-                            luaBuilder.AppendLine(string.Format("\t{0}={1}{2}", columnName, ParseLua(cellStr), loopColumn != lastColumnIdx ? "," : ""));
+                            if(!string.IsNullOrEmpty(param.ExportLuaPath))
+                                luaBuilder.AppendLine(string.Format("\t{0}={1}{2}", columnName, ParseLua(cellStr), loopColumn != lastColumnIdx ? "," : ""));
                         }
                     }
                   
                     // 如果这行，之后\t或换行符，无其它内容，认为是可以省略的
                     if (!string.IsNullOrEmpty(rowBuilder.ToString().Trim()))
                     {
-                        tableBuilder.Append(rowBuilder);
-                        luaBuilder.AppendLine(string.Concat("}", startRow == lastRowIdx ? "" : ","));
+                        if(param.CanExportTsv) tableBuilder.Append(rowBuilder);
+                        if(!string.IsNullOrEmpty(param.ExportLuaPath))
+                            luaBuilder.AppendLine(string.Concat("}", startRow == lastRowIdx ? "" : ","));
                     }
                 }
-                luaBuilder.AppendLine("}");
+                if(!string.IsNullOrEmpty(param.ExportLuaPath))
+                    luaBuilder.AppendLine("}");
             }
             //以上是tml写入其它行
             #endregion
 
-            var fileName = Path.GetFileNameWithoutExtension(param.path);
-            string exportPath;
-            if (!string.IsNullOrEmpty(param.compileToFilePath))
+            string exportDirPath =  exportDirPath = Path.GetDirectoryName(param.ExportTsvPath);
+            if (!Directory.Exists(exportDirPath))
+                Directory.CreateDirectory(exportDirPath);;
+
+            if (!string.IsNullOrEmpty(param.ExportLuaPath))
             {
-                exportPath = param.compileToFilePath;
-            }
-            else
-            {
-                // use default
-                exportPath = fileName + _config.ExportTabExt;
+                exportDirPath = Path.GetDirectoryName(param.ExportLuaPath);
+                if (!Directory.Exists(exportDirPath))
+                    Directory.CreateDirectory(exportDirPath);
             }
 
-            var exportDirPath = Path.GetDirectoryName(exportPath);
-            if (!Directory.Exists(exportDirPath))
-                Directory.CreateDirectory(exportDirPath);
-            exportDirPath = Path.GetDirectoryName(param.compileToLuaFilePath);
-            if (!Directory.Exists(exportDirPath))
-                Directory.CreateDirectory(exportDirPath);
             // 是否写入文件
             if (param.doRealCompile)
             {
-                File.WriteAllText(exportPath, tableBuilder.ToString());
-                File.WriteAllText(param.compileToLuaFilePath, luaComentBuilder.ToString() + luaBuilder.ToString());
+                if(param.CanExportTsv)
+                    File.WriteAllText(param.ExportTsvPath, tableBuilder.ToString());
+                if(!string.IsNullOrEmpty(param.ExportLuaPath))
+                    File.WriteAllText(param.ExportLuaPath, luaCommentBuilder.ToString() + luaBuilder.ToString());
             }
-
+            //TODO 待验证不生成tsv是否能生成c#代码
 
             // 基于base dir路径
-            var tabFilePath = exportPath; // without extension
+            var tabFilePath = param.ExportTsvPath; // without extension
             var fullTabFilePath = Path.GetFullPath(tabFilePath).Replace("\\", "/"); ;
             if (!string.IsNullOrEmpty(param.compileBaseDir))
             {
@@ -358,7 +374,7 @@ namespace TableML.Compiler
         public TableCompileResult Compile(string path)
         {
             var outputPath = System.IO.Path.ChangeExtension(path, this._config.ExportTabExt);
-            var param = new CompilerParam(){path = path,compileToFilePath = outputPath};
+            var param = new CompilerParam(){path = path,ExportTsvPath = outputPath};
             return Compile(param);
         }
 
@@ -373,11 +389,18 @@ namespace TableML.Compiler
         public TableCompileResult Compile(CompilerParam param)
         {
             // 确保目录存在
-            param.compileToFilePath = Path.GetFullPath(param.compileToFilePath);
-            var compileToFileDirPath = Path.GetDirectoryName(param.compileToFilePath);
+            if (!string.IsNullOrEmpty(param.ExportTsvPath))
+            {
+                param.ExportTsvPath = Path.GetFullPath(param.ExportTsvPath);
+                var compileToFileDirPath = Path.GetDirectoryName(param.ExportTsvPath);
 
-            if (!Directory.Exists(compileToFileDirPath))
-                Directory.CreateDirectory(compileToFileDirPath);
+                if (!Directory.Exists(compileToFileDirPath))
+                    Directory.CreateDirectory(compileToFileDirPath);
+            }
+            else if (param.CanExportTsv)
+            {
+                ConsoleHelper.Error("导出tsv的路径为空");
+            }
 
             var ext = Path.GetExtension(param.path);
 
@@ -406,7 +429,7 @@ namespace TableML.Compiler
             {
                 return src;
             }
-            //TODO 如果有特殊的需求，需要成自定义的语法
+            //TODO 如果有特殊的需求，解析成自定义的语法
             //else if (src.StartsWith("{"))
             return string.Concat("\"", src, "\"");
         }
@@ -416,11 +439,21 @@ namespace TableML.Compiler
     public class CompilerParam
     {
         public string path;
-        public string compileToFilePath;
         /// <summary>
-        /// TODO 未传入lua路径，则不生成lua file
+        /// 生成tsv保存的路径
         /// </summary>
-        public string compileToLuaFilePath;
+        public string ExportTsvPath;
+        /// <summary>
+        /// 是否需要生成tsv文件
+        /// </summary>
+        public bool CanExportTsv = true;
+        /// <summary>
+        /// 生成的lua保存路径，未传入lua则不生成
+        /// </summary>
+        public string ExportLuaPath;
+        /// <summary>
+        /// 要编译的sheetindex
+        /// </summary>
         public int index = 0;
         public string compileBaseDir = null;
         /// <summary>

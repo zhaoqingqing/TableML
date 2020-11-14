@@ -5,11 +5,17 @@ using System.Xml;
 namespace TableMLGUI
 {
     /// <summary>
-    /// 提供像xml一样方法修改App.config，因为通过ConfigurationManager修改会丢失注释
+    /// 提供像xml一样方法修改App.config，因为通过ConfigurationManager修改config文件会丢失注释
     /// by qingqing.zhao (569032731@qq.com)
     /// </summary>
     public static class AppConfigHelper
     {
+        //NOTE：使用系统提供的API会重新生成app.config,导致里面的注释丢失，所以使用AppConfigHelper
+        /*var newKeyValue =  box.Checked ? "1" : "0";
+        Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        config.AppSettings.Settings["UseSqlite"].Value = newKeyValue;
+        config.Save(ConfigurationSaveMode.Modified);
+        ConfigurationManager.RefreshSection("appSettings");*/
        public static void SetValue(string key,string value)
         {
             XmlDocument doc = new XmlDocument();

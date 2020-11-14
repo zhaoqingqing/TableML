@@ -192,7 +192,7 @@ namespace TableML.Compiler
                         {
                             Console.WriteLine("[SettingModule]Compile from {0} to {1}", excelPath, compileToPath);
                             Console.WriteLine();//美观一下 打印空白行 //TODO lua导出路径
-                            var param  = new CompilerParam(){path = excelPath,compileToFilePath = compileToPath,index = 0,compileBaseDir = compileBaseDir,doRealCompile = doCompile};
+                            var param  = new CompilerParam(){path = excelPath,ExportTsvPath = compileToPath,index = 0,compileBaseDir = compileBaseDir,doRealCompile = doCompile};
                             var compileResult = compiler.Compile(param);
 
                             // 添加模板值

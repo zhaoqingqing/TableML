@@ -61,18 +61,19 @@ namespace TableMLGUI
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath,
-                        e.Message));
-                    //IsLoadSuccess = false;
+                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
                 }
             }
             Worksheet = Workbook.GetSheetAt(0);
-            //TODO 检查行数是否超出索引
-//            Worksheet.RowBreaks
+            //检查行数是否超出索引，NOTE 如果有预留行数，还要减去
+            if (Worksheet.LastRowNum - 1 < 4)
+            {
+                ConsoleHelper.Error("{0}行数不足4行",Path.GetFileName(filePath));
+                return false;
+            }
             List<ICell> cells = Worksheet.GetRow(4).Cells;
             foreach (ICell cell in cells)
             {
-
                 if (cell.StringCellValue == "num")
                 {
                     cell.SetCellValue("int");
@@ -135,7 +136,6 @@ namespace TableMLGUI
                 {
                     throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath,
                         e.Message));
-                    //IsLoadSuccess = false;
                 }
             }
 

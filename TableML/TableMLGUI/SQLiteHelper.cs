@@ -179,11 +179,10 @@ public partial class SQLiteHelper
     {
         if (File.Exists(filePath) == false)
         {
-            ConsoleHelper.Error("{0} 文件不存在！", filePath);
+            ConsoleHelper.Error("更新数据表失败，{0} 文件不存在！", filePath);
             return false;
         }
         var fileName = Path.GetFileNameWithoutExtension(filePath);
-        //TODO 处理当文件不是文本格式时
         string[] lines = File.ReadAllLines(filePath);
         //当文件内容为空时的处理
         if (lines == null || lines.Length <= 0)
@@ -351,10 +350,7 @@ public partial class SQLiteHelper
                     //执行sql语句
                     foreach (FileInfo fileInfo in files)
                     {
-                        /*
-                        TODO 从文件中读取到的sql，要把\r\n变成\n，并且其它转义符号也去掉
-                        或者直接执行sql文件，而不是sql语句
-                         */
+                        //NOTE 从文件中读取到的sql，要把\r\n变成\n，并且其它转义符号也去掉 或者直接执行sql文件，而不是sql语句
                         var sql = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
                         dbCmd.CommandText = sql;
                         addNum += dbCmd.ExecuteNonQuery();

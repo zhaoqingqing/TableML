@@ -90,7 +90,7 @@ int	string
 		public void TestCompileXls()
 		{
 			var compiler = new Compiler();
-			var param = new CompilerParam(){path = "./TestSettings/TestExcel.xls",compileToFilePath = Path.GetFullPath("./TestExcelXls.tml"),index = 0,compileBaseDir="./"};
+			var param = new CompilerParam(){path = "./TestSettings/TestExcel.xls",ExportTsvPath = Path.GetFullPath("./TestExcelXls.tml"),index = 0,compileBaseDir="./"};
 			compiler.Compile(param);
 		    Assert.True(File.Exists("TestExcelXls.tml"));
 
@@ -99,7 +99,7 @@ int	string
 		public void TestCompileXlsx()
 		{
 			var compiler = new Compiler();
-			var param = new CompilerParam(){path = "./TestSettings/TestExcel2.xlsx",compileToFilePath = Path.GetFullPath("./TestExcelXlsx.tml"),index = 0,compileBaseDir="./"};
+			var param = new CompilerParam(){path = "./TestSettings/TestExcel2.xlsx",ExportTsvPath = Path.GetFullPath("./TestExcelXlsx.tml"),index = 0,compileBaseDir="./"};
 			compiler.Compile(param);
 		    Assert.True(File.Exists("TestExcelXlsx.tml"));
 

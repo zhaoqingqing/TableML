@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,12 +11,19 @@ using TableML.Compiler;
 
 namespace TableMLGUI
 {
+    /// <summary>
+    /// 作者：赵青青(569032731@qq.com)
+    /// 日期：2017-4-23
+    /// 功能：tableml的gui
+    /// </summary>
     public partial class MainForm : Form
     {
+        #region 配置字段
+
         /// <summary>
         /// 输出tml文件路径
         /// </summary>
-        public string ExportTmlPath;
+        public string ExportTsvPath;
         public string srcFullPath;
 
         /// <summary>
@@ -32,7 +40,7 @@ namespace TableMLGUI
         private string sqlDBPath;
 
         /// <summary>
-        /// 简单三行格式文件
+        /// 是否简单三行格式文件
         /// </summary>
         public bool IsSimpleRule
         {
@@ -40,29 +48,20 @@ namespace TableMLGUI
         }
         
         /// <summary>
-        /// ksframework的表格默认格式
+        /// 是否为ksframework的表格默认格式
         /// </summary>
         public bool IsKSFrameworkRule
         {
             get { return cbKSFormat.Checked; }
         }
-
-        private bool _exportToSqlite = false;
-        public bool ExportToSqlite { get
-            {
-                return _exportToSqlite;
-            }
-            set
-            {
-                if (_exportToSqlite != value)
-                {
-                    _exportToSqlite = value;
-                    UpdateSqlVisible();
-                }
-            }
-        }
-
-        public bool NeedGenCSharp = true; 
+        
+        public bool EnableToSqlite;
+        public bool EnableGenCSharp; 
+        public bool EnableGenLua; 
+        public bool EnableGenTsv; 
+        
+        #endregion
+        
         /// <summary>
         /// 框中的文件列表
         /// </summary>
@@ -73,30 +72,32 @@ namespace TableMLGUI
                 return tbFileList.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
+        
         public MainForm()
         {
             InitializeComponent();
             Init();
             //test
-            tbFileList.Text = srcFullPath + @"\Billboard.xlsx";
+            //tbFileList.Text = srcFullPath + @"\Billboard.xlsx";
         }
 
         public void Init()
         {
-            string useAbsolutePathStr = ConfigurationManager.AppSettings.Get("UseAbsolutePath").Trim().ToLower();
-            bool useAbsolutePath = useAbsolutePathStr == "true" || useAbsolutePathStr == "1";
-
+            //禁止调整窗体大小：窗体FormBorderStyle属性设置为：FixedSingle，并把最大化禁用
+            bool useAbsolutePath = ConfigurationManager.AppSettings.Get("UseAbsolutePath").Trim() == "1";
             //源始excel路径
             var srcExcelPath = ConfigurationManager.AppSettings.Get("srcExcelPath");
             srcFullPath = useAbsolutePath ? Path.GetFullPath(srcExcelPath) : Path.GetFullPath(Application.StartupPath + srcExcelPath);
             this.tbSrcPath.Text = srcFullPath;
 
-            string exportToSqliteStr = ConfigurationManager.AppSettings.Get("ExportToSqlite").Trim().ToLower();
-            ExportToSqlite = exportToSqliteStr == "true" || exportToSqliteStr == "1";
-
+            EnableToSqlite = ConfigurationManager.AppSettings.Get("EnableToSqlite").Trim() == "1";
+            EnableGenCSharp = ConfigurationManager.AppSettings.Get("EnableGenCSharp").Trim() == "1";
+            EnableGenLua = ConfigurationManager.AppSettings.Get("EnableGenLua").Trim() == "1";
+            EnableGenTsv = ConfigurationManager.AppSettings.Get("EnableGenTsv").Trim() == "1";
+            
             //sql的database文件存放路径
-            var dbPath = ConfigurationManager.AppSettings.Get("DBPath");
             var _sqlScriptsPath = ConfigurationManager.AppSettings.Get("ExportSqlScriptsPath");
+            var dbPath = ConfigurationManager.AppSettings.Get("ExportDBPath");
             if (!string.IsNullOrEmpty(dbPath))
             {
                 this.sqlDBPath = useAbsolutePath ? dbPath : Path.GetFullPath(Application.StartupPath + dbPath);
@@ -107,14 +108,11 @@ namespace TableMLGUI
 
             //tml文件格式
             var tmlFileEx = ConfigurationManager.AppSettings.Get("TmlExtensions");
-            if (!string.IsNullOrEmpty(tmlFileEx))
-            {
-                TmlExtensions = tmlFileEx;
-            }
+            if (!string.IsNullOrEmpty(tmlFileEx))  TmlExtensions = tmlFileEx;
 
             //tml路径
-            var genTmlPath = ConfigurationManager.AppSettings.Get("ExportTmlPath");
-            ExportTmlPath = useAbsolutePath ? genTmlPath : Path.GetFullPath(Application.StartupPath + genTmlPath);
+            var genTmlPath = ConfigurationManager.AppSettings.Get("ExportTsvPath");
+            ExportTsvPath = useAbsolutePath ? genTmlPath : Path.GetFullPath(Application.StartupPath + genTmlPath);
 
             //代码路径
             var genCodePath = ConfigurationManager.AppSettings.Get("ExportCSharpPath");
@@ -137,8 +135,8 @@ namespace TableMLGUI
             openFileDialog1.Multiselect = true;
             openFileDialog1.SupportMultiDottedExtensions = true;
 
-            cb_sql.Checked = ExportToSqlite;
-            InitExcelFormat();
+            ExcelConfig.IsKSFrameworkFormat = IsKSFrameworkRule;
+            UpdateConfigVisible();
         }
 
         #region  文件拖拽到列表
@@ -179,24 +177,15 @@ namespace TableMLGUI
             var dragDir = files.GetValue(0).ToString();
             if (Directory.Exists(dragDir) == false)
             {
-                Console.WriteLine("Error !{0} 目录不存在或不是目录", dragDir);
+                ConsoleHelper.Error("{0} 目录不存在或不是目录", dragDir);
                 return;
             }
             this.tbSrcPath.Text = dragDir;
         }
         #endregion
-
-        private void btnCompileSelect_Click(object sender, EventArgs e)
-        {
-            CompileSelect();
-            if(ExportToSqlite) SQLiteHelper.UpdateDB(ExportTmlPath);
-        }
-
-        public void CompileSelect(bool msgResult = false)
-        {
-            CompileSelect(fileList, msgResult);
-        }
-
+        
+        #region 编译按钮点击事件
+        
         private IWorkbook PreParseExcel(string filePath)
         {
             IWorkbook Workbook;
@@ -208,7 +197,6 @@ namespace TableMLGUI
                 }
                 catch (Exception e)
                 {
-                    //                    throw new Exception(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
                     ConsoleHelper.Error(string.Format("无法打开Excel: {0}, 可能原因：正在打开？或是Office2007格式（尝试另存为）？ {1}", filePath, e.Message));
                     return null;
                 }
@@ -216,7 +204,6 @@ namespace TableMLGUI
 
             if (Workbook == null)
             {
-                //                    throw new Exception(filePath + " Null Workbook");
                 ConsoleHelper.Error(filePath + " Null Workbook");
                 return null;
             }
@@ -225,7 +212,7 @@ namespace TableMLGUI
         
         void GenCodeFile (TableCompileResult compileResult,string fileName)
         {
-            if (NeedGenCSharp)
+            if (EnableGenCSharp)
             {
                 //生成csharp代码
                 BatchCompiler batchCompiler = new BatchCompiler();
@@ -236,6 +223,7 @@ namespace TableMLGUI
                 };
                 batchCompiler.GenCodeFile(param);
             }
+            //NOTE 如果是使用sqlite则生成此文件
             //LuaHelper.GenLuaFile(compileResult, ExportLuaPath +  fileName + ".lua");
         }
         
@@ -257,15 +245,15 @@ namespace TableMLGUI
             var compiler = new Compiler();
             Dictionary<string, string> dst2src = new Dictionary<string, string>();
             int comileCount = 0;
-
-
+            Stopwatch watch  = new Stopwatch();
+            watch.Start();
             foreach (var filePath in fullPaths)
             {
                 if (string.IsNullOrEmpty(filePath))
                 {
                     continue;
                 }
-                Console.WriteLine(filePath);
+                ConsoleHelper.Info(filePath);
                 var ext = Path.GetExtension(filePath).Trim().ToLower();
                 if (ext.Contains(".xls") || ext.Contains(".xlsx"))
                 {
@@ -280,10 +268,11 @@ namespace TableMLGUI
                         {
                             continue;
                         }
-                        savePath = ExportTmlPath + "\\" + outputName + TmlExtensions;
-                        var saveLuaPath = ExportLuaPath + "\\" + outputName + ".lua";
+
+                        savePath =  ExportTsvPath + "\\" + outputName + TmlExtensions ;
+                        var saveLuaPath = EnableGenLua? ExportLuaPath + "\\" + outputName + ".lua":null;
                         //编译成tml
-                        var param = new CompilerParam(){path = filePath,compileToFilePath = savePath,compileToLuaFilePath = saveLuaPath,index = index,doRealCompile = true};
+                        var param = new CompilerParam() {path = filePath, ExportTsvPath = savePath, CanExportTsv = EnableGenTsv,ExportLuaPath = saveLuaPath, index = index, doRealCompile = true};
                         TableCompileResult compileResult = compiler.Compile(param);
                         tmlList.Add(Path.GetFullPath(savePath));
                         var dstFileName = Path.GetFileNameWithoutExtension(savePath);
@@ -308,10 +297,10 @@ namespace TableMLGUI
                     {
                         continue;
                     }
-                    var savePath = ExportTmlPath + "\\" + outputName + TmlExtensions;
-                    var saveLuaPath = ExportLuaPath + "\\" + outputName + ".lua";
+                    var savePath =  ExportTsvPath + "\\" + outputName + TmlExtensions;
+                    var saveLuaPath = EnableGenLua ? ExportLuaPath + "\\" + outputName + ".lua" : null;
                     //编译成tml
-                    var param = new CompilerParam(){path = filePath,compileToFilePath = savePath,compileToLuaFilePath = saveLuaPath,index = 0,doRealCompile = false};
+                    var param = new CompilerParam(){path = filePath,ExportTsvPath = savePath,CanExportTsv = EnableGenTsv ,ExportLuaPath = saveLuaPath,index = 0,doRealCompile = false};
                     TableCompileResult compileResult = compiler.Compile(param);
                     tmlList.Add(Path.GetFullPath(savePath));
                     var dstFileName = Path.GetFileNameWithoutExtension(savePath);
@@ -334,18 +323,21 @@ namespace TableMLGUI
                 }
                 else
                 {
-                    Console.WriteLine("跳过" + filePath);
+                    ConsoleHelper.Info("跳过" + filePath);
                 }
 
             }
             BatchCompiler.SaveCompileResult(dst2src);
-            if (ExportToSqlite)
+            if (EnableToSqlite)
             {
                 //将结果插入到sqlite中
                 SQLiteHelper.UpdateDB(tmlList.ToArray());
             }
-
-            if (msgResult) { ShowCompileResult(comileCount); }
+            watch.Stop();
+            if (msgResult)
+            {
+                MessageBox.Show(string.Format("共编译{0}张表，耗时{1}s", comileCount,watch.ElapsedMilliseconds*0.001f), "编译完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         /// <summary>
@@ -362,21 +354,39 @@ namespace TableMLGUI
             CompileSelect(files.ToArray(), msgResult);
         }
 
-
-        private void btnCompileAll_Click(object sender, EventArgs e)
+        private void btnCompileExcel_Click(object sender, EventArgs e)
         {
-            CompileAllExcel();
-            if (ExportToSqlite)
+            //编译某个目录下全部的excel
+            CompileAllExcel(true);
+            if (EnableToSqlite)
             {
-                SQLiteHelper.UpdateDB(ExportTmlPath);
+                SQLiteHelper.UpdateDB(ExportTsvPath);
             }
         }
-
-        public void ShowCompileResult(int count)
+        
+        private void btnCompileSelect_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(string.Format("共编译{0}张表", count), "编译完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //编译已选择的excel
+            CompileSelect(fileList, true);
+            if(EnableToSqlite) SQLiteHelper.UpdateDB(ExportTsvPath);
         }
-
+        
+        private void btnUpdateDB_Click(object sender, EventArgs e)
+        {
+            if (EnableToSqlite)
+            {
+                SQLiteHelper.UpdateDB(ExportTsvPath);
+            }
+            else
+            {
+                MessageBox.Show("未启用Sqlite功能，请在App.config中启用", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+        
+        #endregion
+        
+        #region 辅助功能的Click事件
+        
         private void btnUpdateCSSyntax_Click(object sender, EventArgs e)
         {
             ExcelHelper.UpdateAllTableSyntax();
@@ -384,24 +394,24 @@ namespace TableMLGUI
 
         private void btnSyncCode_Click(object sender, EventArgs e)
         {
-//            if (Directory.Exists(txtCodePath.Text) == false)
-//            {
-//                Directory.CreateDirectory(txtCodePath.Text);
-//            }
-//            FileHelper.CopyFolder(GenCodePath, txtCodePath.Text);
-//            Console.WriteLine("copy {0} to \r\n {1}", GenCodePath, txtCodePath.Text);
-//            MessageBox.Show(string.Format("{0}\r\n同步完成", txtCodePath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            /*if (Directory.Exists(txtCodePath.Text) == false)
+            {
+                Directory.CreateDirectory(txtCodePath.Text);
+            }
+            FileHelper.CopyFolder(GenCodePath, txtCodePath.Text);
+            Console.WriteLine("copy {0} to \r\n {1}", GenCodePath, txtCodePath.Text);
+            MessageBox.Show(string.Format("{0}\r\n同步完成", txtCodePath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);*/
         }
 
         private void btnSyncTml_Click(object sender, EventArgs e)
         {
-//            if (Directory.Exists(txtTmlPath.Text) == false)
-//            {
-//                Directory.CreateDirectory(txtTmlPath.Text);
-//            }
-//            FileHelper.CopyFolder(GenTmlPath, txtTmlPath.Text);
-//            Console.WriteLine("copy {0} to \r\n {1}", GenTmlPath, txtTmlPath.Text);
-//            MessageBox.Show(string.Format("{0}\r\n同步完成", txtTmlPath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            /*if (Directory.Exists(txtTmlPath.Text) == false)
+            {
+                Directory.CreateDirectory(txtTmlPath.Text);
+            }
+            FileHelper.CopyFolder(GenTmlPath, txtTmlPath.Text);
+            Console.WriteLine("copy {0} to \r\n {1}", GenTmlPath, txtTmlPath.Text);
+            MessageBox.Show(string.Format("{0}\r\n同步完成", txtTmlPath.Text), "同步完成", MessageBoxButtons.OK, MessageBoxIcon.Information);*/
         }
 
         private void btnCheckNameRepet_Click(object sender, EventArgs e)
@@ -419,7 +429,7 @@ namespace TableMLGUI
 
         private void btnOpenTmlDir_Click(object sender, EventArgs e)
         {
-            FileHelper.OpenFolder(ExportTmlPath);
+            FileHelper.OpenFolder(ExportTsvPath);
         }
 
         private void btnCheckNameEmpty_Click(object sender, EventArgs e)
@@ -447,7 +457,7 @@ namespace TableMLGUI
                 {
                     ExcelHelper.ToCSharpSyntax(filePath);
                 }
-                Console.WriteLine("数据类型更新完成");
+                ConsoleHelper.Info("数据类型更新完成");
             }
         }
 
@@ -455,37 +465,16 @@ namespace TableMLGUI
         {
             SQLiteHelper.TestInsert();
         }
-
-        private void btnUpdateDB_Click(object sender, EventArgs e)
-        {
-            if (ExportToSqlite)
-            {
-                SQLiteHelper.UpdateDB(ExportTmlPath);
-            }
-            else
-            {
-                MessageBox.Show("未启用Sqlite功能，请在App.config中启用", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        private void btnCompileExcel_Click(object sender, EventArgs e)
-        {
-            CompileAllExcel();
-            if (ExportToSqlite)
-            {
-                SQLiteHelper.UpdateDB(ExportTmlPath);
-            }
-        }
-
+        
         /// <summary>
         /// 命令行模式编译并插入到sqlite中
         /// </summary>
         public void CMDCompile()
         {
             CompileAllExcel();
-            if (ExportToSqlite)
+            if (EnableToSqlite)
             {
-                SQLiteHelper.UpdateDB(ExportTmlPath);
+                SQLiteHelper.UpdateDB(ExportTsvPath);
             }
         }
 
@@ -524,46 +513,80 @@ namespace TableMLGUI
             SQLiteHelper.ExecuteSql();
         }
 
-        private void cbKSFormat_Click(object sender, EventArgs e)
-        {
-            InitExcelFormat(true);
-        }
-
-        void InitExcelFormat(bool show_msg = false)
-        {
-            if (show_msg)
-            {
-                MessageBox.Show("是否选中"+cbKSFormat.Checked);
-            }
-            ExcelConfig.IsKSFrameworkFormat = IsKSFrameworkRule;
-        }
-
         private void btnOpenLuaDir_Click(object sender, EventArgs e)
         {
             FileHelper.OpenFolder(ExportLuaPath);
         }
-
+        
+        #endregion
+        
+        #region 界面修改配置
+        void UpdateConfigVisible()
+        {
+            //btnUpdateDB.Visible = EnableToSqlite;
+            cb_sql.Checked = EnableToSqlite;
+            cb_lua.Checked = EnableGenLua;
+            cb_csharp.Checked = EnableGenCSharp;
+            cb_tsv.Checked = EnableGenTsv;
+        }
+        
+        private void cbKSFormat_Click(object sender, EventArgs e)
+        {
+            var box = sender as CheckBox;
+            if (box != null)
+            {
+                if (!box.Checked)
+                {
+                    MessageBox.Show("对于非KSFramework格式的Excel需要修改SimpleExcel的代码");
+                    return;
+                }
+                ExcelConfig.IsKSFrameworkFormat = IsKSFrameworkRule;
+            }
+        }
+        
         private void Cb_sql_CheckedChanged(object sender, EventArgs e)
         {
             var box = sender as CheckBox;
             if (box!=null)
             {
-                ExportToSqlite = box.Checked;
-                //NOTE：使用此方法会重新生成app.config,导致里面的注释丢失，所以使用AppConfigHelper
-                /*var newKeyValue =  box.Checked ? "1" : "0";
-                Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                config.AppSettings.Settings["UseSqlite"].Value = newKeyValue;
-                config.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection("appSettings");*/
+                EnableToSqlite = box.Checked;
                 AppConfigHelper.SetValue("UseSqlite", box.Checked ? "1" : "0");
                 ConsoleHelper.Log($"是否启用导出到sqlite?{box.Checked} ,config:{AppConfigHelper.GetValue("UseSqlite")}");
-
+            }
+        }
+        
+        private void cb_lua_CheckedChanged(object sender, EventArgs e)
+        {
+            var box = sender as CheckBox;
+            if (box!=null)
+            {
+                EnableToSqlite = box.Checked;
+                AppConfigHelper.SetValue("EnableToSqlite", box.Checked ? "1" : "0");
+                ConsoleHelper.Log($"是否启用导出到sqlite?{box.Checked} ,config:{AppConfigHelper.GetValue("EnableToSqlite")}");
             }
         }
 
-        void UpdateSqlVisible()
+        private void cb_csharp_CheckedChanged(object sender, EventArgs e)
         {
-            btnUpdateDB.Visible = ExportToSqlite;
+            var box = sender as CheckBox;
+            if (box!=null)
+            {
+                EnableGenLua = box.Checked;
+                AppConfigHelper.SetValue("EnableGenLua", box.Checked ? "1" : "0");
+                ConsoleHelper.Log($"是否启用生成Lua?{box.Checked} ,config:{AppConfigHelper.GetValue("EnableGenLua")}");
+            }
         }
+
+        private void cb_tsv_CheckedChanged(object sender, EventArgs e)
+        {
+            var box = sender as CheckBox;
+            if (box!=null)
+            {
+                EnableGenTsv = box.Checked;
+                AppConfigHelper.SetValue("EnableGenTsv", box.Checked ? "1" : "0");
+                ConsoleHelper.Log($"是否启用生成Tsv?{box.Checked} ,config:{AppConfigHelper.GetValue("EnableGenTsv")}");
+            }
+        }
+        #endregion
     }
 }

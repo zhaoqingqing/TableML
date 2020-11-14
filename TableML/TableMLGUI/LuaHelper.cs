@@ -8,7 +8,7 @@ using TableML.Compiler;
 /// Author：qingqing.zhao (569032731@qq.com)
 /// Date：2020/11/5 16:33
 /// Desc：配置表转成lua文件
-///         使用了C#6的语法
+///        转成lua配置文件请查看Compiler.DoCompilerExcelReader
 /// </summary>
 public class LuaHelper
 {
@@ -22,7 +22,7 @@ public class LuaHelper
             StringBuilder builder = new StringBuilder();
             StringBuilder typeBuilder = new StringBuilder();
             var fileName = Path.GetFileNameWithoutExtension(exportPath);
-            typeBuilder.AppendLine($"---@class {fileName}");
+            typeBuilder.AppendLine("---@class "+fileName);
             builder.AppendLine("return {");
             var count = compileResult.FieldsInternal.Count;
             var end = count - 1;

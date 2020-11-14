@@ -40,14 +40,15 @@ namespace TableML.Compiler
     public class GenParam
     {
         public string genCodeTemplateString;
+        /// <summary>
+        /// 生成的代码文件路径
+        /// </summary>
         public string genCodeFilePath;
         public string nameSpace = "AppSettings";
         public string changeExtension = ".tml";
         public string settingCodeIgnorePattern;
         public bool forceAll = false;
         public bool genManagerClass = false;
-        public bool genLuaFile = true;//TODO
-        public bool genCSharpFile = true;//TODO
         public TableCompileResult compileResult;
         /// <summary>
         /// 如果是生成Manager Class 一定要在外部初始化此字段
@@ -192,21 +193,16 @@ namespace TableML.Compiler
                 GenerateCode(param.genCodeTemplateString, param.genCodeFilePath, param.nameSpace, templateHashes);
             }
         }
-
-		//TODO 修改参数类型
-        void GenManagerClass(List<TableCompileResult> results, string genCodeTemplateString, string genCodeFilePath,
-            string nameSpace = "AppSettings", string changeExtension = ".tml", string settingCodeIgnorePattern = null, bool forceAll = false)
+        
+        void GenManagerClass(List<TableCompileResult> results,GenParam param)
         {
-            //保存所有的编译结果，用来生成ManagerClass
-            var templateVars = new Dictionary<string, TableTemplateVars>();
+            if (string.IsNullOrEmpty(param.nameSpace)) param.nameSpace = "AppSettings";
+            if (string.IsNullOrEmpty(param.changeExtension)) param.changeExtension = ".tml";
+            param.genManagerClass = true;
             foreach (var compileResult in results)
             {
-                var param = new GenParam()
-                {
-                    compileResult = compileResult, genCodeTemplateString = genCodeTemplateString, genCodeFilePath = genCodeFilePath,
-                    nameSpace = nameSpace, changeExtension = changeExtension, forceAll = forceAll, settingCodeIgnorePattern = settingCodeIgnorePattern,
-                    genManagerClass = true,templateVars = templateVars
-                };
+                //保存所有的编译结果，用来生成ManagerClass
+                param.templateVars = new Dictionary<string, TableTemplateVars>();
                 GenCodeFile(param);
             }
         }
@@ -218,14 +214,10 @@ namespace TableML.Compiler
         /// </summary>
         /// <param name="sourcePath">需要的编译的Excel路径</param>
         /// <param name="compilePath">编译后的tml存放路径</param>
-        /// <param name="genCodeFilePath">编译后的代码存放路径</param>
-        /// <param name="changeExtension">编译后的tml文件格式</param>
-        /// <param name="forceAll">no diff! only force compile will generate code</param>
+        /// <param name="genParam">生成代码的参数</param>
         /// <param name="genCSCode">是否生成CSharp代码</param>
         /// <returns></returns>
-        public List<TableCompileResult> CompileAll(string sourcePath, string compilePath,
-            string genCodeFilePath, string genCodeTemplateString = null, string nameSpace = "AppSettings",
-            string changeExtension = ".tml", string settingCodeIgnorePattern = null, bool forceAll = false, bool genCSCode = true)
+        public List<TableCompileResult> CompileAll(string sourcePath, string compilePath, GenParam genParam, bool genCSCode = true)
         {
             var results = new List<TableCompileResult>();
             var compileBaseDir = compilePath;
@@ -247,7 +239,6 @@ namespace TableML.Compiler
                 var nowFileIndex = -1; // 开头+1， 起始为0
                 foreach (var excelPath in allFiles)
                 {
-                    //TODO 如果要读取每一个sheet
                     nowFileIndex++;
                     var ext = Path.GetExtension(excelPath);
                     var fileName = Path.GetFileNameWithoutExtension(excelPath);
@@ -280,15 +271,14 @@ namespace TableML.Compiler
                             continue;
                         }
                         var compileToPath = string.Format("{0}/{1}", compileBaseDir,
-                            Path.ChangeExtension(relativePath, changeExtension));
+                            Path.ChangeExtension(relativePath, genParam.changeExtension));
                         var srcFileInfo = new FileInfo(excelPath);
                         var dstFileName = Path.GetFileNameWithoutExtension(compileToPath);
                         if (dst2src.ContainsKey(dstFileName) == false)
                         {
                             dst2src.Add(dstFileName, Path.GetFileName(excelPath));
                         }
-                        Console.WriteLine("Compiling Excel to Tab..." +
-                                          string.Format("{0} -> {1}", excelPath, compileToPath));
+                        Console.WriteLine("Compiling Excel to Tab..." + string.Format("{0} -> {1}", excelPath, compileToPath));
 
                         // 如果已经存在，判断修改时间是否一致，用此来判断是否无需compile，节省时间
                         bool doCompile = true;
@@ -296,7 +286,7 @@ namespace TableML.Compiler
                         {
                             var toFileInfo = new FileInfo(compileToPath);
 
-                            if (!forceAll && srcFileInfo.LastWriteTime == toFileInfo.LastWriteTime)
+                            if (!genParam.forceAll && srcFileInfo.LastWriteTime == toFileInfo.LastWriteTime)
                             {
                                 //Log.DoLog("Pass!SameTime! From {0} to {1}", excelPath, compileToPath);
                                 doCompile = false;
@@ -307,7 +297,7 @@ namespace TableML.Compiler
                             Console.WriteLine("[SettingModule]Compile from {0} to {1}", excelPath, compileToPath);
                             Console.WriteLine(); //美观一下 打印空白行
                             //TODO lua文件保存路径
-                            var compileResult = compiler.Compile(new CompilerParam(){path = excelPath,compileToFilePath = compileToPath,compileBaseDir = compileBaseDir,doRealCompile = doCompile});
+                            var compileResult = compiler.Compile(new CompilerParam(){path = excelPath,ExportTsvPath = compileToPath,compileBaseDir = compileBaseDir,doRealCompile = doCompile});
                             if (genCSCode)
                             {
                                 // 添加模板值
@@ -316,12 +306,8 @@ namespace TableML.Compiler
                                 var compiledFileInfo = new FileInfo(compileToPath);
                                 compiledFileInfo.LastWriteTime = srcFileInfo.LastWriteTime;
                                 //仅仅是生成单个Class，只需要当前的CompileResult
-                                var param = new GenParam()
-                                {
-                                    compileResult = compileResult, genCodeTemplateString = genCodeTemplateString, genCodeFilePath = genCodeFilePath,
-                                    nameSpace = nameSpace, changeExtension = changeExtension, forceAll = forceAll,settingCodeIgnorePattern= settingCodeIgnorePattern
-                                };
-                                GenCodeFile(param);
+                                genParam.compileResult = compileResult;
+                                GenCodeFile(genParam);
                             }
 
                         }
@@ -342,8 +328,8 @@ namespace TableML.Compiler
                 if (genCSCode)
                 {
                     //生成Manager class
-                    GenManagerClass(results, DefaultTemplate.GenManagerCodeTemplate, genCodeFilePath, nameSpace,
-                        changeExtension, settingCodeIgnorePattern, forceAll);
+                    var param = new GenParam(){genCodeTemplateString = DefaultTemplate.GenManagerCodeTemplate};
+                    GenManagerClass(results, param);
                 }
                 SaveCompileResult(dst2src);
             }

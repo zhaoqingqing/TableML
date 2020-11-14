@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -68,7 +69,16 @@ public class ConsoleHelper
         var msg = string.Concat("[", System.DateTime.Now.ToString("u"), "]", string.Format(message, args));
         Console.WriteLine(msg);
         Console.ResetColor();
-        //TODO 打印出错堆栈
+    }
+    
+    public static void ErrorWithStack(string message, params object[] args)
+    {
+        Console.BackgroundColor = ConsoleColor.Black;
+        Console.ForegroundColor = ConsoleColor.Red;
+        //打印出错堆栈
+        var msg = string.Concat("[", System.DateTime.Now.ToString("u"), "]", string.Format(message, args),new StackTrace());
+        Console.WriteLine(msg);
+        Console.ResetColor();
     }
 }
 

@@ -18,15 +18,7 @@ namespace TableCompilerConsole
     {
         public static void Main(string[] args)
         {
-            ConsoleHelper.WriteLine("回滚事务,Exception:{0}", "ex message");
-            Console.WriteLine("WriteLine");
-            ConsoleHelper.Log("Log");
-            ConsoleHelper.Warning("Warning");
-            ConsoleHelper.Confirmation("Confirmation");
-            ConsoleHelper.Error("error");
-            ConsoleHelper.Error("error,{0}","111");
             //CompileOne();
-
             //CopyTo(true);
             //CompileAll();
 
@@ -51,11 +43,9 @@ namespace TableCompilerConsole
                 return;
             }
             Console.WriteLine("当前编译的Excel：{0}", srcFile);
-            //TODO 代码的重新生成
-            Compiler compiler = new Compiler();
-            compiler.Compile(srcFile, OutputDirectory);
-
-
+            //代码的重新生成
+            Compiler compiler = new Compiler();var param = new CompilerParam(){ path = srcFile ,compileToFilePath = OutputDirectory };
+            compiler.Compile( param);
             Console.WriteLine("Done!");
         }
 
@@ -74,12 +64,9 @@ namespace TableCompilerConsole
             //生成的代码路径
             var CodeFilePath = "GenCode\\";
             string settingCodeIgnorePattern = "(I18N/.*)|(StringsTable.*)|(tool/*)|(log/*)|(server/*)|(client/*)";
+            var param = new GenParam(){genCodeTemplateString = DefaultTemplate.GenSingleClassCodeTemplate,settingCodeIgnorePattern = settingCodeIgnorePattern,forceAll = true};
             var batchCompiler = new BatchCompiler();
-
-            string templateString = DefaultTemplate.GenSingleClassCodeTemplate;
-
-            var results = batchCompiler.CompileAll(srcDirectory, OutputDirectory, CodeFilePath,
-               templateString, "AppSettings", ".tml", settingCodeIgnorePattern, true);
+            batchCompiler.CompileAll(srcDirectory, OutputDirectory,param);
 
             Console.WriteLine("Done!");
 
