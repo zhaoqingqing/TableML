@@ -2,7 +2,7 @@
 
 '''
 
-Desc：python3zip 
+Desc：1.把开发目录下的tabmlgui拷贝到ksframework下，用于快速测试  2.对tableml在当前目录下生成zip
 
 Time: 2020/7/27 17:58
 
