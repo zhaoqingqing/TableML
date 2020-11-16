@@ -148,7 +148,7 @@ namespace TableML.Compiler
                         Comment = excelFile.ColName2Comment[colNameStr],
                     });
                     if(!string.IsNullOrEmpty(param.ExportLuaPath))
-                        luaCommentBuilder.AppendLine(string.Format("---@field public {0} {1}",colNameStr,typeName));
+                        luaCommentBuilder.AppendLine(string.Format("---@field public {0} {1} {2}",colNameStr,typeName,excelFile.ColName2Comment[colNameStr]));
                 }
             }
             if(param.CanExportTsv) tableBuilder.Append("\n");

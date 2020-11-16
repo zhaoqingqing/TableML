@@ -136,7 +136,7 @@ namespace TableMLGUI
             openFileDialog1.SupportMultiDottedExtensions = true;
 
             ExcelConfig.IsKSFrameworkFormat = IsKSFrameworkRule;
-            UpdateConfigVisible();
+            SetCheckboxState();
         }
 
         #region  文件拖拽到列表
@@ -521,7 +521,7 @@ namespace TableMLGUI
         #endregion
         
         #region 界面修改配置
-        void UpdateConfigVisible()
+        void SetCheckboxState()
         {
             //btnUpdateDB.Visible = EnableToSqlite;
             cb_sql.Checked = EnableToSqlite;
@@ -550,8 +550,8 @@ namespace TableMLGUI
             if (box!=null)
             {
                 EnableToSqlite = box.Checked;
-                AppConfigHelper.SetValue("UseSqlite", box.Checked ? "1" : "0");
-                ConsoleHelper.Log($"是否启用导出到sqlite?{box.Checked} ,config:{AppConfigHelper.GetValue("UseSqlite")}");
+                AppConfigHelper.SetValue("EnableToSqlite", box.Checked ? "1" : "0");
+                ConsoleHelper.Log($"是否启用导出到sqlite?{box.Checked} ,config:{AppConfigHelper.GetValue("EnableToSqlite")}");
             }
         }
         
@@ -560,9 +560,9 @@ namespace TableMLGUI
             var box = sender as CheckBox;
             if (box!=null)
             {
-                EnableToSqlite = box.Checked;
-                AppConfigHelper.SetValue("EnableToSqlite", box.Checked ? "1" : "0");
-                ConsoleHelper.Log($"是否启用导出到sqlite?{box.Checked} ,config:{AppConfigHelper.GetValue("EnableToSqlite")}");
+                EnableGenLua = box.Checked;
+                AppConfigHelper.SetValue("EnableGenLua", box.Checked ? "1" : "0");
+                ConsoleHelper.Log($"是否启用生成Lua?{box.Checked} ,config:{AppConfigHelper.GetValue("EnableGenLua")}");
             }
         }
 
@@ -571,9 +571,9 @@ namespace TableMLGUI
             var box = sender as CheckBox;
             if (box!=null)
             {
-                EnableGenLua = box.Checked;
-                AppConfigHelper.SetValue("EnableGenLua", box.Checked ? "1" : "0");
-                ConsoleHelper.Log($"是否启用生成Lua?{box.Checked} ,config:{AppConfigHelper.GetValue("EnableGenLua")}");
+                EnableGenCSharp = box.Checked;
+                AppConfigHelper.SetValue("EnableGenCSharp", box.Checked ? "1" : "0");
+                ConsoleHelper.Log($"是否启用生成CSharp?{box.Checked} ,config:{AppConfigHelper.GetValue("EnableGenCSharp")}");
             }
         }
 

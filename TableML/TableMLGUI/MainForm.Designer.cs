@@ -221,7 +221,7 @@
             this.btnCompileExcel.Location = new System.Drawing.Point(61, 919);
             this.btnCompileExcel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCompileExcel.Name = "btnCompileExcel";
-            this.btnCompileExcel.Size = new System.Drawing.Size(160, 40);
+            this.btnCompileExcel.Size = new System.Drawing.Size(160, 57);
             this.btnCompileExcel.TabIndex = 0;
             this.btnCompileExcel.Text = "编译目录下的Excel";
             this.btnCompileExcel.UseVisualStyleBackColor = true;
@@ -243,7 +243,7 @@
             this.btnUpdateDB.Location = new System.Drawing.Point(300, 919);
             this.btnUpdateDB.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnUpdateDB.Name = "btnUpdateDB";
-            this.btnUpdateDB.Size = new System.Drawing.Size(160, 40);
+            this.btnUpdateDB.Size = new System.Drawing.Size(160, 57);
             this.btnUpdateDB.TabIndex = 0;
             this.btnUpdateDB.Text = "仅插入到Sqlite";
             this.btnUpdateDB.UseVisualStyleBackColor = true;
@@ -374,8 +374,6 @@
             // cb_sql
             // 
             this.cb_sql.AutoSize = true;
-            this.cb_sql.Checked = true;
-            this.cb_sql.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_sql.Location = new System.Drawing.Point(384, 742);
             this.cb_sql.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cb_sql.Name = "cb_sql";
@@ -388,8 +386,6 @@
             // cb_lua
             // 
             this.cb_lua.AutoSize = true;
-            this.cb_lua.Checked = true;
-            this.cb_lua.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_lua.Location = new System.Drawing.Point(12, 771);
             this.cb_lua.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cb_lua.Name = "cb_lua";
