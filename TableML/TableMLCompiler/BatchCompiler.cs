@@ -34,7 +34,7 @@ using DotLiquid;
 namespace TableML.Compiler
 {
     /// <summary>
-    /// BatchCompiler, compile
+    /// BatchCompiler/ compile mulit excel
     /// </summary>
     public partial class BatchCompiler
     {
@@ -75,7 +75,6 @@ namespace TableML.Compiler
         /// <param name="files"></param>
 		void GenerateCode(string templateString, string genCodeFilePath, string nameSpace, List<Hash> files)
         {
-
             var codeTemplates = new Dictionary<string, string>()
             {
                 {templateString, genCodeFilePath},
@@ -128,7 +127,7 @@ namespace TableML.Compiler
         }
 
         /// <summary>
-        /// Compile one directory 's all settings, and return behaivour results
+        /// 编译全部文件放到一个cs中(Compile one directory 's all settings, and return behaivour results)
         /// </summary>
         /// <param name="sourcePath"></param>
         /// <param name="compilePath"></param>

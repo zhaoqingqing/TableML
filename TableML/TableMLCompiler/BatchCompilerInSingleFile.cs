@@ -36,19 +36,23 @@ using NPOI.Util;
 
 namespace TableML.Compiler
 {
-    //生成CSharp的参数
+    /// <summary>
+    /// 配置生成CSharp的参数
+    /// </summary>
     public class GenParam
     {
+        public bool forceAll = false;
+        public bool genManagerClass = false;
+        
         public string genCodeTemplateString;
         /// <summary>
-        /// 生成的代码文件路径
+        /// 生成的代码保存文件路径
         /// </summary>
         public string genCodeFilePath;
         public string nameSpace = "AppSettings";
         public string changeExtension = ".tml";
         public string settingCodeIgnorePattern;
-        public bool forceAll = false;
-        public bool genManagerClass = false;
+
         public TableCompileResult compileResult;
         /// <summary>
         /// 如果是生成Manager Class 一定要在外部初始化此字段
@@ -57,7 +61,7 @@ namespace TableML.Compiler
     }
 
     /// <summary>
-    /// 扩展BatchCopiler，用途：每张表的代码生成在独立的文件中而全部放在在一个文件中
+    /// 扩展BatchCopiler，用途：每张表的代码生成在独立的文件中而全部放在一个文件中
     /// </summary>
     public partial class BatchCompiler
     {
