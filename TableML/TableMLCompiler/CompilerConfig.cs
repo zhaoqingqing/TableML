@@ -5,7 +5,7 @@ namespace TableML.Compiler
         /// <summary>
         /// 编译后的扩展名
         /// </summary>
-        public string ExportTabExt = ".tml";
+        public string ExportTabExt = ".tsv";
         // 被认为是注释的表头
         public string[] CommentStartsWith = { "Comment", "#" };
 

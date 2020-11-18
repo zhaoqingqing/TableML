@@ -43,14 +43,16 @@ namespace TableML.Compiler
     {
         public bool forceAll = false;
         public bool genManagerClass = false;
+        public bool genCSharpClass = false;
         
         public string genCodeTemplateString;
         /// <summary>
         /// 生成的代码保存文件路径
         /// </summary>
         public string genCodeFilePath;
+        public string ExportLuaPath;
         public string nameSpace = "AppSettings";
-        public string changeExtension = ".tml";
+        public string changeExtension = ".tsv";
         public string settingCodeIgnorePattern;
 
         public TableCompileResult compileResult;
@@ -201,7 +203,7 @@ namespace TableML.Compiler
         void GenManagerClass(List<TableCompileResult> results,GenParam param)
         {
             if (string.IsNullOrEmpty(param.nameSpace)) param.nameSpace = "AppSettings";
-            if (string.IsNullOrEmpty(param.changeExtension)) param.changeExtension = ".tml";
+            if (string.IsNullOrEmpty(param.changeExtension)) param.changeExtension = ".tsv";
             param.genManagerClass = true;
             foreach (var compileResult in results)
             {
@@ -221,7 +223,7 @@ namespace TableML.Compiler
         /// <param name="genParam">生成代码的参数</param>
         /// <param name="genCSCode">是否生成CSharp代码</param>
         /// <returns></returns>
-        public List<TableCompileResult> CompileAll(string sourcePath, string compilePath, GenParam genParam, bool genCSCode = true)
+        public List<TableCompileResult> CompileAll(string sourcePath, string compilePath, GenParam genParam,CompilerParam compilerParam)
         {
             var results = new List<TableCompileResult>();
             var compileBaseDir = compilePath;
@@ -243,6 +245,8 @@ namespace TableML.Compiler
                 var nowFileIndex = -1; // 开头+1， 起始为0
                 foreach (var excelPath in allFiles)
                 {
+                    //清空上一次的值 
+                    genParam.genCodeFilePath = null;
                     nowFileIndex++;
                     var ext = Path.GetExtension(excelPath);
                     var fileName = Path.GetFileNameWithoutExtension(excelPath);
@@ -252,21 +256,18 @@ namespace TableML.Compiler
                         relativePath = relativePath.Substring(1);
                     if (excelExt.Contains(ext) && !fileName.StartsWith("~")) // ~开头为excel临时文件，不要读
                     {
-                        // it's an excel file
-                        /*
-                         * NOTE 开始编译Excel 成 tml文件
-                         * 每编译一个Excel就生成一个代码文件
-                        */
-                        //NOTE 设置编译后文件的文件名(tml文件名)
-                        if (Path.GetExtension(excelPath) == ".tsv")
+                        //NOTE 开始编译Excel 成 tsv文件， 每编译一个Excel就生成一个代码文件
+                        //NOTE 设置编译后文件的文件名(tsv文件名)
+                        if (ext == ".tsv")
                         {
                             relativePath = Path.GetFileName(excelPath);
                         }
-                        else if (Path.GetExtension(excelPath) == "*.csv")
+                        else if (ext == "*.csv")
                         {
                             relativePath = SimpleCSVFile.GetOutFileName(excelPath);
                         }
-                        else{
+                        else
+                        {
                             relativePath = SimpleExcelFile.GetOutFileName(excelPath);
                         }
                         if (string.IsNullOrEmpty(relativePath))
@@ -278,10 +279,7 @@ namespace TableML.Compiler
                             Path.ChangeExtension(relativePath, genParam.changeExtension));
                         var srcFileInfo = new FileInfo(excelPath);
                         var dstFileName = Path.GetFileNameWithoutExtension(compileToPath);
-                        if (dst2src.ContainsKey(dstFileName) == false)
-                        {
-                            dst2src.Add(dstFileName, Path.GetFileName(excelPath));
-                        }
+                        dst2src[dstFileName] = Path.GetFileName(excelPath);
                         Console.WriteLine("Compiling Excel to Tab..." + string.Format("{0} -> {1}", excelPath, compileToPath));
 
                         // 如果已经存在，判断修改时间是否一致，用此来判断是否无需compile，节省时间
@@ -289,7 +287,6 @@ namespace TableML.Compiler
                         if (File.Exists(compileToPath))
                         {
                             var toFileInfo = new FileInfo(compileToPath);
-
                             if (!genParam.forceAll && srcFileInfo.LastWriteTime == toFileInfo.LastWriteTime)
                             {
                                 //Log.DoLog("Pass!SameTime! From {0} to {1}", excelPath, compileToPath);
@@ -299,10 +296,19 @@ namespace TableML.Compiler
                         if (doCompile)
                         {
                             Console.WriteLine("[SettingModule]Compile from {0} to {1}", excelPath, compileToPath);
-                            Console.WriteLine(); //美观一下 打印空白行
-                            //TODO lua文件保存路径
-                            var compileResult = compiler.Compile(new CompilerParam(){path = excelPath,ExportTsvPath = compileToPath,compileBaseDir = compileBaseDir,doRealCompile = doCompile});
-                            if (genCSCode)
+                            Console.WriteLine(); //打印空白行，美观一下 
+                            //lua文件保存路径
+                            var exportLuaPath = genParam.ExportLuaPath + Path.GetFileNameWithoutExtension(excelPath) + ".lua";
+                            //填充部分值
+                            if(compilerParam == null) compilerParam = new CompilerParam();
+                            compilerParam.path = excelPath;
+                            if (!string.IsNullOrEmpty(compilerParam.ExportLuaPath)) compilerParam.ExportLuaPath = exportLuaPath;
+                            compilerParam.ExportTsvPath = compileToPath;
+                            compilerParam.compileBaseDir = compileBaseDir;
+                            compilerParam.doRealCompile = doCompile;
+                            
+                            var compileResult = compiler.Compile(compilerParam);
+                            if (genParam.genCSharpClass)
                             {
                                 // 添加模板值
                                 results.Add(compileResult);
@@ -329,7 +335,7 @@ namespace TableML.Compiler
                         Console.WriteLine("Copy File ..." + string.Format("{0} -> {1}", excelPath, compileToPath));
                     }
                 }
-                if (genCSCode)
+                if (genParam.genCSharpClass)
                 {
                     //生成Manager class
                     var param = new GenParam(){genCodeTemplateString = DefaultTemplate.GenManagerCodeTemplate};

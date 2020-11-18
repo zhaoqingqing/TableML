@@ -296,15 +296,15 @@ namespace TableML.Compiler
             //以上是tml写入其它行
             #endregion
 
-            string exportDirPath =  exportDirPath = Path.GetDirectoryName(param.ExportTsvPath);
+            string exportDirPath = Path.GetDirectoryName(param.ExportTsvPath);
             if (!Directory.Exists(exportDirPath))
                 Directory.CreateDirectory(exportDirPath);;
 
             if (!string.IsNullOrEmpty(param.ExportLuaPath))
             {
-                exportDirPath = Path.GetDirectoryName(param.ExportLuaPath);
-                if (!Directory.Exists(exportDirPath))
-                    Directory.CreateDirectory(exportDirPath);
+                var luaDirPath = Path.GetDirectoryName(param.ExportLuaPath);
+                if (!Directory.Exists(luaDirPath))
+                    Directory.CreateDirectory(luaDirPath);
             }
 
             // 是否写入文件
@@ -315,7 +315,6 @@ namespace TableML.Compiler
                 if(!string.IsNullOrEmpty(param.ExportLuaPath))
                     File.WriteAllText(param.ExportLuaPath, luaCommentBuilder.ToString() + luaBuilder.ToString());
             }
-            //TODO 待验证不生成tsv是否能生成c#代码
 
             // 基于base dir路径
             var tabFilePath = param.ExportTsvPath; // without extension
@@ -435,12 +434,18 @@ namespace TableML.Compiler
         }
         #endregion
     }
-
+    
+    /// <summary>
+    /// 编译单个excel文件的选项
+    /// </summary>
     public class CompilerParam
     {
+        /// <summary>
+        /// Excel源文件路径
+        /// </summary>
         public string path;
         /// <summary>
-        /// 生成tsv保存的路径
+        /// 生成tsv保存的路径(就算不生成也需要传入参数)
         /// </summary>
         public string ExportTsvPath;
         /// <summary>
@@ -455,6 +460,9 @@ namespace TableML.Compiler
         /// 要编译的sheetindex
         /// </summary>
         public int index = 0;
+        /// <summary>
+        /// 根路径
+        /// </summary>
         public string compileBaseDir = null;
         /// <summary>
         /// TODO 对于csv/tsv doRealCompile = false,但也要生成lua file

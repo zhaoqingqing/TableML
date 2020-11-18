@@ -90,18 +90,18 @@ int	string
 		public void TestCompileXls()
 		{
 			var compiler = new Compiler();
-			var param = new CompilerParam(){path = "./TestSettings/TestExcel.xls",ExportTsvPath = Path.GetFullPath("./TestExcelXls.tml"),index = 0,compileBaseDir="./"};
+			var param = new CompilerParam(){path = "./TestSettings/TestExcel.xls",ExportTsvPath = Path.GetFullPath("./TestExcelXls.tsv"),index = 0,compileBaseDir="./"};
 			compiler.Compile(param);
-		    Assert.True(File.Exists("TestExcelXls.tml"));
+		    Assert.True(File.Exists("TestExcelXls.tsv"));
 
 		}
 		[Test]
 		public void TestCompileXlsx()
 		{
 			var compiler = new Compiler();
-			var param = new CompilerParam(){path = "./TestSettings/TestExcel2.xlsx",ExportTsvPath = Path.GetFullPath("./TestExcelXlsx.tml"),index = 0,compileBaseDir="./"};
+			var param = new CompilerParam(){path = "./TestSettings/TestExcel2.xlsx",ExportTsvPath = Path.GetFullPath("./TestExcelXlsx.tsv"),index = 0,compileBaseDir="./"};
 			compiler.Compile(param);
-		    Assert.True(File.Exists("TestExcelXlsx.tml"));
+		    Assert.True(File.Exists("TestExcelXlsx.tsv"));
 
 		}
 
@@ -126,7 +126,7 @@ int	string
 		public void TestBatchCompile()
 		{
 			var bc = new BatchCompiler();
-			var results = bc.CompileTableMLAll("TestSettings", "TestSettingsResult", "TestSettings.cs.gen", DefaultTemplate.GenCodeTemplate, "AppSettings", ".tml", null, true);
+			var results = bc.CompileTableMLAll("TestSettings", "TestSettingsResult", "TestSettings.cs.gen", DefaultTemplate.GenCodeTemplate, "AppSettings", ".tsv", null, true);
 			//根据实际情况目录下有多少个excel文件
 			var files = Directory.GetFiles("TestSettings", "*", SearchOption.AllDirectories);
 			Assert.AreEqual(files.Length, results.Count);
