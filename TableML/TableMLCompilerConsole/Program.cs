@@ -123,7 +123,7 @@ namespace TableCompilerConsole
             var srcPath = "./SettingSource/";
             //输出tml文件路径
             var exportTsvPath = "./Setting/";
-            var exportLuaPath = "./Lua/entity/";
+            var exportLuaPath = "./Lua/configs/";
 
             string settingCodeIgnorePattern = "(I18N/.*)|(StringsTable.*)|(tool/*)|(log/*)|(server/*)|(client/*)";
             var genParam = new GenParam()
@@ -148,13 +148,13 @@ namespace TableCompilerConsole
             var srcPath = "./SettingSource/";
             //输出tml文件路径
             var exportTsvPath = "./Setting/";
-            var LuaPath = "./CSharp";
+            var exportCSPath = "./CSharp";
 
             string settingCodeIgnorePattern = "(I18N/.*)|(StringsTable.*)|(tool/*)|(log/*)|(server/*)|(client/*)";
             var genParam = new GenParam()
             {
                 genCodeTemplateString = DefaultTemplate.GenSingleClassCodeTemplate, settingCodeIgnorePattern = settingCodeIgnorePattern,
-                genCSharpClass = true, genCodeFilePath = null, forceAll = true, ExportLuaPath = LuaPath
+                genCSharpClass = true, genCodeFilePath = exportCSPath, forceAll = true
             };
             var compilerParam = new CompilerParam() {CanExportTsv = true, ExportTsvPath = exportTsvPath, ExportLuaPath = null};
             var results = new BatchCompiler().CompileAll(srcPath, exportTsvPath, genParam, compilerParam);

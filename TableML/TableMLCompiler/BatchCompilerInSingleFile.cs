@@ -114,6 +114,11 @@ namespace TableML.Compiler
         /// </summary>
         public void GenCodeFile(GenParam param)
         {
+            if (param.compileResult == null)
+            {
+                ConsoleHelper.Error("GenCodeFile faild . compileResult is null.");
+				return;
+            }
             // 根据编译结果，构建vars，同class名字的，进行合并
             if (!param.genManagerClass)
             {
@@ -199,17 +204,40 @@ namespace TableML.Compiler
                 GenerateCode(param.genCodeTemplateString, param.genCodeFilePath, param.nameSpace, templateHashes);
             }
         }
-        
-        void GenManagerClass(List<TableCompileResult> results,GenParam param)
+
+        void GenManagerClass(List<TableCompileResult> results, GenParam param)
         {
-            if (string.IsNullOrEmpty(param.nameSpace)) param.nameSpace = "AppSettings";
-            if (string.IsNullOrEmpty(param.changeExtension)) param.changeExtension = ".tsv";
-            param.genManagerClass = true;
-            foreach (var compileResult in results)
+            var nameSpace = !string.IsNullOrEmpty(param.nameSpace)? param.nameSpace : "AppSettings";
+            var exportPath = string.Concat(param.genCodeFilePath, ManagerClassName);
+            // 生成代码
+            var template = Template.Parse(DefaultTemplate.GenManagerCodeTemplate);
+            var topHash = new Hash();
+            topHash["NameSpace"] = nameSpace;
+            //topHash["Files"] = files;
+
+            if (!string.IsNullOrEmpty(exportPath))
             {
-                //保存所有的编译结果，用来生成ManagerClass
-                param.templateVars = new Dictionary<string, TableTemplateVars>();
-                GenCodeFile(param);
+                var genCode = template.Render(topHash);
+                if (File.Exists(exportPath)) // 存在，比较是否相同
+                {
+                    if (File.ReadAllText(exportPath) != genCode)
+                    {
+                        File.WriteAllText(exportPath, genCode, Encoding.UTF8);
+                        Console.WriteLine("{0} update code file complete", exportPath);
+                    }
+                }
+                else
+                {
+                    //判断目录是否存在
+                    var exportDir = Path.GetDirectoryName(exportPath);
+                    if (!string.IsNullOrEmpty(exportDir) && Directory.Exists(exportDir) == false)
+                    {
+                        Directory.CreateDirectory(exportDir);
+                    }
+
+                    File.WriteAllText(exportPath, genCode, Encoding.UTF8);
+                    Console.WriteLine("{0} code file gen complete", exportPath);
+                }
             }
         }
 
@@ -337,9 +365,8 @@ namespace TableML.Compiler
                 }
                 if (genParam.genCSharpClass)
                 {
-                    //生成Manager class
-                    var param = new GenParam(){genCodeTemplateString = DefaultTemplate.GenManagerCodeTemplate};
-                    GenManagerClass(results, param);
+                    //TODO 生成Manager class
+                    GenManagerClass(results, genParam);
                 }
                 SaveCompileResult(dst2src);
             }
