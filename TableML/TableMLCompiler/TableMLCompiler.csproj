@@ -75,7 +75,6 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="BatchCompilerInSingleFile.cs" />
     <Compile Include="CompilerConfig.cs" />
     <Compile Include="ExcelConfig.cs" />
     <Compile Include="ITableSourceFile.cs" />

@@ -324,8 +324,8 @@ namespace {{ NameSpace }}
                 if (_settingsList == null)
                 {
                     _settingsList = new IReloadableSettings[]
-                    { {% for file in Files %}
-                        {{ file.ClassName }}Settings._instance,{% endfor %}
+                    {
+                     {{ ClassNames }}
                     };
                 }
                 return _settingsList;

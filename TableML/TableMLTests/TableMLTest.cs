@@ -125,8 +125,8 @@ int	string
 		[Test]
 		public void TestBatchCompile()
 		{
-			var bc = new BatchCompiler();
-			var results = bc.CompileTableMLAll("TestSettings", "TestSettingsResult", "TestSettings.cs.gen", DefaultTemplate.GenCodeTemplate, "AppSettings", ".tsv", null, true);
+			var genParam =new GenParam() {genCodeFilePath = "TestSettings.cs",genCSharpClass = true,  genCodeTemplateString = DefaultTemplate.GenCodeTemplate,forceAll = true};
+			var results = new BatchCompiler().CompileAllToOneFile("TestSettings", "TestSettingsResult", genParam);
 			//根据实际情况目录下有多少个excel文件
 			var files = Directory.GetFiles("TestSettings", "*", SearchOption.AllDirectories);
 			Assert.AreEqual(files.Length, results.Count);

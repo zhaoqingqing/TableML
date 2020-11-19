@@ -54,6 +54,7 @@ namespace TableCompilerConsole
             //ParseArgs(args);
             CompileAllToCSharp();
             //CompileAllToLua();
+            //CompileAllToOneCSharp();
         }
 
         static void ParseArgs(string[] args)
@@ -73,15 +74,10 @@ namespace TableCompilerConsole
                     templateString = System.IO.File.ReadAllText(options.TemplateFilePath);
                 }
 
-                //var results =
-                batchCompiler.CompileTableMLAll(options.Directory, options.OutputDirectory, options.CodeFilePath,
-                    templateString, "AppSettings", ".tsv", null, !string.IsNullOrEmpty(options.CodeFilePath));
+                var genParam = new GenParam(){genCodeFilePath = options.CodeFilePath,genCodeTemplateString = templateString,genCSharpClass = true,forceAll = true};
+                batchCompiler.CompileAllToOneFile(options.Directory, options.OutputDirectory,genParam);
 
                 Console.WriteLine("Done!");
-
-                //				var compiler = new Compiler();
-                //				var result = compiler.Compile(options.Directory);
-                //				Console.WriteLine(string.Format("Compile excel file: {0} , to {1}", options.Directory, result.TabFileRelativePath));
             }
         }
 
@@ -148,7 +144,29 @@ namespace TableCompilerConsole
             var srcPath = "./SettingSource/";
             //输出tml文件路径
             var exportTsvPath = "./Setting/";
-            var exportCSPath = "./CSharp";
+            var exportCSPath = "./CSharp/";
+
+            string settingCodeIgnorePattern = "(I18N/.*)|(StringsTable.*)|(tool/*)|(log/*)|(server/*)|(client/*)";
+            var genParam = new GenParam()
+            {
+                genCodeTemplateString = DefaultTemplate.GenSingleClassCodeTemplate, settingCodeIgnorePattern = settingCodeIgnorePattern,
+                genCSharpClass = true,  genCodeFilePath = exportCSPath, forceAll = true
+            };
+            var compilerParam = new CompilerParam() {CanExportTsv = true, ExportTsvPath = exportTsvPath, ExportLuaPath = null};
+            var results = new BatchCompiler().CompileAll(srcPath, exportTsvPath, genParam, compilerParam);
+
+            Console.WriteLine("Done!");
+        }
+        
+        public static void CompileAllToOneCSharp()
+        {
+            var startPath = Environment.CurrentDirectory;
+            Console.WriteLine("当前目录：{0}", startPath);
+            //源excel文件路径
+            var srcPath = "./SettingSource/";
+            //输出tml文件路径
+            var exportTsvPath = "./Setting/";
+            var exportCSPath = "./CSharp/";
 
             string settingCodeIgnorePattern = "(I18N/.*)|(StringsTable.*)|(tool/*)|(log/*)|(server/*)|(client/*)";
             var genParam = new GenParam()
@@ -161,7 +179,7 @@ namespace TableCompilerConsole
 
             Console.WriteLine("Done!");
         }
-
+        
         public static void LoadTest()
         {
             var fileContent =

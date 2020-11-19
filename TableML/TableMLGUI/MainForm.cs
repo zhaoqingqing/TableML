@@ -221,7 +221,7 @@ namespace TableMLGUI
                     compileResult = compileResult, genCodeTemplateString = DefaultTemplate.GenSingleClassCodeTemplate, genCodeFilePath = ExportCSharpPath,
                     nameSpace = NameSpace, changeExtension = TmlExtensions, forceAll = true
                 };
-                batchCompiler.GenCodeFile(param);
+                batchCompiler.BeforeGenCodeFile(param);
             }
             //NOTE 如果是使用sqlite则生成此文件
             //LuaHelper.GenLuaFile(compileResult, ExportLuaPath +  fileName + ".lua");
