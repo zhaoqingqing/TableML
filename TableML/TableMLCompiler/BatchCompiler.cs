@@ -360,7 +360,7 @@ namespace TableML.Compiler
             var compiler = new Compiler(new CompilerConfig() {ConditionVars = CompileSettingConditionVars});
 
             var excelExt = new HashSet<string>() {".xls", ".xlsx", ".tsv", "*.csv"};
-            var copyExt = new HashSet<string>() {".txt"};
+            var copyExt = new HashSet<string>() {".txt",".lua"};
             if (Directory.Exists(sourcePath) == false)
             {
                 Console.WriteLine("Error! {0} 路径不存在！", sourcePath);

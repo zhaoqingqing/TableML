@@ -68,7 +68,7 @@
             this.btnCompileSelect.Location = new System.Drawing.Point(266, 643);
             this.btnCompileSelect.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCompileSelect.Name = "btnCompileSelect";
-            this.btnCompileSelect.Size = new System.Drawing.Size(251, 57);
+            this.btnCompileSelect.Size = new System.Drawing.Size(250, 57);
             this.btnCompileSelect.TabIndex = 0;
             this.btnCompileSelect.Text = "编译上面框中的Excel";
             this.btnCompileSelect.UseVisualStyleBackColor = true;
@@ -99,11 +99,11 @@
             // tbSrcPath
             // 
             this.tbSrcPath.AllowDrop = true;
-            this.tbSrcPath.Location = new System.Drawing.Point(14, 858);
+            this.tbSrcPath.Location = new System.Drawing.Point(12, 858);
             this.tbSrcPath.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tbSrcPath.Multiline = true;
             this.tbSrcPath.Name = "tbSrcPath";
-            this.tbSrcPath.Size = new System.Drawing.Size(518, 41);
+            this.tbSrcPath.Size = new System.Drawing.Size(410, 40);
             this.tbSrcPath.TabIndex = 3;
             this.tbSrcPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragDrop);
             this.tbSrcPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbFileDir_DragEnter);
@@ -111,7 +111,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 816);
+            this.label2.Location = new System.Drawing.Point(12, 828);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(157, 17);
             this.label2.TabIndex = 4;
@@ -218,12 +218,12 @@
             // 
             // btnCompileExcel
             // 
-            this.btnCompileExcel.Location = new System.Drawing.Point(61, 919);
-            this.btnCompileExcel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnCompileExcel.Location = new System.Drawing.Point(447, 854);
+            this.btnCompileExcel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCompileExcel.Name = "btnCompileExcel";
-            this.btnCompileExcel.Size = new System.Drawing.Size(160, 57);
+            this.btnCompileExcel.Size = new System.Drawing.Size(84, 44);
             this.btnCompileExcel.TabIndex = 0;
-            this.btnCompileExcel.Text = "编译目录下的Excel";
+            this.btnCompileExcel.Text = "编译";
             this.btnCompileExcel.UseVisualStyleBackColor = true;
             this.btnCompileExcel.Click += new System.EventHandler(this.btnCompileExcel_Click);
             // 
@@ -240,10 +240,10 @@
             // 
             // btnUpdateDB
             // 
-            this.btnUpdateDB.Location = new System.Drawing.Point(300, 919);
+            this.btnUpdateDB.Location = new System.Drawing.Point(155, 170);
             this.btnUpdateDB.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnUpdateDB.Name = "btnUpdateDB";
-            this.btnUpdateDB.Size = new System.Drawing.Size(160, 57);
+            this.btnUpdateDB.Size = new System.Drawing.Size(128, 40);
             this.btnUpdateDB.TabIndex = 0;
             this.btnUpdateDB.Text = "仅插入到Sqlite";
             this.btnUpdateDB.UseVisualStyleBackColor = true;
@@ -251,10 +251,10 @@
             // 
             // btnOpenDB
             // 
-            this.btnOpenDB.Location = new System.Drawing.Point(155, 93);
+            this.btnOpenDB.Location = new System.Drawing.Point(155, 103);
             this.btnOpenDB.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnOpenDB.Name = "btnOpenDB";
-            this.btnOpenDB.Size = new System.Drawing.Size(140, 40);
+            this.btnOpenDB.Size = new System.Drawing.Size(128, 40);
             this.btnOpenDB.TabIndex = 0;
             this.btnOpenDB.Text = "打开生成的data.db";
             this.btnOpenDB.UseVisualStyleBackColor = true;
@@ -284,7 +284,7 @@
             this.btnHelp.Location = new System.Drawing.Point(313, 170);
             this.btnHelp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnHelp.Name = "btnHelp";
-            this.btnHelp.Size = new System.Drawing.Size(140, 40);
+            this.btnHelp.Size = new System.Drawing.Size(128, 40);
             this.btnHelp.TabIndex = 0;
             this.btnHelp.Text = "我要帮助";
             this.btnHelp.UseVisualStyleBackColor = false;
@@ -300,6 +300,7 @@
             this.groupBoxOther.Controls.Add(this.btnClearConsole);
             this.groupBoxOther.Controls.Add(this.btnHelp);
             this.groupBoxOther.Controls.Add(this.btnOpenDB);
+            this.groupBoxOther.Controls.Add(this.btnUpdateDB);
             this.groupBoxOther.Location = new System.Drawing.Point(553, 788);
             this.groupBoxOther.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBoxOther.Name = "groupBoxOther";
@@ -322,7 +323,7 @@
             // 
             // btnExecuteSql
             // 
-            this.btnExecuteSql.Location = new System.Drawing.Point(313, 93);
+            this.btnExecuteSql.Location = new System.Drawing.Point(313, 103);
             this.btnExecuteSql.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnExecuteSql.Name = "btnExecuteSql";
             this.btnExecuteSql.Size = new System.Drawing.Size(128, 40);
@@ -333,7 +334,7 @@
             // 
             // btnClearConsole
             // 
-            this.btnClearConsole.Location = new System.Drawing.Point(7, 93);
+            this.btnClearConsole.Location = new System.Drawing.Point(7, 103);
             this.btnClearConsole.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnClearConsole.Name = "btnClearConsole";
             this.btnClearConsole.Size = new System.Drawing.Size(128, 40);
@@ -432,13 +433,12 @@
             this.Controls.Add(this.cb_sql);
             this.Controls.Add(this.cbKSFormat);
             this.Controls.Add(this.cbSimpleRule);
-            this.Controls.Add(this.btnUpdateDB);
             this.Controls.Add(this.label3);
+            this.Controls.Add(this.btnCompileExcel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbSrcPath);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbFileList);
-            this.Controls.Add(this.btnCompileExcel);
             this.Controls.Add(this.btnFileBrowser);
             this.Controls.Add(this.btnCompileSelect);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
