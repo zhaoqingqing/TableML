@@ -218,7 +218,7 @@ namespace TableMLGUI
                 BatchCompiler batchCompiler = new BatchCompiler();
                 var param = new GenParam()
                 {
-                    compileResult = compileResult, genCodeTemplateString = DefaultTemplate.GenSingleClassCodeTemplate, genCodeFilePath = ExportCSharpPath,
+                    compileResult = compileResult, genCodeTemplateString = DefaultTemplate.GenCodeTemplateOneFile, genCodeFilePath = ExportCSharpPath,
                     nameSpace = NameSpace, changeExtension = TmlExtensions, forceAll = true
                 };
                 batchCompiler.BeforeGenCodeFile(param);

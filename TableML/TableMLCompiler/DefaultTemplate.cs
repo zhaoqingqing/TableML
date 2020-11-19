@@ -362,7 +362,7 @@ namespace {{ NameSpace }}
         /// <summary>
         /// 单张表(Class)对应的模版(Template)
         /// </summary>
-        public static string GenSingleClassCodeTemplate = string.Concat(LicenseStr, @"
+        public static string GenCodeTemplateOneFile = string.Concat(LicenseStr, @"
 // 此代码由工具生成，请勿修改，如需扩展请编写同名Class并加上partial关键字
 
 using System.Collections;
@@ -389,7 +389,7 @@ namespace {{ NameSpace }}
         {
             {{ file.TabFilePaths }}
         };
-        internal static {{file.ClassName}}Settings _instance = new {{file.ClassName}}Settings();
+        public static {{file.ClassName}}Settings _instance = new {{file.ClassName}}Settings();
         Dictionary<{{ file.PrimaryKeyField.FormatType }}, {{file.ClassName}}Setting> _dict = new Dictionary<{{ file.PrimaryKeyField.FormatType }}, {{file.ClassName}}Setting>();
 
         /// <summary>

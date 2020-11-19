@@ -187,7 +187,7 @@ namespace TableML.Compiler
             if (className.Contains("_"))
             {
                 var arr = className.Split(new[] {'_'}, StringSplitOptions.RemoveEmptyEntries);
-                className = arr[0].ToString().ToUpper();
+                className = arr[0][0].ToString().ToUpper() +  arr[0].Substring(1,  arr[0].Length - 1);
                 for (int i = 1; i < arr.Length; i++)
                 {
                     className += arr[i];
@@ -304,7 +304,8 @@ namespace TableML.Compiler
             var template = Template.Parse(DefaultTemplate.GenManagerCodeTemplate);
             var topHash = new Hash();
             topHash["NameSpace"] = nameSpace;
-            var allFiles = Directory.GetFiles(param.genCodeFilePath, "*.cs", SearchOption.AllDirectories);
+            //把其它settings填充到Manager class
+            var allFiles = Directory.GetFiles(Path.GetDirectoryName(param.genCodeFilePath), "*.cs", SearchOption.AllDirectories);
             var builder = new StringBuilder();
             var lastIdx = allFiles.Length - 1;
             for (int i = 0; i < allFiles.Length; i++)
@@ -312,7 +313,7 @@ namespace TableML.Compiler
                 var t = Path.GetFileNameWithoutExtension(allFiles[i]);
                 if (ManagerClassName.Contains(t))
                     continue;
-                var className = string.Concat(i != 0 ? "\t\t\t\t\t\t" : "\t", t, "._instance", i != lastIdx ? " ," : "");
+                var className = string.Concat(i != 0 ? "\t\t\t\t\t\t" : "\t", t, "s._instance", i != lastIdx ? " ," : "");
                 builder.AppendLine(className);
             }
 
@@ -472,7 +473,10 @@ namespace TableML.Compiler
 
                 if (genParam.genCSharpClass)
                 {
-                    //把其它settings填充到Manager class
+                    //清空上一次的值，重置回初始值 
+                    genParam.genCodeFilePath = exportToPath;
+                    genParam.compileResult = null;
+                    genParam.templateVars = null;
                     GenManagerClass(results, genParam);
                 }
 
@@ -538,7 +542,7 @@ namespace TableML.Compiler
             var copyExt = new HashSet<string>() {".txt"};
             if (Directory.Exists(sourcePath) == false)
             {
-                Console.WriteLine("Error! {0} 路径不存在！{0}", sourcePath);
+                Console.WriteLine("Error! {0} 路径不存在！", sourcePath);
                 return results;
             }
 
