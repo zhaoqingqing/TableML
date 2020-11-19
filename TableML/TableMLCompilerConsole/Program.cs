@@ -44,15 +44,14 @@ namespace TableCompilerConsole
     }
 
     /// <summary>
-    /// 接收命令行参数,进行编译excel
-    /// 修改生成的Exe名(程序集)，不为TableML，因为同解决方案下有同名的类库，导致调试时无法获取局部变量
+    /// 命令行模式编译Excel，参数通过命令行传递
     /// </summary>
     class TableCompilerConsole
     {
         public static void Main(string[] args)
         {
-            //ParseArgs(args);
-            CompileAllToCSharp();
+            ParseArgs(args);
+            //CompileAllToCSharp();
             //CompileAllToLua();
             //CompileAllToOneCSharp();
         }

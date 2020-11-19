@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 /// <summary>
 /// 扩展C#的方法
@@ -234,5 +235,14 @@ public static class CSharpEx
         }
         return dict;
     }
-
+    
+    public static bool IsNumber_(string str)
+    {
+        if (string.IsNullOrEmpty(str))
+        {
+            return false;
+        }
+        var pattern = @"^\d*$";
+        return Regex.IsMatch(str, pattern);
+    }
 }

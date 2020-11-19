@@ -78,7 +78,6 @@
     <Compile Include="CompilerConfig.cs" />
     <Compile Include="ExcelConfig.cs" />
     <Compile Include="ITableSourceFile.cs" />
-    <Compile Include="MyHelper.cs" />
     <Compile Include="SimpleCSVFile.cs" />
     <Compile Include="SimpleTSVFile.cs" />
     <Compile Include="TableCompileResult.cs" />

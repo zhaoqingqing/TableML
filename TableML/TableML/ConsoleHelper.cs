@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 
 /// <summary>
-/// 对console的扩充，用于打印出不同颜色的字
+/// 对console的扩充，可打印出不同颜色的字
 /// </summary>
 public class ConsoleHelper
 {

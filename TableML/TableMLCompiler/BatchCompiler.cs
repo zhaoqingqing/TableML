@@ -367,7 +367,7 @@ namespace TableML.Compiler
                 var nowFileIndex = -1; // 开头+1， 起始为0
                 foreach (var excelPath in allFiles)
                 {
-                    //清空上一次的值 
+                    //清空上一次的值，重置回初始值 
                     genParam.genCodeFilePath = exportToPath;
                     nowFileIndex++;
                     var ext = Path.GetExtension(excelPath);

@@ -34,7 +34,7 @@ namespace TableML.Compiler
 {
 
     /// <summary>
-    /// Compile Excel to TSV
+    /// Compile Excel to TSV or Lua
     /// </summary>
     public class Compiler
     {
@@ -73,12 +73,11 @@ namespace TableML.Compiler
             var renderVars = new TableCompileResult();
             renderVars.ExcelFile = excelFile;
             renderVars.FieldsInternal = new List<TableColumnVars>();
-            //NOTE 外部可选是否导出tsv
-            // if (string.IsNullOrEmpty(param.ExportTsvPath))
-            // {
-            //     // use default
-            //     param.ExportTsvPath = Path.GetFileNameWithoutExtension(param.path) + _config.ExportTabExt;
-            // }
+            if (param.CanExportTsv && string.IsNullOrEmpty(param.ExportTsvPath))
+            {
+                // use default
+                param.ExportTsvPath = Path.GetFileNameWithoutExtension(param.path) + _config.ExportTabExt;
+            }
             
             var tableBuilder = new StringBuilder(); //表头
             var rowBuilder = new StringBuilder();//表内容
@@ -365,25 +364,11 @@ namespace TableML.Compiler
 
             return CellType.Value;
         }
-
-        /// <summary>
-        /// Compile the specified path, auto change extension to config `ExportTabExt`
-        /// </summary>
-        /// <param name="path">Path.</param>
-        public TableCompileResult Compile(string path)
-        {
-            var outputPath = System.IO.Path.ChangeExtension(path, this._config.ExportTabExt);
-            var param = new CompilerParam(){path = path,ExportTsvPath = outputPath};
-            return Compile(param);
-        }
-
+        
         /// <summary>
         /// Compile a setting file, return a hash for template
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="compileToFilePath"></param>
-        /// <param name="compileBaseDir"></param>
-        /// <param name="doRealCompile">Real do, or just get the template var?</param>
+        /// <param name="param"></param>
         /// <returns></returns>
         public TableCompileResult Compile(CompilerParam param)
         {
@@ -399,6 +384,7 @@ namespace TableML.Compiler
             else if (param.CanExportTsv)
             {
                 ConsoleHelper.Error("导出tsv的路径为空");
+                return new TableCompileResult();
             }
 
             var ext = Path.GetExtension(param.path);
@@ -424,11 +410,11 @@ namespace TableML.Compiler
 
         public string ParseLua(string src)
         {
-            if (MyHelper.IsNumber(src))
+            if (CSharpEx.IsNumber_(src))
             {
                 return src;
             }
-            //TODO 如果有特殊的需求，解析成自定义的语法
+            //TODO 如果有特殊的需求，解析成自定义的lua格式
             //else if (src.StartsWith("{"))
             return string.Concat("\"", src, "\"");
         }
@@ -441,6 +427,18 @@ namespace TableML.Compiler
     public class CompilerParam
     {
         /// <summary>
+        /// 要编译的sheetindex
+        /// </summary>
+        public int index = 0;
+        /// <summary>
+        /// 是否需要生成tsv文件
+        /// </summary>
+        public bool CanExportTsv = true;
+        /// <summary>
+        /// TODO 对于csv/tsv doRealCompile = false,但也要生成lua file
+        /// </summary>
+        public bool doRealCompile = true;
+        /// <summary>
         /// Excel源文件路径
         /// </summary>
         public string path;
@@ -448,27 +446,16 @@ namespace TableML.Compiler
         /// 生成tsv保存的路径(就算不生成也需要传入参数)
         /// </summary>
         public string ExportTsvPath;
+
         /// <summary>
-        /// 是否需要生成tsv文件
-        /// </summary>
-        public bool CanExportTsv = true;
-        /// <summary>
-        /// 生成的lua保存路径，未传入lua则不生成
+        /// 生成的lua保存路径，null就不生成lua
         /// </summary>
         public string ExportLuaPath;
-        /// <summary>
-        /// 要编译的sheetindex
-        /// </summary>
-        public int index = 0;
+
         /// <summary>
         /// 根路径
         /// </summary>
         public string compileBaseDir = null;
-        /// <summary>
-        /// TODO 对于csv/tsv doRealCompile = false,但也要生成lua file
-        /// </summary>
-        public bool doRealCompile = true;
-        
     }
 
 }
