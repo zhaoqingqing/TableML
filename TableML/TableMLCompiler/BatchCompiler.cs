@@ -31,7 +31,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using DotLiquid;
-using System.Linq;
 
 namespace TableML.Compiler
 {
@@ -185,14 +184,23 @@ namespace TableML.Compiler
             // 子目录合并，首字母大写, 组成class name
             var className = classNameOrigin.Replace("/", "_").Replace("\\", "_");
             className = className.Replace(" ", "");
-            className = string.Join("", (from name
-                        in className.Split(new[] {'_'}, StringSplitOptions.RemoveEmptyEntries)
-                    select (name[0].ToString().ToUpper() + name.Substring(1, name.Length - 1)))
-                .ToArray());
-
-            // 去掉+或#号后面的字符
+            if (className.Contains("_"))
+            {
+                var arr = className.Split(new[] {'_'}, StringSplitOptions.RemoveEmptyEntries);
+                className = arr[0].ToString().ToUpper();
+                for (int i = 1; i < arr.Length; i++)
+                {
+                    className += arr[i];
+                }
+            }
+            else
+            {
+                className = className[0].ToString().ToUpper() + className.Substring(1, className.Length - 1);
+            }
+            
+            // 去掉+或#号后面的字符 AppConfig+A.xlsx，AppConfig+B.xlsx，AppConfig+C.xlsx，在编译时，会统一合并成AppConfig.xlsx。
             var plusSignIndex = className.IndexOf("+");
-            className = className.Substring(0, plusSignIndex == -1 ? className.Length : plusSignIndex);
+            className = className.Substring(0, plusSignIndex == -1  ? className.Length : plusSignIndex);
             plusSignIndex = className.IndexOf("#");
             className = className.Substring(0, plusSignIndex == -1 ? className.Length : plusSignIndex);
 
@@ -309,7 +317,7 @@ namespace TableML.Compiler
             }
 
             topHash["ClassNames"] = builder.ToString();
-            
+
             var genCode = template.Render(topHash);
             if (File.Exists(exportPath)) // 存在，比较是否相同
             {
@@ -369,6 +377,8 @@ namespace TableML.Compiler
                 {
                     //清空上一次的值，重置回初始值 
                     genParam.genCodeFilePath = exportToPath;
+                    genParam.compileResult = null;
+                    genParam.templateVars = null;
                     nowFileIndex++;
                     var ext = Path.GetExtension(excelPath);
                     var fileName = Path.GetFileNameWithoutExtension(excelPath);

@@ -315,11 +315,7 @@ namespace TableMLGUI
                     string repStr = Directory.GetParent(compileResult.TabFileRelativePath).FullName + "\\";
                     compileResult.TabFileRelativePath = compileResult.TabFileRelativePath.Replace(repStr, "");
                     GenCodeFile(compileResult,outputName);
-
-                    if (compileResult != null)
-                    {
-                        comileCount += 1;
-                    }
+                    comileCount += 1;
                 }
                 else
                 {
@@ -347,10 +343,17 @@ namespace TableMLGUI
         public void CompileAllExcel(bool msgResult = false)
         {
             //编译整个目录
-             var files = Directory.GetFiles(tbSrcPath.Text, "*.*", SearchOption.AllDirectories)
-                .Where(file=>file.ToLower().EndsWith("csv")||file.ToLower().EndsWith("xls")
-                || file.ToLower().EndsWith("xlsx") || file.ToLower().EndsWith("tsv")).ToList();
-            tbFileList.Text = string.Join("\r\n", files);
+             var files = Directory.GetFiles(tbSrcPath.Text, "*.*", SearchOption.AllDirectories);
+             var list = new List<string>();
+             var excelExt = new HashSet<string>() {".xls", ".xlsx", ".tsv", "*.csv"};
+             foreach (var file in files)
+             {
+                 var ext = Path.GetExtension(file);
+                 if (excelExt.Contains(ext))
+                     list.Add(file);
+             }
+
+             tbFileList.Text = string.Join("\r\n", files);
             CompileSelect(files.ToArray(), msgResult);
         }
 
