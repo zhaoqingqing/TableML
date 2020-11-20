@@ -2,9 +2,9 @@
 
 把配置表转换成lua文件，可以在lua中直接读取，而无需再解析CSV文件
 
-### EmmlyLua格式
+### EmmyLua格式
 
-emmlylua 注解格式如下
+emmylua 注解格式如下
 
 ```lua
 ---@class Billboard
