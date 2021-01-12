@@ -211,81 +211,81 @@ namespace TableML.Compiler
                     for (var loopColumn = 0; loopColumn < columnCount; loopColumn++)
                     {
                         //读取每一列的内容
-                        if (!ignoreColumns.Contains(loopColumn)) // comment column, ignore 注释列忽略
+                        if (ignoreColumns.Contains(loopColumn)) // comment column, ignore 注释列忽略
                         {
-                            if (excelFile.Index2ColName.ContainsKey(loopColumn) == false)
-                            {
-                                continue;
-                            }
-                            var columnName = excelFile.Index2ColName[loopColumn];
-                            var cellStr = excelFile.GetString(columnName, startRow);
-
-                            if (loopColumn == 0)
-                            {
-                                var cellType = CheckCellType(cellStr);
-                                if (cellType == CellType.Comment) // 如果行首为#注释字符，忽略这一行)
-                                    break;
-
-                                // 进入#if模式
-                                if (cellType == CellType.If)
-                                {
-                                    var ifVars = GetIfVars(cellStr);
-                                    var hasAllVars = true;
-                                    foreach (var var in ifVars)
-                                    {
-                                        if (_config.ConditionVars == null ||
-                                            !_config.ConditionVars.Contains(var)) // 定义的变量，需要全部配置妥当,否则if失败
-                                        {
-                                            hasAllVars = false;
-                                            break;
-                                        }
-                                    }
-                                    ifCondtioning = hasAllVars;
-                                    break;
-                                }
-                                if (cellType == CellType.Endif)
-                                {
-                                    ifCondtioning = true;
-                                    break;
-                                }
-
-                                if (!ifCondtioning) // 这一行被#if 忽略掉了
-                                    break;
-
-
-                                if (startRow != 0) // 不是第一行，往添加换行，首列
-                                {
-                                    if(param.CanExportTsv) rowBuilder.Append("\n");
-                                }
-                                if(!string.IsNullOrEmpty(param.ExportLuaPath))
-                                    luaBuilder.AppendLine(string.Concat("[",ParseLua(cellStr),"] = {"));
-                            }
-                            /*
-                                NOTE by qingqing-zhao 因为是从指定的列开始读取，所以>有效列 才加入\t
-                                如果这列是空白的也不需要加入
-                            */
-                            if(param.CanExportTsv)
-                            {
-                                bool hasColumn = !string.IsNullOrEmpty(columnName)
-                                                 && loopColumn > 0
-                                                 && loopColumn < columnCount; //列是否有效
-                                if (hasColumn) rowBuilder.Append("\t");
-                                // 如果单元格是字符串，换行符改成\\n
-                                cellStr = cellStr.Replace("\n", "\\n");
-                                rowBuilder.Append(cellStr);
-                            }
-
-                            //NOTE lua语法如果是字符串则加上"" 
-                            if(!string.IsNullOrEmpty(param.ExportLuaPath))
-                                luaBuilder.AppendLine(string.Format("\t{0}={1}{2}", columnName, ParseLua(cellStr), loopColumn != lastColumnIdx ? "," : ""));
+                            continue;
                         }
+
+                        if (excelFile.Index2ColName.ContainsKey(loopColumn) == false)
+                        {
+                            continue;
+                        }
+                        var columnName = excelFile.Index2ColName[loopColumn];
+                        var cellStr = excelFile.GetString(columnName, startRow);
+
+                        if (loopColumn == 0)
+                        {
+                            var cellType = CheckCellType(cellStr);
+                            if (cellType == CellType.Comment) // 如果行首为#注释字符，忽略这一行)
+                                break;
+
+                            // 进入#if模式
+                            if (cellType == CellType.If)
+                            {
+                                var ifVars = GetIfVars(cellStr);
+                                var hasAllVars = true;
+                                foreach (var var in ifVars)
+                                {
+                                    if (_config.ConditionVars == null ||
+                                        !_config.ConditionVars.Contains(var)) // 定义的变量，需要全部配置妥当,否则if失败
+                                    {
+                                        hasAllVars = false;
+                                        break;
+                                    }
+                                }
+                                ifCondtioning = hasAllVars;
+                                break;
+                            }
+                            if (cellType == CellType.Endif)
+                            {
+                                ifCondtioning = true;
+                                break;
+                            }
+
+                            if (!ifCondtioning) // 这一行被#if 忽略掉了
+                                break;
+
+
+                            if (startRow != 0) // 不是第一行，添加换行，首列
+                            {
+                                rowBuilder.Append("\n");
+                            }
+                            if(!string.IsNullOrEmpty(param.ExportLuaPath))
+                                luaBuilder.AppendLine(string.Concat("[",ParseLua(cellStr),"] = {"));
+                        }
+                        /*
+                            NOTE by qingqing-zhao 因为是从指定的列开始读取，所以>有效列 才加入\t
+                            如果这列是空白的也不需要加入
+                        */
+                        bool hasColumn = !string.IsNullOrEmpty(columnName)
+                                         && loopColumn > 0
+                                         && loopColumn < columnCount; //列是否有效
+                        if (hasColumn) rowBuilder.Append("\t");
+                        // 如果单元格是字符串，换行符改成\\n
+                        cellStr = cellStr.Replace("\n", "\\n");
+                        rowBuilder.Append(cellStr);
+
+                        //NOTE lua语法如果是字符串则加上"" 
+                        if(!string.IsNullOrEmpty(param.ExportLuaPath))
+                            luaBuilder.AppendLine(string.Format("\t{0}={1}{2}", columnName, ParseLua(cellStr), loopColumn != lastColumnIdx ? "," : ""));
                     }
                   
                     // 如果这行，之后\t或换行符，无其它内容，认为是可以省略的
                     if (!string.IsNullOrEmpty(rowBuilder.ToString().Trim()))
                     {
-                        if(param.CanExportTsv) tableBuilder.Append(rowBuilder);
-                        if(!string.IsNullOrEmpty(param.ExportLuaPath))
+                        if (param.CanExportTsv) tableBuilder.Append(rowBuilder);
+
+                        if (!string.IsNullOrEmpty(param.ExportLuaPath))
                             luaBuilder.AppendLine(string.Concat("}", startRow == lastRowIdx ? "" : ","));
                     }
                 }
