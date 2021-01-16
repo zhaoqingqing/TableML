@@ -5,8 +5,8 @@ cd %~dp0
 set tableml=%~dp0TableML\TableML\bin\Release\TableML.dll
 set tableml_compiler=%~dp0TableML\TableMLCompiler\bin\Release\TableMLCompiler.dll
 
-set mono_path="D:\Program Files\Unity\Editor\Data\MonoBleedingEdge\bin\mono.exe"
-set pdb2mdb_path="D:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.5\pdb2mdb.exe"
+set mono_path="C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\bin\mono.exe"
+set pdb2mdb_path="C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.5\pdb2mdb.exe"
 
 %mono_path% %pdb2mdb_path% %tableml%
 %mono_path% %pdb2mdb_path% %tableml_compiler%

@@ -35,7 +35,7 @@ namespace TableMLGUI
 
         public static string GetAppConfigPath()
         {
-            //区分是在vs中运行的，还是独立exe运行环境
+            //TODO 区分是在vs中运行的，还是独立exe运行环境
             if (false)
             {
                 int intPos = Application.StartupPath.Trim().IndexOf("bin") - 1;

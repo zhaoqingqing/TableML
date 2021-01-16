@@ -43,7 +43,6 @@ namespace TableML.Compiler
         public bool genCSharpClass;
 
         public string genCodeTemplateString;
-
         /// <summary>
         /// 生成的代码保存文件路径
         /// </summary>
@@ -413,8 +412,12 @@ namespace TableML.Compiler
                         var compileToPath = string.Format("{0}/{1}", compileBaseDir,
                             Path.ChangeExtension(relativePath, genParam.changeExtension));
                         var srcFileInfo = new FileInfo(excelPath);
-                        var dstFileName = Path.GetFileNameWithoutExtension(compileToPath);
-                        dst2src[dstFileName] = Path.GetFileName(excelPath);
+                        if (ExcelConfig.IsSaveCompileResult)
+                        {
+                            var dstFileName = Path.GetFileNameWithoutExtension(compileToPath);
+                            dst2src[dstFileName] = Path.GetFileName(excelPath);
+                        }
+
                         Console.WriteLine("Compiling Excel to Tab..." + string.Format("{0} -> {1}", excelPath, compileToPath));
 
                         // 如果已经存在，判断修改时间是否一致，用此来判断是否无需compile，节省时间
@@ -480,7 +483,7 @@ namespace TableML.Compiler
                     GenManagerClass(results, genParam);
                 }
 
-                SaveCompileResult(dst2src);
+                if (ExcelConfig.IsSaveCompileResult) { SaveCompileResult(dst2src); }
             }
             finally
             {

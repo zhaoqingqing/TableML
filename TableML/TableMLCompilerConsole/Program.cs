@@ -2,14 +2,8 @@
 using CommandLine;
 using CommandLine.Text;
 using TableML.Compiler;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using CommandLine;
-using CommandLine.Text;
-using NPOI.SS.UserModel;
 using TableML;
-using TableML.Compiler;
 
 namespace TableCompilerConsole
 {
@@ -93,7 +87,7 @@ namespace TableCompilerConsole
             //输出tml文件路径
             var OutputDirectory = Path.Combine(startPath, "setting", "Test.tsv");
             //生成的代码路径
-            var CodeFilePath = "Code.cs";
+            //var CodeFilePath = "Code.cs";
             if (File.Exists(srcFile) == false)
             {
                 Console.WriteLine("{0} 源文件不存在！", srcFile);
@@ -148,7 +142,7 @@ namespace TableCompilerConsole
             string settingCodeIgnorePattern = "(I18N/.*)|(StringsTable.*)|(tool/*)|(log/*)|(server/*)|(client/*)";
             var genParam = new GenParam()
             {
-                genCodeTemplateString = DefaultTemplate.GenSingleClassCodeTemplate, settingCodeIgnorePattern = settingCodeIgnorePattern,
+                genCodeTemplateString = DefaultTemplate.GenCodeTemplateOneFile, settingCodeIgnorePattern = settingCodeIgnorePattern,
                 genCSharpClass = true,  genCodeFilePath = exportCSPath, forceAll = true
             };
             var compilerParam = new CompilerParam() {CanExportTsv = true, ExportTsvPath = exportTsvPath, ExportLuaPath = null};
@@ -170,7 +164,7 @@ namespace TableCompilerConsole
             string settingCodeIgnorePattern = "(I18N/.*)|(StringsTable.*)|(tool/*)|(log/*)|(server/*)|(client/*)";
             var genParam = new GenParam()
             {
-                genCodeTemplateString = DefaultTemplate.GenSingleClassCodeTemplate, settingCodeIgnorePattern = settingCodeIgnorePattern,
+                genCodeTemplateString = DefaultTemplate.GenCodeTemplateOneFile, settingCodeIgnorePattern = settingCodeIgnorePattern,
                 genCSharpClass = true, genCodeFilePath = exportCSPath, forceAll = true
             };
             var compilerParam = new CompilerParam() {CanExportTsv = true, ExportTsvPath = exportTsvPath, ExportLuaPath = null};

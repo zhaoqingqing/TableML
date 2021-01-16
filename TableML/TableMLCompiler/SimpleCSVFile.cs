@@ -163,7 +163,7 @@ namespace TableML.Compiler
                 {
                     csvReader = new CsvReader(reader);
                     string[] commentRow = new string[] { }, commentRowDetail = new string[] { };
-                    var hasConstraints = false;
+                    //var hasConstraints = false;
                     while (csvReader.Read())
                     {
                         if (CurrentLineIndex == RowTypeIndex)
@@ -201,7 +201,7 @@ namespace TableML.Compiler
                                     var statementString = statementCell != null ? statementCell.ToString() : "";
                                     ColName2Constraints[colName] = statementString;
                                 }
-                                hasConstraints = true;
+                                //hasConstraints = true;
                             }
                             else
                             {
